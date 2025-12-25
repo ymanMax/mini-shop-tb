@@ -1,0 +1,10 @@
+<!--pages/auth/index.wxml-->
+<button type="primary" plain open-type="getUserInfo" bindgetuserinfo="handleGetUserInfo">
+	获取授权
+</button>
+<view class="caution">
+	<view>
+		只能进行模拟获取权限 无法真正获取token值 望周知！！！
+	</view>
+
+</view>
