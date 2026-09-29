@@ -1,0 +1,92 @@
+烧饼商品小程序升级需求文档（V3.0 精简版）
+
+【最高优先级】后端未启动，全量 Mock 数据实现。页面必须可见、可交互、数据真实呈现，无白屏/报错/裂图/死链。
+
+一、Mock 数据体系（先于所有功能实现）
+
+- 新建 api/http.js：USE_MOCK 开关统一收口请求，替换现有 request/index.js
+- 新建 mock/index.js：路由分发，匹配 url+method 返回 Promise
+- mock/data/ 下含：categories.js / goods.js / carts.js / orders.js / reviews.js / user.js
+- 所有返回格式 { code: 200, data, msg }，分页 { records, total }
+- 图片用 picsum.photos 固定 seed 生成，分类用 emoji 图标，image 统一 binderror 兜底
+- 写操作（加购/下单/评价/收藏/取消）内存生效 + storage 持久化，200~600ms 随机延迟
+- app.js onLaunch 自动注入 Mock 用户
+
+二、5 大核心需求 + 3 个深挖需求
+
+【需求 1】商品分类页重构 —— pages/category/index
+- 左右分栏：左一级分类（emoji 图标 + 名称）+ 右二级分类标签栏 + 商品列表
+- 筛选排序（综合/价格升降/销量）+ 半屏筛选面板（价格区间/有货）
+- 商品卡片含加购按钮，写购物车 + toast + 角标联动
+- 上拉分页、下拉刷新、空态、骨架屏
+
+【需求 2】商品详情页重构 —— pages/goods_detail/index
+- 多图轮播 + 点击放大（wx.previewImage）
+- SKU 半屏弹层：按规格联动价格/库存/主图、数量 stepper 受库存约束
+- 商品参数/售后保障可折叠面板
+- 详情图文描述
+- 评价模块（见需求 5）
+
+【需求 3】购物车完善 —— pages/cart/index
+- 单选/全选、数量调整、左滑删除、批量删除
+- 失效商品折叠区（置灰可清空）
+- 底部实时算价 + "去结算(n)"
+- 空态 + 猜你喜欢推荐
+- 角标全局同步 + storage 持久化
+
+【需求 4】订单管理 —— pages/order/index + 新增 pages/order/detail
+- 列表：Tab 切换（全部/待付款/待发货/待收货/已完成），各状态操作按钮
+- 详情：状态头部 + 物流 timeline + 地址/商品/金额明细 + 订单号可复制
+- Mock 演示：提供「模拟发货→模拟配送→模拟送达」按钮推进状态
+- 取消/确认收货需二次确认弹窗
+
+【需求 5】评价系统 —— 融入 goods_detail + 新增 pages/order/review
+- 详情页评价区：评分统计（综合分+星级分布条）、标签筛选（全部/好评/中评/差评/有图）、评价列表分页
+- 评价提交页：星级组件、快捷标签多选、文字（100字）、晒图 mock 上传（最多 6 张）
+- 提交后刷新详情页评价区，订单标记已评价，toast 提示
+
+【深挖 1】商品收藏与浏览足迹
+- 收藏：详情页心形按钮切换收藏/取消，状态跨页面同步（storage），收藏列表页（pages/collect/index）完善——支持 Tab 筛选、左滑取消、商品卡点击跳详情
+- 足迹：进详情页自动写入浏览记录（storage，去重、按时间倒序、最多存 50 条），我的页面新增"浏览足迹"入口，足迹列表按日期分组、支持清空
+
+【深挖 2】搜索功能增强 —— pages/search/index
+- 搜索历史：本地存储最近 15 条、单条删除/全部清空、点击历史词直接搜索
+- 热门搜索：mock 热门词（如"肉松烧饼""芝麻饼""绿豆糕"），点击直接搜索
+- 搜索联想：输入 1-2 字后实时匹配商品名前缀，防抖 300ms，下拉联想列表
+- 结果页：商品列表支持排序（综合/价格/销量），上拉分页，无结果空态
+
+【深挖 3】收货地址管理 —— 新增 pages/address/list + pages/address/edit
+- 列表页：地址卡片（姓名/电话/标签/地址详情）+ 设为默认 + 左滑编辑/删除 + 底部「新增地址」按钮
+- 编辑页（新增/编辑复用）：省市区三级联动选择（mock 数据）、姓名/手机/详细地址/标签/设为默认，表单校验（手机号格式、必填项）
+- 联动：订单确认/购物车页选择地址时跳转 list 页（选择模式），选中后返回并回填；当前无地址时在购物车页直接引导新增地址
+
+三、数据模型（精简）
+
+分类：id, name, icon(emoji), desc, children[{id,name,icon,desc}]
+商品：id, name, pics[], price, originalPrice, sales, stock, specs[], params[], afterSale, detailImages[], categoryId, isCollect
+购物车：id, goodsId, name, mainPic, specText, price, count, checked, stock
+订单：id, orderNo, status, items[], totalAmount, payAmount, addressSnapshot, logistics, isReviewed, createTime
+评价：id, goodsId, rating, content, images[], tags[], userName, userAvatar, createTime
+地址：id, name, phone, province, city, district, detail, tag, isDefault
+
+四、Mock 数据量要求
+
+分类：8-10 个一级，每级 2-4 个二级
+商品：40+ 条，覆盖所有分类，价格 5-200 元，15+ 条带规格，全部含 4-6 张轮播图
+购物车：初始 3-4 条
+订单：12+ 条，覆盖 6 种状态
+评价：30+ 条，评分分布 5:4:3:2:1 ≈ 20:6:3:2:1，10 条带晒图
+地址：4-5 条，含默认/家/公司标签
+
+五、改造清单
+
+改造：category、goods_detail、cart、order/index、pay、search、collect、user、app.js、request→api/http.js
+新增：order/detail、order/review、address/list、address/edit
+新增目录：mock/、api/、static/images/
+
+六、一票否决
+- 任意页面白屏/报错
+- 核心数据为空
+- 大面积裂图（>30%）
+- 主功能按钮无响应/"开发中"
+- 规格选择不联动价格
