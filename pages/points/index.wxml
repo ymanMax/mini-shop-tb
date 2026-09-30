@@ -1,0 +1,57 @@
+<!--pages/points/index.wxml-->
+<view class="points_page">
+  <!-- 头部积分卡 -->
+  <view class="points_header">
+    <view class="points_balance">
+      <view class="balance_label">可用积分</view>
+      <view class="balance_num">{{balance}}</view>
+    </view>
+    <view class="checkin_entry" bindtap="goCheckin">
+      <view class="checkin_icon">📅</view>
+      <view class="checkin_text">签到赚积分</view>
+    </view>
+  </view>
+
+  <!-- 积分兑换专区 -->
+  <view class="section_card">
+    <view class="section_title">积分兑换</view>
+    <view class="exchange_grid">
+      <view class="exchange_item" wx:for="{{exchangeItems}}" wx:key="id">
+        <view class="ex_points">{{item.points}}积分</view>
+        <view class="ex_title">{{item.title}}</view>
+        <view class="ex_desc">{{item.desc}}</view>
+        <view
+          class="ex_btn {{balance < item.points ? 'disabled' : ''}}"
+          bindtap="exchange"
+          data-id="{{item.id}}"
+          data-points="{{item.points}}"
+          data-title="{{item.title}}"
+        >
+          {{balance < item.points ? '积分不够' : '立即兑换'}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 积分明细 -->
+  <view class="section_card">
+    <view class="section_title">积分明细</view>
+    <view class="record_list" wx:if="{{records.length > 0}}">
+      <view class="record_item" wx:for="{{records}}" wx:key="id">
+        <view class="record_left">
+          <view class="record_source">{{item.source}}</view>
+          <view class="record_time">{{item.timeText}}</view>
+        </view>
+        <view class="record_points {{item.points > 0 ? 'plus' : 'minus'}}">
+          {{item.points > 0 ? '+' : ''}}{{item.points}}
+        </view>
+      </view>
+    </view>
+    <view class="empty-wrap" wx:if="{{records.length === 0 && !loading}}">
+      <view class="empty-icon">💰</view>
+      <view class="empty-text">暂无积分记录</view>
+    </view>
+    <view class="loading_more" wx:if="{{loading}}">加载中…</view>
+    <view class="no_more" wx:if="{{noMore && records.length > 0}}">—— 没有更多了 ——</view>
+  </view>
+</view>

@@ -1,30 +1,35 @@
+// app.js
+import { updateCartBadge } from './api/http.js'
+
 App({
-
-  /**
-   * 当小程序初始化完成时，会触发 onLaunch（全局只触发一次）
-   */
-  onLaunch: function () {
-    
+  globalData: {
+    userInfo: null,
+    cartCount: 0
   },
 
-  /**
-   * 当小程序启动，或从后台进入前台显示，会触发 onShow
-   */
-  onShow: function (options) {
-    
+  onLaunch() {
+    // 注入 Mock 登录态，保证依赖登录态的页面零报错
+    let userInfo = wx.getStorageSync('userInfo')
+    if (!userInfo) {
+      userInfo = {
+        id: 10001,
+        nickName: '烧饼爱好者',
+        avatar: '/static/images/default-avatar.png',
+        phone: '138****8888',
+        points: 268,
+        level: '黄金会员',
+        coupons: 3
+      }
+      wx.setStorageSync('userInfo', userInfo)
+      // 兼容旧页面读取的小写 key
+      wx.setStorageSync('userinfo', { nickName: userInfo.nickName, avatarUrl: userInfo.avatar })
+    }
+    this.globalData.userInfo = userInfo
+    // 初始化购物车角标
+    updateCartBadge()
   },
 
-  /**
-   * 当小程序从前台进入后台，会触发 onHide
-   */
-  onHide: function () {
-    
-  },
-
-  /**
-   * 当小程序发生脚本错误，或者 api 调用失败时，会触发 onError 并带上错误信息
-   */
-  onError: function (msg) {
-    
+  onShow() {
+    updateCartBadge()
   }
 })

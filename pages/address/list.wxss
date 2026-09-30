@@ -1,0 +1,106 @@
+/* pages/address/list.wxss */
+page {
+  background: #f5f5f5;
+}
+.address_page {
+  min-height: 100vh;
+  padding-bottom: 140rpx;
+}
+
+.address_list {
+  padding: 24rpx;
+}
+.address_item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16rpx;
+  margin-bottom: 16rpx;
+}
+.delete_btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 160rpx;
+  background: #eb4450;
+  color: #fff;
+  text-align: center;
+  line-height: 160rpx;
+  font-size: 26rpx;
+  z-index: 1;
+}
+.item_main {
+  background: #fff;
+  padding: 24rpx;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.25s;
+}
+.item_head {
+  display: flex;
+  align-items: center;
+}
+.item_name {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-right: 20rpx;
+}
+.item_phone {
+  font-size: 26rpx;
+  color: #666;
+  margin-right: 16rpx;
+}
+.tag_capsule {
+  font-size: 20rpx;
+  color: #ff9500;
+  border: 1rpx solid #ff9500;
+  border-radius: 6rpx;
+  padding: 2rpx 12rpx;
+}
+.default_badge {
+  font-size: 20rpx;
+  color: #52c41a;
+  border: 1rpx solid #52c41a;
+  border-radius: 6rpx;
+  padding: 2rpx 12rpx;
+  margin-left: auto;
+}
+.item_address {
+  font-size: 26rpx;
+  color: #666;
+  margin-top: 12rpx;
+  line-height: 1.6;
+}
+.item_actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #f5f5f5;
+}
+.action_link {
+  font-size: 24rpx;
+  color: #eb4450;
+  margin-left: 24rpx;
+}
+
+/* 底部新增 */
+.add_bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20rpx 24rpx;
+  background: #fff;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+.add_btn {
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background: linear-gradient(90deg, #ff5a66, #eb4450);
+  color: #fff;
+  border-radius: 999rpx;
+  font-size: 30rpx;
+}

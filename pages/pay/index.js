@@ -1,148 +1,233 @@
-// pages/cart/index.js
-import { getSetting, chooseAddress, openSetting, showModal, showToast, requestPayment } from '../../utils/asyncWx.js';
-import regeneratorRuntime from '../../lib/runtime/runtime'
-import { request } from '../../request/index.js'
-
+// pages/pay/index.js
+import { request, updateCartBadge } from '../../api/http.js'
+import { toast } from '../../utils/toast.js'
+import { formatPrice } from '../../utils/format.js'
 
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-    address: {},
-    cart: [],
-    totaPrice: 0,
-    totaNum: 0
+    mode: 'cart',
+    orderId: null,
+    address: null,
+    items: [],
+    totalAmount: 0,
+    discountAmount: 0,       // 满减优惠
+    freight: 0,
+    payAmount: 0,
+    paying: false,
+    totalAmountText: '¥0.00',
+    discountText: '¥0.00',
+    freightText: '免运费',
+    payAmountText: '¥0.00',
+    // 优惠券
+    coupons: [],
+    selectedCoupon: null,
+    couponDiscount: 0,
+    showCouponPanel: false
   },
 
-  onShow() {
-    // 获取获取本地存储中的地址信息
-    const address = wx.getStorageSync('address')
-    // 获取缓存中的购物车数据
-    let cart = wx.getStorageSync('cart') || []
-    // 过滤购物车数组
-    cart = cart.filter(v => v.checked)
-    this.setData({ address })
-    // 计算总价格和总数量
-    let totaPrice = 0;
-    let totaNum = 0;
-    cart.forEach(v => {
-      totaPrice += v.goods_price * v.num;
-      totaNum++
-    })
-    // 给data赋值
+  updateFormatted() {
+    const couponDiscount = this.data.couponDiscount || 0
+    const pay = Math.max(0, this.data.totalAmount - this.data.discountAmount - couponDiscount)
     this.setData({
-      cart,
-      totaPrice,
-      totaNum,
-      address
-    });
+      totalAmountText: formatPrice(this.data.totalAmount),
+      discountText: formatPrice(this.data.discountAmount),
+      freightText: this.data.freight === 0 ? '免运费' : formatPrice(this.data.freight),
+      couponDiscountText: formatPrice(couponDiscount),
+      payAmount: pay,
+      payAmountText: formatPrice(pay)
+    })
   },
 
-  // 点击 支付 
-  async handleOrderPay() {
-    try {
+  onLoad(options) {
+    this.setData({
+      mode: options.mode || 'cart',
+      orderId: options.orderId || null
+    })
+    this.loadData()
+  },
 
-      // 1 判断缓存中有没有loginParams 代替 token 
-      const loginParams = wx.getStorageSync("loginParams");
-      // 2 判断
-      if (!loginParams) {
-        wx.navigateTo({
-          url: '/pages/auth/index'
-        });
-        return;
+  async loadData() {
+    // 地址
+    const addrRes = await request({ url: '/address/list' })
+    const addrList = addrRes.data || []
+    const address = addrList.find(a => a.isDefault) || addrList[0] || null
+    this.setData({ address })
+
+    if (this.data.mode === 'order' && this.data.orderId) {
+      const res = await request({ url: '/orders/detail', data: { id: this.data.orderId } })
+      if (res.code === 200) {
+        const o = res.data
+        this.setData({
+          items: (o.items || []).map(i => ({ ...i, priceText: formatPrice(i.price) })),
+          totalAmount: o.totalAmount,
+          discountAmount: o.discountAmount,
+          freight: o.freight,
+          couponDiscount: 0
+        })
+        this.updateFormatted()
       }
-
-      // 3 将要支付的商品添加到缓存中 手动删除缓存中已经支付了的商品
-      let newCart = wx.getStorageSync("cart");
-      //  将要支付购买的商品添加到 订单数组
-      let orders = wx.getStorageSync("orders");
-      let newOrders = newCart.filter(v => v.checked)
-      // 将购买的商品从购物车数组中删除
-      newCart = newCart.filter(v => !v.checked);
-
-      const d = new Date()
-      newOrders.forEach(v => {
-        v.create_time = d.getTime()
+    } else if (this.data.mode === 'buyNow') {
+      const buyNow = wx.getStorageSync('mk_buyNow')
+      if (buyNow) {
+        this.setData({
+          items: (buyNow.items || []).map(i => ({ ...i, priceText: formatPrice(i.price) })),
+          totalAmount: buyNow.payAmount,
+          discountAmount: 0,
+          freight: 0,
+          couponDiscount: 0
+        })
+        this.updateFormatted()
+      }
+    } else {
+      // 购物车结算
+      const res = await request({ url: '/cart/list' })
+      const cart = (res.data || []).filter(c => c.checked).map(c => ({ ...c, priceText: formatPrice(c.price) }))
+      const total = cart.reduce((s, c) => s + c.price * c.count, 0)
+      const discount = total >= 39 ? 5 : 0
+      this.setData({
+        items: cart,
+        totalAmount: total,
+        discountAmount: discount,
+        freight: 0,
+        couponDiscount: 0
       })
-
-      // 更新缓存
-      wx.setStorageSync("cart", newCart);
-      wx.setStorageSync("orders", [...orders, ...newOrders]);
-
-      // 4 支付成功了 跳转到订单页面
-      wx.showLoading({
-        title: '支付中',
-        mask: true
-      })
-
-      setTimeout(function () {
-        wx.hideLoading()
-        wx.redirectTo({
-          url: '/pages/order/index?type=1'
-        });
-      }, 700)
-
-
-
-
-    } catch (error) {
-      await showToast({ title: "支付失败" })
-      console.log(error);
+      this.updateFormatted()
     }
+
+    // 加载可用优惠券
+    await this.loadCoupons()
+  },
+
+  async loadCoupons() {
+    const res = await request({ url: '/coupon/my', data: { status: 1 } })
+    const list = (res.data || []).map(c => {
+      // 计算是否可用 + 优惠金额
+      let usable = true
+      let reason = ''
+      let discountAmount = 0
+      if (this.data.totalAmount < c.threshold) {
+        usable = false
+        reason = `未满 ${c.threshold} 元`
+      } else if (c.type === 2) {
+        discountAmount = +(this.data.totalAmount * (1 - c.discount)).toFixed(2)
+      } else {
+        discountAmount = c.amount
+      }
+      return {
+        ...c,
+        amountText: c.amount ? formatPrice(c.amount) : '',
+        discountText: c.discount ? (c.discount * 10).toFixed(1) + '折' : '',
+        usable,
+        reason,
+        discountAmount
+      }
+    })
+    // 按优惠金额降序
+    list.sort((a, b) => b.discountAmount - a.discountAmount)
+    this.setData({ coupons: list })
+    // 自动匹配最优可用券
+    const best = list.find(c => c.usable)
+    if (best) {
+      this.setData({ selectedCoupon: best, couponDiscount: best.discountAmount })
+      this.updateFormatted()
+    }
+  },
+
+  // 打开券弹层
+  openCouponPanel() {
+    this.setData({ showCouponPanel: true })
+  },
+  closeCouponPanel() {
+    this.setData({ showCouponPanel: false })
+  },
+
+  // 选择券
+  selectCoupon(e) {
+    const { id } = e.currentTarget.dataset
+    const coupon = this.data.coupons.find(c => c.id === id)
+    if (!coupon || !coupon.usable) {
+      toast.info(coupon ? coupon.reason : '该券不可用')
+      return
+    }
+    // 再次点击取消选择
+    if (this.data.selectedCoupon && this.data.selectedCoupon.id === id) {
+      this.setData({ selectedCoupon: null, couponDiscount: 0 })
+    } else {
+      this.setData({ selectedCoupon: coupon, couponDiscount: coupon.discountAmount })
+    }
+    this.updateFormatted()
+    this.setData({ showCouponPanel: false })
+  },
+
+  // 选择地址
+  chooseAddress() {
+    wx.navigateTo({ url: '/pages/address/list?mode=select' })
+  },
+  onAddressSelected(addr) {
+    this.setData({ address: addr })
+  },
+
+  // 支付
+  async handlePay() {
+    if (this.data.paying) return
+    if (!this.data.address) {
+      toast.info('请先选择收货地址')
+      return
+    }
+    this.setData({ paying: true })
+    toast.loading('支付中')
+    await new Promise(r => setTimeout(r, 2000))
+    toast.hideLoading()
+
+    const addressSnapshot = {
+      name: this.data.address.name,
+      phone: this.data.address.phone,
+      address: `${this.data.address.province}${this.data.address.city}${this.data.address.district}${this.data.address.detail}`
+    }
+
+    if (this.data.mode === 'order' && this.data.orderId) {
+      await request({ url: '/orders/pay', method: 'POST', data: { id: this.data.orderId } })
+      // 使用券
+      if (this.data.selectedCoupon) {
+        await request({ url: '/coupon/use', method: 'POST', data: { couponId: this.data.selectedCoupon.id, orderId: this.data.orderId } })
+      }
+      toast.success('支付成功')
+      setTimeout(() => {
+        wx.redirectTo({ url: `/pages/order/detail?id=${this.data.orderId}` })
+      }, 800)
+    } else {
+      const res = await request({
+        url: '/orders/create',
+        method: 'POST',
+        data: {
+          items: this.data.items,
+          address: addressSnapshot,
+          totalAmount: this.data.totalAmount,
+          discountAmount: this.data.discountAmount + this.data.couponDiscount,
+          freight: this.data.freight,
+          payAmount: this.data.payAmount
+        }
+      })
+      if (res.code === 200) {
+        // 使用券
+        if (this.data.selectedCoupon) {
+          await request({ url: '/coupon/use', method: 'POST', data: { couponId: this.data.selectedCoupon.id, orderId: res.data.id } })
+        }
+        toast.success('支付成功')
+        updateCartBadge()
+        wx.removeStorageSync('mk_buyNow')
+        setTimeout(() => {
+          wx.redirectTo({ url: `/pages/order/detail?id=${res.data.id}` })
+        }, 800)
+      } else {
+        toast.error('支付失败')
+      }
+    }
+    this.setData({ paying: false })
+  },
+
+  onImgError(e) {
+    const { index } = e.currentTarget.dataset
+    this.setData({ [`items[${index}].mainPic`]: '/static/images/default.png' })
   }
-
-  // 该账号非企业账号 不能实现支付 故将该流程注释 采用其它方式模拟
-  // 点击 支付 
-  // async handleOrderPay() {
-  //   try {
-
-  //     // 1 判断缓存中有没有token 
-  //     const token = wx.getStorageSync("token");
-  //     // 2 判断
-  //     if (!token) {
-  //       wx.navigateTo({
-  //         url: '/pages/auth/index'
-  //       });
-  //       return;
-  //     }
-  //     // 3 创建订单
-  //     // 3.1 准备 请求头参数
-  //     // const header = { Authorization: token };
-  //     // 3.2 准备 请求体参数
-  //     const order_price = this.data.totalPrice;
-  //     const consignee_addr = this.data.address.all;
-  //     const cart = this.data.cart;
-  //     let goods = [];
-  //     cart.forEach(v => goods.push({
-  //       goods_id: v.goods_id,
-  //       goods_number: v.num,
-  //       goods_price: v.goods_price
-  //     }))
-  //     const orderParams = { order_price, consignee_addr, goods };
-  //     // 4 准备发送请求 创建订单 获取订单编号
-  //     const { order_number } = await request({ url: "/my/orders/create", method: "POST", data: orderParams });
-  //     // 5 发起 预支付接口
-  //     const { pay } = await request({ url: "/my/orders/req_unifiedorder", method: "POST", data: { order_number } });
-  //     // 6 发起微信支付 
-  //     await requestPayment(pay);
-  //     // 7 查询后台 订单状态
-  //     const res = await request({ url: "/my/orders/chkOrder", method: "POST", data: { order_number } });
-  //     await showToast({ title: "支付成功" });
-  //     // 8 手动删除缓存中 已经支付了的商品
-  //     let newCart = wx.getStorageSync("cart");
-  //     newCart = newCart.filter(v => !v.checked);
-  //     wx.setStorageSync("cart", newCart);
-
-  //     // 8 支付成功了 跳转到订单页面
-  //     wx.navigateTo({
-  //       url: '/pages/order/index'
-  //     });
-
-  //   } catch (error) {
-  //     await showToast({ title: "支付失败" })
-  //     console.log(error);
-  //   }
-  // }
 })

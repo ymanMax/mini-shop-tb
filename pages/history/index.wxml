@@ -1,0 +1,43 @@
+<!--pages/history/index.wxml-->
+<view class="history_page">
+  <!-- 顶部操作栏 -->
+  <view class="top_bar" wx:if="{{groups.length > 0}}">
+    <view class="clear_all" bindtap="clearAll">🗑 清空全部</view>
+  </view>
+
+  <!-- 分组列表 -->
+  <view class="group_section" wx:for="{{groups}}" wx:key="title" wx:for-index="gidx">
+    <view class="group_title">{{item.title}}</view>
+    <view class="group_list">
+      <view
+        class="history_item"
+        wx:for="{{item.items}}"
+        wx:for-item="h"
+        wx:key="goodsId"
+        data-id="{{h.goodsId}}"
+        data-group="{{gidx}}"
+        bindtouchstart="onTouchStart"
+        bindtouchend="onTouchEnd"
+      >
+        <view class="delete_btn" catchtap="removeItem" data-id="{{h.goodsId}}">删除</view>
+        <view class="item_main" style="transform: translateX({{swipeId === h.goodsId ? '-160rpx' : '0'}});" bindtap="goDetail" data-id="{{h.goodsId}}">
+          <image class="item_img" src="{{h.mainPic}}" mode="aspectFill" binderror="onImgError" data-group="{{gidx}}" data-index="{{index}}" />
+          <view class="item_info">
+            <view class="item_name ellipsis-2">{{h.name}}</view>
+            <view class="item_bottom">
+              <text class="item_price">{{h.priceText}}</text>
+              <text class="item_time">{{h.timeText}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空态 -->
+  <view class="empty-wrap" wx:if="{{groups.length === 0}}">
+    <view class="empty-icon">🕐</view>
+    <view class="empty-text">还没有浏览记录，去逛逛~</view>
+    <view class="empty_btn btn-primary" bindtap="goHome">去逛逛</view>
+  </view>
+</view>

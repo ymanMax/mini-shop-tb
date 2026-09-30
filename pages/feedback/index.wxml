@@ -1,31 +1,43 @@
-<SearchInput></SearchInput>
-<Tabs tabs="{{tabs}}" bindtabsItenChange="handletabsItenChange">
-	<view class="fb_main">
-		<view class="fb_title">问题的种类</view>
-		<view class="fb_item">
-			<text>功能建议</text>
-			<text>功能建议</text>
-			<text>功能建议</text>
-			<text>功能建议</text>
-		</view>
-		<view class="fb_content">
-			<!-- 文本 -->
-			<textarea placeholder="请描述一下您的问题" bindinput="handleTextInput"></textarea>
-			<!-- 选择上传图片区域 -->
-			<view class="fb_tool">
-				<button bindtap="handleChooseImg">+</button>
-				<view class="image_item" wx:for="{{chooseImgs}}" wx:key="*this" bindtap="handleRemoveImg" data-index="{{index}}">
-					<UpImg src="{{item}}"></UpImg>
-				</view>
-			</view>
-		</view>
-		<!-- 按钮 -->
-		<view class="fb_btn">
-			<button type="primary" bindtap="handleFormSubmit">
-				<icon type="success_no_circle" size="23" color="white">
-				</icon>
-				提交
-			</button>
-		</view>
-	</view>
-</Tabs>
+<!--pages/feedback/index.wxml-->
+<view class="fb_page">
+  <view class="fb_type_section">
+    <view class="fb_title">问题的种类</view>
+    <view class="fb_types">
+      <view
+        class="fb_type {{activeType === index ? 'active' : ''}}"
+        wx:for="{{types}}"
+        wx:key="*this"
+        bindtap="onTypeTap"
+        data-index="{{index}}"
+      >{{item}}</view>
+    </view>
+  </view>
+
+  <view class="fb_content_section">
+    <view class="fb_title">问题描述</view>
+    <textarea
+      class="fb_textarea"
+      placeholder="请描述一下您的问题或建议，我们会尽快处理~"
+      maxlength="200"
+      value="{{textVal}}"
+      bindinput="handleTextInput"
+    />
+    <view class="word_count">{{textVal.length}}/200</view>
+  </view>
+
+  <view class="fb_upload_section">
+    <view class="fb_title">上传图片（选填，最多3张）</view>
+    <view class="fb_upload_list">
+      <view class="fb_upload_item" wx:for="{{chooseImgs}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill" class="fb_upload_img" />
+        <view class="fb_upload_remove" bindtap="handleRemoveImg" data-index="{{index}}">✕</view>
+      </view>
+      <view class="fb_upload_add" wx:if="{{chooseImgs.length < 3}}" bindtap="handleChooseImg">
+        <view class="add_icon">＋</view>
+        <view class="add_text">上传图片</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="fb_submit" bindtap="handleFormSubmit">提交反馈</view>
+</view>

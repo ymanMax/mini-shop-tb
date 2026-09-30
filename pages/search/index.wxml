@@ -1,9 +1,99 @@
-<!-- 搜索框及按钮 -->
-<view class="search_row">
-	<input value="{{inpValue}}" placeholder="请输入您要搜索的商品" bindinput="handleInput"></input>
-	<button bindtap="handleCancel" hidden="{{!isFocus}}" class="search_button">取消</button>
-</view>
-<!-- 推荐内容 -->
-<view class="search_content">
-	<navigator class="search_item" wx:for="{{goods}}" wx:key="goods_id" url="/pages/goods_detail/index?goods_id={{item.goods_id}}">{{item.goods_name}}</navigator>
+<!--pages/search/index.wxml-->
+<view class="search_page">
+  <!-- 搜索框 -->
+  <view class="search_row">
+    <view class="search_box">
+      <text class="search_icon">🔍</text>
+      <input
+        value="{{inpValue}}"
+        placeholder="请输入您要搜索的商品"
+        bindinput="handleInput"
+        bindconfirm="onSearchConfirm"
+        bindfocus="onFocus"
+        confirm-type="search"
+        focus="{{focused}}"
+      />
+      <view class="clear_btn" wx:if="{{inpValue}}" bindtap="backToInput">✕</view>
+    </view>
+    <view class="search_btn" bindtap="onSearchConfirm">搜索</view>
+  </view>
+
+  <!-- 焦点态：历史 + 热门 + 联想 -->
+  <view class="focus_panel" wx:if="{{focused && !searched}}">
+    <!-- 搜索历史 -->
+    <view class="section" wx:if="{{historyList.length > 0}}">
+      <view class="section_title_row">
+        <text class="section_title">搜索历史</text>
+        <view class="clear_history" bindtap="clearHistory">🗑 清空</view>
+      </view>
+      <view class="history_words">
+        <view class="history_word" wx:for="{{historyList}}" wx:key="*this" bindtap="tapHot" data-word="{{item}}">
+          <text class="history_text">{{item}}</text>
+          <text class="history_del" catchtap="removeHistory" data-word="{{item}}">✕</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 热门搜索 -->
+    <view class="section">
+      <view class="section_title_row">
+        <text class="section_title">🔥 热门搜索</text>
+      </view>
+      <view class="hot_words">
+        <view class="hot_word" wx:for="{{hotWords}}" wx:key="*this" bindtap="tapHot" data-word="{{item}}">{{item}}</view>
+      </view>
+    </view>
+
+    <!-- 联想下拉 -->
+    <view class="suggest_panel" wx:if="{{showSuggest}}">
+      <view class="suggest_item" wx:for="{{suggestList}}" wx:key="id" bindtap="tapSuggest" data-id="{{item.id}}">
+        <image class="suggest_img" src="{{item.mainPic}}" mode="aspectFill" />
+        <view class="suggest_info">
+          <view class="suggest_name">
+            <text wx:if="{{item.parts}}">{{item.parts.before}}</text>
+            <text class="highlight" wx:if="{{item.parts}}">{{item.parts.match}}</text>
+            <text wx:if="{{item.parts}}">{{item.parts.after}}</text>
+            <text wx:else>{{item.name}}</text>
+          </view>
+          <view class="suggest_price">{{item.priceText}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 结果态 -->
+  <view class="result_panel" wx:if="{{searched}}">
+    <!-- 排序栏 -->
+    <view class="sort_bar">
+      <view class="sort_item {{activeSort === 'default' ? 'active' : ''}}" bindtap="onSortTap" data-sort="default">综合</view>
+      <view class="sort_item {{activeSort === 'priceAsc' ? 'active' : ''}}" bindtap="onSortTap" data-sort="priceAsc">价格升序</view>
+      <view class="sort_item {{activeSort === 'priceDesc' ? 'active' : ''}}" bindtap="onSortTap" data-sort="priceDesc">价格降序</view>
+      <view class="sort_item {{activeSort === 'sales' ? 'active' : ''}}" bindtap="onSortTap" data-sort="sales">销量</view>
+    </view>
+
+    <!-- 商品列表 -->
+    <view class="goods_list" wx:if="{{goodsList.length > 0}}">
+      <view class="goods_item" wx:for="{{goodsList}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+        <image class="goods_img" src="{{item.mainPic}}" mode="aspectFill" binderror="onImgError" data-index="{{index}}" />
+        <view class="goods_info">
+          <view class="goods_name ellipsis-2">{{item.name}}</view>
+          <view class="goods_bottom">
+            <text class="goods_price">{{item.priceText}}</text>
+            <text class="original_price" wx:if="{{item.originalPrice > item.price}}">{{item.originalPriceText}}</text>
+          </view>
+          <view class="sales">已售{{item.sales}}件</view>
+        </view>
+        <view class="add_btn" catchtap="addToCart" data-item="{{item}}">＋</view>
+      </view>
+    </view>
+
+    <!-- 空态 -->
+    <view class="empty-wrap" wx:if="{{goodsList.length === 0 && !loading}}">
+      <view class="empty-icon">🔍</view>
+      <view class="empty-text">没有找到相关商品，换个关键词试试~</view>
+    </view>
+
+    <view class="no_more" wx:if="{{noMore && goodsList.length > 0}}">—— 没有更多了 ——</view>
+    <view class="loading_more" wx:if="{{loading}}">加载中…</view>
+  </view>
 </view>

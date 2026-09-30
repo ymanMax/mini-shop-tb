@@ -1,0 +1,89 @@
+<!--pages/order/review.wxml-->
+<view class="review_page">
+  <!-- 商品信息 -->
+  <view class="section_card">
+    <view class="section_title"><text>评价商品</text></view>
+    <view class="item_list">
+      <view
+        class="item_row {{activeItemIndex === index ? 'active' : ''}}"
+        wx:for="{{items}}"
+        wx:key="goodsId"
+        bindtap="selectItem"
+        data-index="{{index}}"
+      >
+        <image class="item_img" src="{{item.mainPic}}" mode="aspectFill" binderror="onImgError" data-index="{{index}}" />
+        <view class="item_info">
+          <view class="item_name ellipsis-2">{{item.name}}</view>
+          <view class="item_spec">{{item.specText}} ×{{item.count}}</view>
+        </view>
+        <view class="item_radio">{{activeItemIndex === index ? '●' : '○'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 星级评分 -->
+  <view class="section_card">
+    <view class="section_title"><text>评分</text></view>
+    <view class="star_row">
+      <view
+        class="big_star {{rating >= item ? 'on' : ''}}"
+        wx:for="{{[1,2,3,4,5]}}"
+        wx:key="*this"
+        bindtap="onStarTap"
+        data-value="{{item}}"
+      >★</view>
+      <text class="star_label">{{starLabel}}</text>
+    </view>
+  </view>
+
+  <!-- 快捷标签 -->
+  <view class="section_card">
+    <view class="section_title"><text>快捷标签（可多选）</text></view>
+    <view class="tag_list">
+      <view
+        class="tag_option {{item.active ? 'active' : ''}}"
+        wx:for="{{tagOptions}}"
+        wx:key="label"
+        bindtap="toggleTag"
+        data-tag="{{item.label}}"
+      >{{item.label}}</view>
+    </view>
+  </view>
+
+  <!-- 文字评价 -->
+  <view class="section_card">
+    <view class="section_title"><text>评价内容</text></view>
+    <textarea
+      class="content_input"
+      placeholder="说说你的使用感受吧~"
+      maxlength="100"
+      value="{{content}}"
+      bindinput="onContentInput"
+    />
+    <view class="word_count">{{content.length}}/100</view>
+  </view>
+
+  <!-- 晒图上传 -->
+  <view class="section_card">
+    <view class="section_title"><text>晒图（最多6张）</text></view>
+    <view class="upload_list">
+      <view class="upload_item" wx:for="{{images}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill" class="upload_img" />
+        <view class="upload_remove" bindtap="removeImage" data-index="{{index}}">✕</view>
+      </view>
+      <view class="upload_add" wx:if="{{images.length < 6}}" bindtap="chooseImage">
+        <view class="add_icon">＋</view>
+        <view class="add_text">上传图片</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom_placeholder"></view>
+</view>
+
+<!-- 底部提交栏 -->
+<view class="footer_tool">
+  <view class="submit_btn {{submitting ? 'disabled' : ''}}" bindtap="submit">
+    {{submitting ? '提交中…' : '提交评价'}}
+  </view>
+</view>

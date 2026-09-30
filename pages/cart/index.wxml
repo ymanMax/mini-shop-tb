@@ -1,77 +1,119 @@
-<!-- 收获地址按钮 -->
-<view class="revice_address_row">
-	<view class="address_btn" wx:if="{{!address.userName}}">
-		<button bindtap="handleChooseAddress" type="primary" plain>获取收获地址</button>
-	</view>
-	<!-- 收货信息 -->
-	<view wx:else class="user_info_row">
-		<view class="user_info">
-			<view>收货人: {{address.userName}}</view>
-			<view>{{address.all}}</view>
-		</view>
-		<view class="user_phone">{{address.telNumber}}</view>
-	</view>
-	<!--  -->
-</view>
+<!--pages/cart/index.wxml-->
+<view class="cart_page">
+  <!-- 收货地址区 -->
+  <view class="address_card" bindtap="openAddressPanel">
+    <view class="address_icon">📍</view>
+    <block wx:if="{{address}}">
+      <view class="address_info">
+        <view class="address_top">
+          <text class="address_name">{{address.name}}</text>
+          <text class="address_phone">{{address.phone}}</text>
+        </view>
+        <view class="address_detail">{{address.province}}{{address.city}}{{address.district}}{{address.detail}}</view>
+      </view>
+    </block>
+    <view class="address_info" wx:else>
+      <view class="address_name">请添加收货地址</view>
+      <view class="address_detail">点击选择或新增地址</view>
+    </view>
+    <view class="address_arrow">›</view>
+  </view>
 
-<!-- 购物车内容 -->
-<view class="cart_content">
-	<view class="cart_title">购物车</view>
-	<!-- 商品 -->
-	<view class="cart_main">
-		<!-- 购物车有商品时显示 -->
-		<block wx:if="{{cart.length !== 0}}">
-			<view class="cart_item" wx:for="{{cart}}" wx:key="goods_id">
-				<!-- 复选框 -->
-				<view class="caer_chk_wrap">
-					<checkbox-group bindchange="handleItemChange" data-id="{{item.goods_id}}">
-						<checkbox checked="{{item.checked}}" color="#FF2D4A"></checkbox>
-					</checkbox-group>
-				</view>
-				<!-- 图片 -->
-				<navigator class="cart_img_wrap">
-					<image src="{{item.goods_small_logo}}" mode="widthFix" />
-				</navigator>
-				<!-- 信息 -->
-				<view class="cart_info_wrap">
-					<view class="goods_name">{{item.goods_name}}</view>
-					<view class="goods_price_wrap">
-						<view class="goods_price">￥{{item.goods_price}}</view>
-						<view class="num_tool">
-							<view class="num_edit" bindtap="handleItemNumEdit" data-id="{{item.goods_id}}" data-operation="{{-1}}">-</view>
-							<view class="goods_num">{{item.num}}</view>
-							<view class="num_edit" bindtap="handleItemNumEdit" data-id="{{item.goods_id}}" data-operation="{{1}}">+</view>
-						</view>
-					</view>
-				</view>
-			</view>
-		</block>
-		<!-- 购物车没商品时显示 -->
-		<block wx:else>
-			<image src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1285087026,2572595179&fm=26&gp=0.jpg" mode="widthFix" />
+  <!-- 购物车内容 -->
+  <view class="cart_content" wx:if="{{cart.length > 0 || invalidCart.length > 0}}">
+    <!-- 正常商品 -->
+    <view class="section_title">购物车 ({{cart.length}})</view>
+    <view class="cart_list">
+      <view
+        class="cart_item"
+        wx:for="{{cart}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtouchstart="onTouchStart"
+        bindtouchend="onTouchEnd"
+      >
+        <!-- 删除按钮（左滑露出） -->
+        <view class="delete_btn" catchtap="removeItem" data-id="{{item.id}}">删除</view>
+        <view class="item_main" style="transform: translateX({{swipeId === item.id ? '-160rpx' : '0'}});">
+          <view class="chk_wrap" catchtap="toggleCheck" data-id="{{item.id}}">
+            <view class="chk {{item.checked ? 'on' : ''}}">{{item.checked ? '✓' : ''}}</view>
+          </view>
+          <image class="item_img" src="{{item.mainPic}}" mode="aspectFill" binderror="onImgError" data-index="{{index}}" />
+          <view class="item_info">
+            <view class="item_name ellipsis-2">{{item.name}}</view>
+            <view class="item_spec">{{item.specText}}</view>
+            <view class="item_bottom">
+              <text class="item_price">{{item.priceText}}</text>
+              <view class="stepper">
+                <view class="stepper_btn" catchtap="changeCount" data-id="{{item.id}}" data-delta="{{-1}}">−</view>
+                <view class="stepper_num">{{item.count}}</view>
+                <view class="stepper_btn" catchtap="changeCount" data-id="{{item.id}}" data-delta="{{1}}">＋</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
 
-		</block>
+    <!-- 失效商品 -->
+    <block wx:if="{{invalidCart.length > 0}}">
+      <view class="section_title invalid_title">失效商品 ({{invalidCart.length}})</view>
+      <view class="invalid_list">
+        <view class="cart_item invalid" wx:for="{{invalidCart}}" wx:key="id">
+          <view class="item_main">
+            <view class="chk_wrap">
+              <view class="chk disabled"></view>
+            </view>
+            <image class="item_img" src="{{item.mainPic}}" mode="aspectFill" />
+            <view class="item_info">
+              <view class="item_name ellipsis-2">{{item.name}}</view>
+              <view class="item_spec">{{item.specText}}</view>
+              <view class="item_bottom">
+                <text class="item_price disabled_price">¥{{item.price}}</text>
+                <text class="invalid_tip">已下架</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="clear_invalid" bindtap="clearInvalid">清空失效商品</view>
+    </block>
+  </view>
 
-	</view>
+  <!-- 空态 -->
+  <view class="empty-wrap" wx:if="{{cart.length === 0 && invalidCart.length === 0}}">
+    <view class="empty-icon">🛒</view>
+    <view class="empty-text">购物车还是空的</view>
+    <view class="empty_btn btn-primary" bindtap="goHome">去逛逛</view>
+  </view>
+
+  <!-- 猜你喜欢 -->
+  <view class="recommend_section" wx:if="{{recommendList.length > 0}}">
+    <view class="section_title">猜你喜欢</view>
+    <scroll-view scroll-x class="recommend_bar">
+      <view class="recommend_inner">
+        <view class="recommend_item" wx:for="{{recommendList}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+          <image src="{{item.mainPic}}" mode="aspectFill" class="recommend_img" />
+          <view class="recommend_name ellipsis">{{item.name}}</view>
+          <view class="recommend_price">{{item.priceText}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 底部占位 -->
+  <view class="bottom_placeholder"></view>
 </view>
 
 <!-- 底部结算栏 -->
-<view class="footer_tool">
-	<!-- 全选按钮 -->
-	<view class="all_chk_wrap">
-		<checkbox-group bindchange="handleAllChecked">
-			<checkbox checked="{{allChecked}}" color="#F8554F">
-				全选
-			</checkbox>
-		</checkbox-group>
-	</view>
-	<!-- 总价格部分 -->
-	<view class="total_price_wrap">
-		<view class="total_price">
-			合计: <text class="price">￥{{totaPrice}}</text>
-		</view>
-		<view>包含运费</view>
-	</view>
-	<!-- 结算 -->
-	<view bindtap="handlePay" class="order_pay_wrap">结算({{totaNum}})</view>
+<view class="footer_tool" wx:if="{{cart.length > 0}}">
+  <view class="all_chk_wrap" bindtap="toggleAll">
+    <view class="chk {{allChecked ? 'on' : ''}}">{{allChecked ? '✓' : ''}}</view>
+    <text class="all_chk_text">全选</text>
+  </view>
+  <view class="total_wrap">
+    <view class="total_price">合计：<text class="price">{{totalPrice}}</text></view>
+    <view class="discount_text">{{discountText}}</view>
+  </view>
+  <view class="pay_btn" bindtap="handlePay">去结算({{totalCount}})</view>
 </view>

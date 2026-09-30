@@ -15,3 +15,88 @@ page {
 image {
   width: 100%;
 }
+
+/* ============ 全局工具类 ============ */
+.theme-color { color: #eb4450; }
+.price-color { color: #eb4450; }
+.flex { display: flex; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-center { display: flex; justify-content: center; align-items: center; }
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ellipsis-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.ellipsis-3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+/* 骨架屏呼吸动画 */
+@keyframes breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.skeleton {
+  background: #eee;
+  border-radius: 8rpx;
+  animation: breathe 1.4s ease-in-out infinite;
+}
+
+/* 角标 */
+.badge {
+  position: absolute;
+  top: -10rpx;
+  right: -14rpx;
+  min-width: 30rpx;
+  height: 30rpx;
+  line-height: 30rpx;
+  padding: 0 8rpx;
+  background: #eb4450;
+  color: #fff;
+  font-size: 20rpx;
+  border-radius: 15rpx;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* 主按钮 */
+.btn-primary {
+  background: linear-gradient(90deg, #ff5a66, #eb4450);
+  color: #fff;
+  border-radius: 999rpx;
+  text-align: center;
+}
+.btn-outline {
+  border: 1rpx solid #eb4450;
+  color: #eb4450;
+  border-radius: 999rpx;
+  text-align: center;
+  background: #fff;
+}
+
+/* 空态 */
+.empty-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 0;
+}
+.empty-icon {
+  width: 160rpx;
+  height: 160rpx;
+  opacity: 0.6;
+}
+.empty-text {
+  color: #999;
+  font-size: 26rpx;
+  margin-top: 24rpx;
+}

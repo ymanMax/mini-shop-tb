@@ -1,96 +1,279 @@
 /* pages/pay/index.wxss */
 page {
-  padding-bottom: 90rpx;
+  background: #f5f5f5;
+  padding-bottom: 120rpx;
 }
-.revice_address_row .user_info_row {
+.pay_page {
+  min-height: 100vh;
+}
+
+/* 地址卡片 */
+.address_card {
   display: flex;
-  padding: 20rpx;
+  align-items: center;
+  background: #fff;
+  padding: 28rpx 24rpx;
+  margin-bottom: 16rpx;
 }
-.revice_address_row .user_info_row .user_info {
-  flex: 5;
+.address_icon {
+  font-size: 40rpx;
+  margin-right: 16rpx;
 }
-.revice_address_row .user_info_row .user_phone {
-  flex: 3;
-  text-align: right;
+.address_info {
+  flex: 1;
 }
-.cart_content .cart_title {
-  padding: 20rpx;
-  font-size: 36rpx;
-  border-top: 1rpx solid #FF2D4A;
-  border-bottom: 1rpx solid #FF2D4A;
-}
-.cart_content .cart_main .cart_item {
+.address_top {
   display: flex;
-  padding: 10rpx;
-  border-bottom: 1rpx solid #ccc;
-}
-.cart_content .cart_main .cart_item navigator.cart_img_wrap {
-  flex: 2;
-  display: flex;
-  justify-content: center;
   align-items: center;
 }
-.cart_content .cart_main .cart_item navigator.cart_img_wrap image {
-  width: 80%;
+.address_name {
+  font-size: 30rpx;
+  font-weight: bold;
+  margin-right: 20rpx;
 }
-.cart_content .cart_main .cart_item .cart_info_wrap {
-  flex: 4;
-  display: flex;
-  justify-content: space-around;
-  flex-direction: column;
-}
-.cart_content .cart_main .cart_item .cart_info_wrap .goods_name {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+.address_phone {
+  font-size: 26rpx;
   color: #666;
 }
-.cart_content .cart_main .cart_item .cart_info_wrap .goods_price_wrap {
+.address_detail {
+  font-size: 26rpx;
+  color: #666;
+  margin-top: 8rpx;
+}
+.address_arrow {
+  font-size: 40rpx;
+  color: #ccc;
+}
+
+/* 区块卡片 */
+.section_card {
+  background: #fff;
+  margin: 16rpx 24rpx;
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+.section_title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+/* 商品清单 */
+.goods_row {
+  display: flex;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+.goods_row:last-child {
+  border-bottom: none;
+}
+.goods_img {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 8rpx;
+  background: #eee;
+}
+.goods_info {
+  flex: 1;
+  margin-left: 20rpx;
+}
+.goods_name {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.4;
+}
+.goods_spec {
+  font-size: 22rpx;
+  color: #999;
+  margin: 8rpx 0;
+}
+.goods_bottom {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
 }
-.cart_content .cart_main .cart_item .cart_info_wrap .goods_price_wrap .goods_price {
+.goods_price {
+  color: #eb4450;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+.goods_count {
+  color: #999;
+  font-size: 24rpx;
+}
+
+/* 金额明细 */
+.amount_row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12rpx 0;
+  font-size: 26rpx;
+  color: #666;
+}
+.amount_row.total {
+  border-top: 1rpx solid #f5f5f5;
+  margin-top: 12rpx;
+  padding-top: 20rpx;
+  font-size: 30rpx;
+  color: #333;
+  font-weight: bold;
+}
+.discount {
+  color: #ff9500;
+}
+.pay_amount {
+  color: #eb4450;
   font-size: 34rpx;
-  color: var(--themeColor);
+  font-weight: bold;
 }
-.cart_content .cart_main .cart_item .cart_info_wrap .goods_price_wrap .num_tool {
+
+/* 支付方式 */
+.pay_method {
   display: flex;
-}
-.cart_content .cart_main .cart_item .cart_info_wrap .goods_price_wrap .num_tool .goods_num {
-  display: flex;
-  width: 55rpx;
-  height: 55rpx;
-  justify-content: center;
   align-items: center;
+  padding: 12rpx 0;
 }
+.pay_method_icon {
+  font-size: 40rpx;
+  margin-right: 16rpx;
+}
+.pay_method_name {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+.pay_method_check {
+  color: #eb4450;
+  font-size: 32rpx;
+}
+
+/* 底部支付栏 */
 .footer_tool {
-  position: absolute;
+  position: fixed;
   left: 0;
+  right: 0;
   bottom: 0;
-  width: 100%;
   height: 100rpx;
+  background: #fff;
   display: flex;
-  background-color: #fff;
-  border-top: 1rpx solid #ccc;
-}
-.footer_tool .total_price_wrap {
-  flex: 5;
-  padding-right: 15rpx;
-  text-align: right;
-}
-.footer_tool .total_price_wrap .total_price .price {
-  color: var(--themeColor);
-  font-size: 34rpx;
-  font-weight: 600;
-}
-.footer_tool .order_pay_wrap {
-  flex: 3;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 36rpx;
-  font-weight: 600;
+  padding: 0 24rpx;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.08);
+  z-index: 50;
+}
+.total_wrap {
+  flex: 1;
+}
+.total_price {
+  font-size: 26rpx;
+  color: #333;
+}
+.total_price .price {
+  color: #eb4450;
+  font-size: 34rpx;
+  font-weight: bold;
+}
+.pay_btn {
+  background: linear-gradient(90deg, #ff5a66, #eb4450);
   color: #fff;
-  background-color: var(--themeColor);
+  padding: 0 60rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+}
+.pay_btn.disabled {
+  opacity: 0.6;
+}
+
+/* ============ 优惠券 ============ */
+.coupon_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.coupon_label {
+  font-size: 28rpx;
+  color: #333;
+}
+.coupon_value {
+  display: flex;
+  align-items: center;
+  font-size: 26rpx;
+  color: #eb4450;
+}
+.coupon_arrow {
+  color: #ccc;
+  margin-left: 8rpx;
+}
+
+/* 券弹层 */
+.mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100;
+}
+.coupon_panel {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: #fff;
+  border-radius: 24rpx 24rpx 0 0;
+  padding: 32rpx;
+  z-index: 101;
+  max-height: 70vh;
+  transform: translateY(100%);
+  transition: transform 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+.coupon_panel.show { transform: translateY(0); }
+.panel_title {
+  font-size: 30rpx;
+  font-weight: bold;
+  margin-bottom: 16rpx;
+}
+.coupon_list {
+  flex: 1;
+  max-height: 500rpx;
+}
+.coupon_item {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1rpx solid #f0f0f0;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  margin-bottom: 16rpx;
+}
+.coupon_item.selected {
+  border-color: #eb4450;
+  background: #fff5f6;
+}
+.coupon_item.disabled {
+  opacity: 0.5;
+}
+.ci_left {
+  width: 140rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx;
+  border-radius: 8rpx;
+  color: #fff;
+}
+.ci_left.type1 { background: linear-gradient(135deg, #ff5a66, #eb4450); }
+.ci_left.type2 { background: linear-gradient(135deg, #ff9500, #ff6b35); }
+.ci_left.type3 { background: linear-gradient(135deg, #ffb400, #ff8c00); }
+.ci_amount { font-size: 36rpx; font-weight: bold; }
+.ci_type { font-size: 20rpx; margin-top: 4rpx; }
+.ci_right { flex: 1; margin-left: 16rpx; }
+.ci_title { font-size: 28rpx; font-weight: bold; color: #333; }
+.ci_desc { font-size: 22rpx; color: #999; margin-top: 4rpx; }
+.ci_reason { font-size: 22rpx; color: #eb4450; margin-top: 4rpx; }
+.ci_check {
+  font-size: 32rpx;
+  color: #eb4450;
+  margin-left: 16rpx;
 }

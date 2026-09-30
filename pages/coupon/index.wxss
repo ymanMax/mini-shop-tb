@@ -1,0 +1,132 @@
+/* pages/coupon/index.wxss */
+page {
+  background: #f5f5f5;
+}
+.coupon_page {
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+/* 顶部切换 */
+.top_tabs {
+  display: flex;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.top_tab {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 28rpx;
+  color: #555;
+  position: relative;
+}
+.top_tab.active {
+  color: #eb4450;
+  font-weight: bold;
+}
+.top_tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48rpx;
+  height: 6rpx;
+  background: #eb4450;
+  border-radius: 3rpx;
+}
+
+/* 券卡 */
+.coupon_card,
+.my_card {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 16rpx 24rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.06);
+}
+.card_left {
+  width: 200rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx;
+  color: #fff;
+}
+.card_left.type1 { background: linear-gradient(135deg, #ff5a66, #eb4450); }
+.card_left.type2 { background: linear-gradient(135deg, #ff9500, #ff6b35); }
+.card_left.type3 { background: linear-gradient(135deg, #ffb400, #ff8c00); }
+.card_amount {
+  font-size: 44rpx;
+  font-weight: bold;
+}
+.card_type {
+  font-size: 22rpx;
+  margin-top: 8rpx;
+  opacity: 0.9;
+}
+.card_right {
+  flex: 1;
+  padding: 24rpx;
+  position: relative;
+}
+.card_title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+.card_desc {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+.expire_soon {
+  color: #eb4450;
+}
+.claim_btn,
+.use_btn {
+  position: absolute;
+  right: 24rpx;
+  bottom: 24rpx;
+  padding: 12rpx 32rpx;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  background: #eb4450;
+  color: #fff;
+}
+.claim_btn.received {
+  background: #ccc;
+}
+
+/* 我的优惠券 Tab */
+.my_tabs {
+  display: flex;
+  background: #fff;
+  padding: 16rpx 24rpx;
+}
+.my_tab {
+  flex: 1;
+  text-align: center;
+  padding: 12rpx 0;
+  font-size: 26rpx;
+  color: #555;
+  border-radius: 999rpx;
+}
+.my_tab.active {
+  background: #fff5f6;
+  color: #eb4450;
+  font-weight: bold;
+}
+.my_card.expired {
+  opacity: 0.6;
+}
+.empty_btn {
+  margin-top: 30rpx;
+  padding: 16rpx 60rpx;
+  font-size: 26rpx;
+}

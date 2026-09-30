@@ -1,10 +1,7 @@
 <!--pages/auth/index.wxml-->
-<button type="primary" plain open-type="getUserInfo" bindgetuserinfo="handleGetUserInfo">
-	获取授权
-</button>
-<view class="caution">
-	<view>
-		只能进行模拟获取权限 无法真正获取token值 望周知！！！
-	</view>
-
+<view class="auth_page">
+  <view class="auth_icon">🫓</view>
+  <view class="auth_title">烧饼商品小程序</view>
+  <view class="auth_desc">游客无需登录即可体验全部功能，点击下方按钮可授权获取用户信息。</view>
+  <button type="primary" open-type="getUserInfo" bindgetuserinfo="handleGetUserInfo" class="auth_btn">获取授权</button>
 </view>

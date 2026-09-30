@@ -1,0 +1,39 @@
+<!--pages/message/index.wxml-->
+<view class="message_page">
+  <!-- 顶部操作栏 -->
+  <view class="top_bar">
+    <view class="read_all" bindtap="readAll">全部已读</view>
+  </view>
+
+  <!-- 类型 Tab -->
+  <view class="tab_bar">
+    <view
+      class="tab_item {{activeTab === index ? 'active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="id"
+      bindtap="onTabTap"
+      data-index="{{index}}"
+    >{{item.value}}</view>
+  </view>
+
+  <!-- 消息列表 -->
+  <view class="message_list" wx:if="{{messages.length > 0}}">
+    <view class="message_item" wx:for="{{messages}}" wx:key="id" bindtap="tapMessage" data-id="{{item.id}}" data-relatedid="{{item.relatedId}}" data-type="{{item.type}}">
+      <view class="msg_icon">{{item.typeIcon}}</view>
+      <view class="msg_info">
+        <view class="msg_title_row">
+          <text class="msg_title">{{item.title}}</text>
+          <view class="msg_unread" wx:if="{{!item.isRead}}"></view>
+        </view>
+        <view class="msg_content ellipsis">{{item.content}}</view>
+        <view class="msg_time">{{item.timeText}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空态 -->
+  <view class="empty-wrap" wx:if="{{messages.length === 0}}">
+    <view class="empty-icon">📭</view>
+    <view class="empty-text">暂无消息</view>
+  </view>
+</view>

@@ -1,0 +1,202 @@
+/* pages/checkin/index.wxss */
+page {
+  background: #f5f5f5;
+}
+.checkin_page {
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+/* 头部 */
+.header_card {
+  background: linear-gradient(135deg, #ffb400, #ff8c00);
+  margin: 24rpx;
+  border-radius: 16rpx;
+  padding: 40rpx 32rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+}
+.consecutive {}
+.consecutive_num {
+  font-size: 64rpx;
+  font-weight: bold;
+}
+.consecutive_label {
+  font-size: 24rpx;
+  opacity: 0.9;
+  margin-top: 4rpx;
+}
+.sign_btn {
+  background: #fff;
+  color: #ff8c00;
+  padding: 20rpx 40rpx;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+.sign_btn.signed {
+  background: rgba(255,255,255,0.3);
+  color: #fff;
+}
+
+/* 连签奖励 */
+.reward_card,
+.calendar_card {
+  background: #fff;
+  margin: 0 24rpx 16rpx;
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+.card_title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+.reward_row {
+  display: flex;
+  justify-content: space-between;
+}
+.reward_item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+.reward_day {
+  font-size: 22rpx;
+  color: #999;
+}
+.reward_points {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #ff8c00;
+  margin-top: 4rpx;
+}
+.rule_tip {
+  font-size: 22rpx;
+  color: #999;
+  margin-top: 16rpx;
+  text-align: center;
+}
+
+/* 日历 */
+.calendar_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.month_nav {
+  width: 60rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  text-align: center;
+  font-size: 40rpx;
+  color: #999;
+}
+.month_title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+.week_row {
+  display: flex;
+  border-bottom: 1rpx solid #f0f0f0;
+  padding-bottom: 12rpx;
+}
+.week_cell {
+  flex: 1;
+  text-align: center;
+  font-size: 24rpx;
+  color: #999;
+}
+.day_grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding-top: 12rpx;
+}
+.day_cell {
+  width: 14.28%;
+  height: 80rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.day_num {
+  font-size: 28rpx;
+  color: #333;
+}
+.day_cell.future .day_num {
+  color: #ccc;
+}
+.day_cell.signed .day_num {
+  color: #fff;
+}
+.day_cell.signed {
+  background: #ff8c00;
+  border-radius: 50%;
+  width: 60rpx;
+  height: 60rpx;
+  margin: 10rpx auto;
+}
+.day_cell.today {
+  border: 2rpx solid #eb4450;
+  border-radius: 50%;
+}
+.day_mark {
+  font-size: 20rpx;
+  color: #fff;
+}
+
+/* 成功弹层 */
+.mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100;
+}
+.success_panel {
+  position: fixed;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%) scale(0);
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 48rpx;
+  text-align: center;
+  z-index: 101;
+  transition: transform 0.3s;
+  width: 60%;
+}
+.success_panel.show {
+  transform: translate(-50%, -50%) scale(1);
+}
+.success_icon {
+  font-size: 80rpx;
+}
+.success_title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-top: 16rpx;
+}
+.success_reward {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #ff8c00;
+  margin-top: 8rpx;
+}
+.success_btn {
+  margin-top: 32rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  background: linear-gradient(90deg, #ffb400, #ff8c00);
+  color: #fff;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+}

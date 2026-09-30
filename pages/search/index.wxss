@@ -1,38 +1,229 @@
+/* pages/search/index.wxss */
 page {
-  background-color: #dedede;
-  padding: 20rpx;
+  background: #f5f5f5;
 }
+.search_page {
+  min-height: 100vh;
+}
+
+/* 搜索框 */
 .search_row {
   display: flex;
-  height: 65rpx;
-}
-.search_row input {
-  flex: 1;
-  padding-left: 30rpx;
-  height: 100%;
-  background-color: #fff;
-  border-radius: 28rpx;
-}
-.search_row .search_button {
-  padding: 0;
-  margin: 0 10rpx 0 15rpx;
-  width: 110rpx;
-  height: 100%;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 30rpx;
-  font-weight: 500;
+  padding: 16rpx 24rpx;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
-.search_content {
-  margin-top: 30rpx;
-  background-color: #fff;
+.search_box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #f2f2f2;
+  border-radius: 999rpx;
+  padding: 16rpx 28rpx;
 }
-.search_content .search_item {
-  padding: 18rpx 10rpx;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+.search_icon {
+  margin-right: 12rpx;
+  font-size: 28rpx;
+}
+.search_box input {
+  flex: 1;
+  font-size: 28rpx;
+}
+.clear_btn {
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 40rpx;
+  text-align: center;
+  background: #ccc;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 22rpx;
+}
+.search_btn {
+  margin-left: 20rpx;
+  color: #eb4450;
+  font-size: 28rpx;
+  padding: 0 12rpx;
+}
+
+/* 焦点面板 */
+.focus_panel {
+  padding: 24rpx;
+}
+.section {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+}
+.section_title_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.section_title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+}
+.clear_history {
+  font-size: 24rpx;
+  color: #999;
+}
+.history_words,
+.hot_words {
+  display: flex;
+  flex-wrap: wrap;
+}
+.history_word,
+.hot_word {
+  padding: 12rpx 28rpx;
+  margin: 0 16rpx 16rpx 0;
+  border-radius: 999rpx;
+  background: #f2f2f2;
   font-size: 26rpx;
-  border-bottom: 1rpx solid #ccc;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+.history_del {
+  margin-left: 12rpx;
+  color: #bbb;
+  font-size: 22rpx;
+}
+
+/* 联想 */
+.suggest_panel {
+  background: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+.suggest_item {
+  display: flex;
+  padding: 20rpx 24rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+  align-items: center;
+}
+.suggest_img {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 8rpx;
+  background: #eee;
+}
+.suggest_info {
+  flex: 1;
+  margin-left: 20rpx;
+}
+.suggest_name {
+  font-size: 28rpx;
+  color: #333;
+}
+.highlight {
+  color: #eb4450;
+}
+.suggest_price {
+  color: #eb4450;
+  font-size: 26rpx;
+  font-weight: bold;
+  margin-top: 4rpx;
+}
+
+/* 排序栏 */
+.sort_bar {
+  display: flex;
+  background: #fff;
+  padding: 16rpx 24rpx;
+  border-top: 1rpx solid #f0f0f0;
+  position: sticky;
+  top: 92rpx;
+  z-index: 9;
+}
+.sort_item {
+  flex: 1;
+  text-align: center;
+  font-size: 26rpx;
+  color: #555;
+}
+.sort_item.active {
+  color: #eb4450;
+  font-weight: bold;
+}
+
+/* 商品列表 */
+.goods_list {
+  padding: 24rpx;
+}
+.goods_item {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
+  position: relative;
+}
+.goods_img {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 8rpx;
+  background: #eee;
+}
+.goods_info {
+  flex: 1;
+  margin-left: 20rpx;
+}
+.goods_name {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.4;
+}
+.goods_bottom {
+  display: flex;
+  align-items: baseline;
+  margin-top: 12rpx;
+}
+.goods_price {
+  color: #eb4450;
+  font-size: 32rpx;
+  font-weight: bold;
+}
+.original_price {
+  color: #999;
+  font-size: 22rpx;
+  text-decoration: line-through;
+  margin-left: 12rpx;
+}
+.sales {
+  font-size: 22rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+.add_btn {
+  position: absolute;
+  right: 20rpx;
+  bottom: 20rpx;
+  width: 52rpx;
+  height: 52rpx;
+  line-height: 52rpx;
+  text-align: center;
+  background: #eb4450;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 36rpx;
+  font-weight: bold;
+}
+.no_more {
+  text-align: center;
+  color: #999;
+  font-size: 24rpx;
+  padding: 30rpx 0;
+}
+.loading_more {
+  text-align: center;
+  color: #999;
+  font-size: 24rpx;
+  padding: 20rpx 0;
 }
