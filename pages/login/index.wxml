@@ -1,4 +1,8 @@
-<!--pages/login/index.wxml-->
-<button type="primary" plain open-type="getUserInfo" bindgetuserinfo="handleGetUserInfo">
-	登入
-</button>
+<!--pages/login/index.wxml —— 登录-->
+<view class="login_page">
+  <view class="login_logo">🥞</view>
+  <view class="login_title">烧饼工坊</view>
+  <view class="login_sub">现烤现发 · 坏果包赔</view>
+  <button type="primary" class="login_btn" open-type="getUserInfo" bindgetuserinfo="handleGetUserInfo">微信一键登录</button>
+  <view class="guest_btn" bindtap="guestEnter">先逛逛，不登录</view>
+</view>

@@ -1,0 +1,52 @@
+<!--pages/checkin/index.wxml —— 每日签到-->
+<view class="checkin_page">
+  <!-- 月份切换 -->
+  <view class="month_bar">
+    <view class="month_arrow" bindtap="prevMonth">‹</view>
+    <view class="month_title">{{currentYear}}年{{currentMonth + 1}}月</view>
+    <view class="month_arrow" bindtap="nextMonth">›</view>
+  </view>
+
+  <!-- 签到日历（7列） -->
+  <view class="calendar">
+    <view class="cal_week" wx:for="{{['日','一','二','三','四','五','六']}}" wx:key="*this">{{item}}</view>
+    <view
+      wx:for="{{calendarCells}}"
+      wx:key="index"
+      class="cal_cell {{item.empty ? 'empty' : ''}} {{item.signed ? 'signed' : ''}} {{item.isToday ? 'today' : ''}} {{item.future ? 'future' : ''}}"
+    >
+      <view wx:if="{{!item.empty}}" class="day_num">{{item.day}}</view>
+    </view>
+  </view>
+
+  <!-- 连续签到奖励条 -->
+  <view class="streak_section">
+    <view class="section_title">🎯 连续签到奖励</view>
+    <view class="streak_grid">
+      <view class="streak_item {{index < streak ? 'done' : ''}}" wx:for="{{grid}}" wx:key="day">
+        <view class="streak_day">第{{item.day}}天</view>
+        <view class="streak_points">+{{item.points}}</view>
+        <view wx:if="{{index < streak}}" class="streak_done">✓</view>
+      </view>
+    </view>
+    <view class="streak_info">
+      当前连续签到 <text class="streak_num">{{streak}}</text> 天 · 断签后重新从第1天计算
+    </view>
+  </view>
+
+  <!-- 签到按钮 -->
+  <view class="checkin_btn {{signedToday ? 'done' : ''}}" bindtap="doCheckin">
+    {{signedToday ? '今日已签到 ✓' : '立即签到 +5'}}
+  </view>
+  <view class="go_points" bindtap="goPoints">查看积分明细 ›</view>
+
+  <!-- 签到成功弹层 -->
+  <view wx:if="{{showSuccess}}" class="mask" bindtap="closeSuccess"></view>
+  <view wx:if="{{showSuccess}}" class="success_sheet">
+    <view class="success_icon">🎉</view>
+    <view class="success_title">签到成功！</view>
+    <view class="success_reward">+{{reward}} 积分</view>
+    <view class="success_streak">已连续签到 {{streak}} 天</view>
+    <view class="success_btn" bindtap="closeSuccess">太棒了</view>
+  </view>
+</view>

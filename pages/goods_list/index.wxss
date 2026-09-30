@@ -1,30 +1,84 @@
 /* pages/goods_list/index.wxss */
-.first_tab .goods_item {
+page { background: #f5f5f5; }
+.gl_page { padding-bottom: 40rpx; }
+.sort_bar {
   display: flex;
-  border-bottom: 1px solid #ccc;
+  background: #fff;
+  border-bottom: 1rpx solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
-.first_tab .goods_item .goods_img_wrap {
-  flex: 2;
+.sort_item {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 28rpx;
+  color: #555;
+}
+.sort_item.active {
+  color: var(--themeColor);
+  font-weight: 600;
+  border-bottom: 4rpx solid var(--themeColor);
+}
+
+.goods_list { padding: 20rpx; }
+.goods_item {
   display: flex;
-  justify-content: center;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
+}
+.g_img {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
+  margin-right: 16rpx;
+}
+.g_info { flex: 1; display: flex; flex-direction: column; }
+.g_name {
+  font-size: 28rpx;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 40rpx;
+}
+.g_tags { margin: 8rpx 0; min-height: 32rpx; }
+.g_bottom {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 }
-.first_tab .goods_item .goods_img_wrap image {
-  width: 70%;
-}
-.first_tab .goods_item .goods_info_wrap {
-  flex: 3;
+.price.big { font-size: 34rpx; }
+.add_btn {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: var(--themeColor);
+  color: #fff;
+  font-size: 36rpx;
   display: flex;
-  flex-direction: column;
-  justify-content: space-around;
+  align-items: center;
+  justify-content: center;
 }
-.first_tab .goods_item .goods_info_wrap .goods_name {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+
+.no_more { text-align: center; color: #999; font-size: 24rpx; padding: 30rpx 0; }
+.loading_tip { text-align: center; color: #999; font-size: 24rpx; padding: 20rpx; }
+
+.sk_list { padding: 20rpx; }
+.sk_card {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
 }
-.first_tab .goods_item .goods_info_wrap .goods_price {
-  font-size: 32rpx;
-  color: var(--themeColor);
-}
+.sk_img { width: 160rpx; height: 160rpx; border-radius: 12rpx; }
+.sk_info { flex: 1; margin-left: 16rpx; padding-top: 10rpx; }
+.sk_line { height: 24rpx; margin-bottom: 16rpx; border-radius: 6rpx; }
+.sk_line.w80 { width: 80%; }
+.sk_line.w60 { width: 60%; }
+.sk_line.w40 { width: 40%; }

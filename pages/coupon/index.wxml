@@ -1,0 +1,81 @@
+<!--pages/coupon/index.wxml —— 领券中心 / 我的优惠券-->
+<view class="coupon_page">
+
+  <!-- ===== 领券中心 ===== -->
+  <block wx:if="{{mode === 'center'}}">
+    <view class="center_header">
+      <view class="center_title">🎟 领券中心</view>
+      <view class="center_sub">每日更新优惠券，先领先得</view>
+      <view class="go_mine" bindtap="goUse">我的券 ›</view>
+    </view>
+    <view class="tpl_list">
+      <view class="tpl_card type-{{item.color}}" wx:for="{{templates}}" wx:key="id">
+        <view class="tpl_left">
+          <view class="tpl_value">
+            <text wx:if="{{item.type === 'cash'}}">¥{{item.value}}</text>
+            <text wx:elif="{{item.type === 'discount'}}">{{item.value}}折</text>
+            <text wx:else>¥{{item.value}}</text>
+          </view>
+          <view class="tpl_type">{{item.type === 'cash' ? '满减券' : item.type === 'discount' ? '折扣券' : '无门槛'}}</view>
+        </view>
+        <view class="tpl_right">
+          <view class="tpl_name">{{item.name}}</view>
+          <view class="tpl_desc">{{item.desc}} · {{item.validDays}}天有效</view>
+          <view class="tpl_scope">适用：{{item.scope}}</view>
+          <view class="tpl_receive {{item.claimed ? 'claimed' : ''}}" bindtap="receive" data-id="{{item.id}}">
+            {{item.claimed ? '已领取' : '立即领取'}}
+          </view>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{templates.length === 0}}" class="empty-state">
+      <view class="empty-icon">🎟</view>
+      <view class="empty-text">优惠券已被领完，下次早点来~</view>
+    </view>
+  </block>
+
+  <!-- ===== 我的优惠券 ===== -->
+  <block wx:else>
+    <view class="mine_tabs">
+      <view
+        wx:for="{{tabs}}"
+        wx:key="key"
+        class="mine_tab {{activeTab === item.key ? 'active' : ''}}"
+        bindtap="switchTab"
+        data-key="{{item.key}}"
+      >{{item.label}}</view>
+    </view>
+    <view class="mine_list">
+      <view
+        class="mine_card"
+        wx:for="{{filtered}}"
+        wx:key="id"
+      >
+        <view class="mine_left type-{{item.tpl.color}}">
+          <view class="tpl_value">
+            <text wx:if="{{item.tpl.type === 'cash'}}">¥{{item.tpl.value}}</text>
+            <text wx:elif="{{item.tpl.type === 'discount'}}">{{item.tpl.value}}折</text>
+            <text wx:else>¥{{item.tpl.value}}</text>
+          </view>
+          <view class="tpl_type">{{item.tpl.type === 'cash' ? '满减' : item.tpl.type === 'discount' ? '折扣' : '无门槛'}}</view>
+        </view>
+        <view class="mine_right">
+          <view class="tpl_name">{{item.tpl.name}}</view>
+          <view class="tpl_desc">{{item.tpl.desc}}</view>
+          <view class="tpl_scope">适用：{{item.tpl.scope}}</view>
+          <view class="mine_footer">
+            <text class="validity">有效期至 {{item.expireText}}</text>
+            <text wx:if="{{item.status === 'unused' && item.remainHours < 24}}" class="expiring">临期</text>
+          </view>
+          <view wx:if="{{item.status === 'unused'}}" class="use_btn" bindtap="goUse">去使用</view>
+          <view wx:elif="{{item.status === 'used'}}" class="used_tag">已使用</view>
+          <view wx:else class="expired_tag">已过期</view>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{filtered.length === 0}}" class="empty-state">
+      <view class="empty-icon">🎟</view>
+      <view class="empty-text">暂无相关优惠券</view>
+    </view>
+  </block>
+</view>

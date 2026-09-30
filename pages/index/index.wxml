@@ -1,39 +1,96 @@
-<view class="pyg_index">
-	<!--搜索框 -->
-	<SearchInput></SearchInput>
-	<!-- 轮播图 -->
-	<view class="index_swiper">
-		<swiper indicator-dots autoplay circular>
-			<swiper-item wx:for="{{swiperList}}" wx:key="goods_id">
-				<navigator url="{{item.navigator_url}}">
-					<image mode="widthFix" src="{{item.image_src}}" alt="" />
-				</navigator>
-			</swiper-item>
-		</swiper>
-	</view>
-	<!-- 分类导航 -->
-	<view class="index_cate">
-		<navigator wx:for="{{catesList}}" wx:key="name" url="/pages/category/index" open-type="switchTab">
-			<image src="{{item.image_src}}" mode="widthFix" />
-		</navigator>
-	</view>
-	<!-- 楼层 -->
-	<view class="index_floor">
-		<view class="floor_group" wx:for="{{floorList}}" wx:for-item="item1" wx:for-index="index1" wx:key="floor_title">
-			<!-- 标题 -->
-			<view class="floor_title">
-				<image src="{{item1.floor_title.image_src}}" mode="widthFix" />
-			</view>
-			<!-- 内容 -->
-			<view class="floor_list">
-				<navigator wx:for="{{item1.product_list}}" wx:for-item="item2" wx:for-index="index2" wx:key="name" url="{{item2.navigator_url}}">
-					<image src="{{item2.image_src}}" mode="{{index2===0?'widthFix':'scaleToFill'}}" />
-				</navigator>
+<!--pages/index/index.wxml —— 首页-->
+<view class="home_page">
+  <SearchInput></SearchInput>
 
-			</view>
-		</view>
+  <!-- 轮播图 -->
+  <swiper class="banner" circular autoplay indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff">
+    <swiper-item wx:for="{{banners}}" wx:key="id" bindtap="goBanner" data-link="{{item.link}}">
+      <image src="{{item.image}}" mode="aspectFill" binderror="handleImgError" data-list="banners" data-idx="{{index}}" data-field="image" />
+      <view class="banner_title">{{item.title}}</view>
+    </swiper-item>
+  </swiper>
 
-	</view>
+  <!-- 限时抢购 -->
+  <view class="seckill_section" wx:if="{{sessions.length > 0}}">
+    <view class="seckill_head">
+      <view class="seckill_title">⚡ 限时抢购</view>
+      <view class="countdown">
+        <text class="cd_label">距结束</text>
+        <text class="cd_time">{{countdown}}</text>
+      </view>
+      <view class="seckill_more" bindtap="goSeckill">更多 ›</view>
+    </view>
+    <!-- 场次条 -->
+    <scroll-view scroll-x class="session_bar" scroll-hide>
+      <view
+        wx:for="{{sessions}}"
+        wx:key="id"
+        class="session_item {{index === activeSession ? 'active' : ''}}"
+        bindtap="switchSession"
+        data-idx="{{index}}"
+      >
+        <view class="session_hour">{{item.hour}}:00</view>
+        <view class="session_name">{{item.title}}</view>
+      </view>
+    </scroll-view>
+    <!-- 横滑商品卡 -->
+    <scroll-view scroll-x class="seckill_scroll" scroll-hide>
+      <view class="seckill_card" wx:for="{{sessions[activeSession].products}}" wx:key="goodsId" bindtap="goGoods" data-id="{{item.goodsId}}">
+        <image src="{{item.mainPic}}" mode="aspectFill" binderror="handleImgError" data-path="sessions[{{activeSession}}].products[{{index}}].mainPic" />
+        <view class="sk_name">{{item.name}}</view>
+        <view class="sk_price_row">
+          <text class="sk_price">¥{{item.seckillPrice}}</text>
+          <text class="sk_orig">¥{{item.originalPrice}}</text>
+        </view>
+        <!-- 进度条 -->
+        <view class="progress_bar">
+          <view class="progress_fill" style="width:{{item.soldPct}}%"></view>
+        </view>
+        <view class="sk_meta">
+          <text class="sk_sold">已抢{{item.soldPct}}%</text>
+          <text class="sk_remain">剩{{item.remain}}份</text>
+        </view>
+        <view
+          class="sk_buy {{item.soldOut ? 'soldout' : ''}}"
+          catchtap="seckillBuy"
+          data-sessionid="{{sessions[activeSession].id}}"
+          data-goodsid="{{item.goodsId}}"
+          data-price="{{item.seckillPrice}}"
+        >{{item.soldOut ? '已抢光' : '马上抢'}}</view>
+      </view>
+    </scroll-view>
+  </view>
 
+  <!-- 分类导航 -->
+  <view class="cate_nav">
+    <view class="cate_item" wx:for="{{cates}}" wx:key="id" bindtap="goCate" data-id="{{item.id}}">
+      <view class="cate_icon">{{item.icon}}</view>
+      <view class="cate_name">{{item.name}}</view>
+    </view>
+  </view>
 
+  <!-- 楼层 -->
+  <view class="floors" wx:for="{{floors}}" wx:for-item="floor" wx:key="id">
+    <view class="floor_title">
+      <text class="floor_icon">{{floor.floor_title.icon}}</text>
+      <text class="floor_name">{{floor.floor_title.title}}</text>
+    </view>
+    <view class="floor_goods">
+      <view class="floor_goods_item" wx:for="{{floor.product_list}}" wx:for-item="g" wx:key="id" bindtap="goGoods" data-id="{{g.id}}">
+        <image src="{{g.mainPic}}" mode="aspectFill" binderror="onFloorImgError" data-fidx="{{index}}" data-gidx="{{index2}}" />
+        <view class="fg_name">{{g.name}}</view>
+        <view class="fg_price price">¥{{g.price}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="home_footer">—— 烧饼工坊 · 现烤现发 ——</view>
+</view>
+
+<!-- 骨架屏 -->
+<view wx:if="{{loading}}" class="home_skeleton">
+  <view class="skeleton sk_banner"></view>
+  <view class="skeleton sk_seckill"></view>
+  <view class="skeleton sk_cates"></view>
+  <view class="skeleton sk_floor"></view>
 </view>

@@ -1,0 +1,142 @@
+/* pages/checkin/index.wxss */
+page { background: #f5f5f5; }
+.checkin_page { padding-bottom: 40rpx; }
+
+.month_bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 24rpx;
+  border-radius: 16rpx;
+  margin: 20rpx;
+}
+.month_arrow { font-size: 40rpx; color: #999; padding: 0 20rpx; }
+.month_title { font-size: 32rpx; font-weight: 700; }
+
+.calendar {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 0 20rpx 20rpx;
+  padding: 20rpx;
+  display: flex;
+  flex-wrap: wrap;
+}
+.cal_week {
+  width: 14.28%;
+  text-align: center;
+  font-size: 26rpx;
+  color: #999;
+  padding: 12rpx 0;
+}
+.cal_cell {
+  width: 14.28%;
+  height: 80rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.cal_cell.empty { visibility: hidden; }
+.cal_cell .day_num {
+  font-size: 28rpx;
+  color: #333;
+  width: 60rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  text-align: center;
+  border-radius: 50%;
+}
+.cal_cell.signed .day_num {
+  background: var(--themeColor);
+  color: #fff;
+  font-weight: 600;
+}
+.cal_cell.today .day_num {
+  border: 2rpx solid var(--themeColor);
+  font-weight: 700;
+}
+.cal_cell.future .day_num { color: #ccc; }
+.day_check {
+  font-size: 18rpx;
+  color: #fff;
+  position: absolute;
+  bottom: 8rpx;
+}
+
+.streak_section {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 0 20rpx 20rpx;
+  padding: 24rpx;
+}
+.section_title { font-size: 30rpx; font-weight: 600; margin-bottom: 16rpx; }
+.streak_grid {
+  display: flex;
+  justify-content: space-between;
+}
+.streak_item {
+  width: 13%;
+  text-align: center;
+  padding: 12rpx 0;
+  border-radius: 12rpx;
+  background: #f5f5f5;
+}
+.streak_item.done {
+  background: var(--themeLight);
+  border: 1rpx solid var(--themeColor);
+}
+.streak_day { font-size: 22rpx; color: #666; }
+.streak_points { font-size: 24rpx; font-weight: 700; color: var(--themeColor); margin-top: 4rpx; }
+.streak_done { font-size: 20rpx; color: var(--themeColor); }
+.streak_info {
+  text-align: center;
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 16rpx;
+}
+.streak_num { color: var(--themeColor); font-weight: 700; font-size: 28rpx; }
+
+.checkin_btn {
+  margin: 30rpx 40rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background: linear-gradient(90deg, #ff5b6a, #eb4450);
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 600;
+  border-radius: 999rpx;
+}
+.checkin_btn.done { background: #ccc; }
+.go_points {
+  text-align: center;
+  color: #999;
+  font-size: 26rpx;
+}
+
+.success_sheet {
+  position: fixed;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  width: 60%;
+  text-align: center;
+  z-index: 110;
+}
+.success_icon { font-size: 80rpx; }
+.success_title { font-size: 32rpx; font-weight: 700; margin-top: 12rpx; }
+.success_reward { font-size: 48rpx; font-weight: 800; color: var(--themeColor); margin-top: 12rpx; }
+.success_streak { font-size: 24rpx; color: #999; margin-top: 8rpx; }
+.success_btn {
+  margin-top: 24rpx;
+  background: var(--themeColor);
+  color: #fff;
+  padding: 14rpx;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+}

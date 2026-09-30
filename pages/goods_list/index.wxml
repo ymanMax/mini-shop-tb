@@ -1,23 +1,55 @@
-<!--pages/goods_list/index.wxml-->
-<SearchInput></SearchInput>
-<Tabs tabs="{{tabs}}" bindtabsItenChange="handletabsItenChange">
-	<block wx:if="{{tabs[0].isActive}}">
-		<view class="first_tab">
-			<navigator class="goods_item" wx:for="{{goodsList}}" wx:key="goods_id" url="/pages/goods_detail/index?goods_id={{item.goods_id}}">
-				<!-- 左侧图片 -->
-				<view class="goods_img_wrap">
-					<image src="{{item.goods_small_logo? item.goods_small_logo :'https://ww1.sinaimg.cn/large/007rAy9hgy1g24by9t530j30i20i2glm.jpg'}}" mode="widthFix" />
-				</view>
-				<!-- 右侧商品数据 -->
-				<view class="goods_info_wrap">
-					<view class="goods_name">{{item.goods_name}}</view>
-					<view class="goods_price">￥{{item.goods_price}}</view>
-				</view>
+<!--pages/goods_list/index.wxml —— 商品列表-->
+<view class="gl_page">
+  <SearchInput placeholder="{{keyword || '搜索商品'}}" keyword="{{keyword}}"></SearchInput>
 
-			</navigator>
-		</view>
-	</block>
-	<block wx:if="{{tabs[1].isActive}}">11111</block>
-	<block wx:if="{{tabs[2].isActive}}">2222</block>
+  <!-- 排序栏 -->
+  <view class="sort_bar">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="key"
+      class="sort_item {{activeSort === item.key ? 'active' : ''}}"
+      bindtap="switchSort"
+      data-key="{{item.key}}"
+    >{{item.label}}</view>
+  </view>
 
-</Tabs>
+  <!-- 骨架屏 -->
+  <view wx:if="{{skeleton}}" class="sk_list">
+    <view class="sk_card" wx:for="{{[1,2,3,4]}}" wx:key="*this">
+      <view class="skeleton sk_img"></view>
+      <view class="sk_info">
+        <view class="skeleton sk_line w80"></view>
+        <view class="skeleton sk_line w60"></view>
+        <view class="skeleton sk_line w40"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 商品列表 -->
+  <view wx:elif="{{goodsList.length > 0}}" class="goods_list">
+    <view class="goods_item" wx:for="{{goodsList}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+      <image class="g_img" src="{{item.mainPic}}" mode="aspectFill" binderror="handleImgError" data-list="goodsList" data-idx="{{index}}" data-field="mainPic" />
+      <view class="g_info">
+        <view class="g_name">{{item.name}}</view>
+        <view class="g_tags">
+          <text class="tag" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
+        </view>
+        <view class="g_bottom">
+          <view class="price_row">
+            <text class="price big"><text class="price-symbol">¥</text>{{item.price}}</text>
+            <text class="price-origin">¥{{item.originalPrice}}</text>
+          </view>
+          <view class="add_btn" catchtap="addToCart" data-item="{{item}}">＋</view>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{noMore}}" class="no_more">—— 没有更多了 ——</view>
+    <view wx:if="{{loading}}" class="loading_tip">加载中…</view>
+  </view>
+
+  <!-- 空态 -->
+  <view wx:else class="empty-state">
+    <view class="empty-icon">🍞</view>
+    <view class="empty-text">没有找到相关商品</view>
+  </view>
+</view>

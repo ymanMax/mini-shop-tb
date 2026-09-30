@@ -1,32 +1,130 @@
-<!--pages/category/index.wxml-->
-<view class="cates">
-	<SearchInput></SearchInput>
-	<view class="cates_container">
-		<!-- 左侧菜单 -->
-		<scroll-view class="left_mune" scroll-y>
-			<view bindtap="handleItemTap" class="mune_item {{index===currentIndex?'active':''}}" wx:for="{{leftMenuList}}" wx:key="*this" data-index="{{index}}">{{item}}
-			</view>
+<!--pages/category/index.wxml —— 分类页-->
+<view class="cate_page">
+  <SearchInput></SearchInput>
+  <view class="cate_container">
+    <!-- 左侧一级分类 -->
+    <scroll-view class="left_menu" scroll-y>
+      <view
+        wx:for="{{leftMenu}}"
+        wx:key="id"
+        class="menu_item {{item.id === currentCateId ? 'active' : ''}}"
+        bindtap="handleCateTap"
+        data-id="{{item.id}}"
+        data-index="{{index}}"
+      >
+        <text class="menu_icon">{{item.icon}}</text>
+        <text class="menu_name">{{item.name}}</text>
+      </view>
+    </scroll-view>
 
-		</scroll-view>
-		<!-- 右侧商品 -->
-		<scroll-view scroll-top="{{scrollTop}}" class="right_content" scroll-y>
-			<view class="goods_group" wx:for="{{rightContent}}" wx:for-item="item1" wx:for-index="index1" wx:key="*this">
-				<view class="goods_title">
-					<text class="delimiter">/</text>
-					<text class="title">{{item1.cat_name}}</text>
-					<text class="delimiter">/</text>
-				</view>
-				<view class="goods_list">
-					<navigator wx:for="{{item1.children}}" wx:for-item="item2" wx:for-index="index2" wx:key="cat_id" url="/pages/goods_list/index?cid={{item2.cat_id}}">
-						<image src="{{item2.cat_icon}}" mode="widthFix" />
-						<view class="goods_name">{{item2.cat_name}}</view>
-					</navigator>
+    <!-- 右侧内容 -->
+    <view class="right_content">
+      <!-- 二级分类横滑 -->
+      <scroll-view class="sub_bar" scroll-x scroll-hide>
+        <view
+          wx:for="{{subCates}}"
+          wx:key="id"
+          class="sub_item {{item.id === currentSubId ? 'active' : ''}}"
+          bindtap="handleSubTap"
+          data-id="{{item.id}}"
+        >
+          <text class="sub_icon">{{item.icon}}</text>{{item.name}}
+        </view>
+      </scroll-view>
 
-				</view>
+      <!-- 吸顶筛选栏 -->
+      <view class="filter_bar">
+        <view
+          wx:for="{{sortOptions}}"
+          wx:key="key"
+          class="sort_item {{sort === item.key ? 'active' : ''}}"
+          bindtap="handleSortTap"
+          data-key="{{item.key}}"
+        >
+          {{item.label}}
+          <text wx:if="{{item.key === 'priceAsc' && sort === 'priceAsc'}}">↑</text>
+          <text wx:if="{{item.key === 'priceDesc' && sort === 'priceDesc'}}">↓</text>
+        </view>
+        <view class="filter_btn {{showFilter ? 'active' : ''}}" bindtap="toggleFilter">
+          ⚙ 筛选
+        </view>
+      </view>
 
-			</view>
+      <!-- 商品列表区 -->
+      <scroll-view class="goods_area" scroll-y bindscrolltolower="onReachBottom">
+        <!-- 骨架屏 -->
+        <view wx:if="{{skeleton}}" class="skeleton_list">
+          <view class="sk_card" wx:for="{{[1,2,3,4,5,6]}}" wx:key="*this">
+            <view class="skeleton sk_img"></view>
+            <view class="sk_info">
+              <view class="skeleton sk_line w80"></view>
+              <view class="skeleton sk_line w60"></view>
+              <view class="skeleton sk_line w40"></view>
+            </view>
+          </view>
+        </view>
 
-		</scroll-view>
-	</view>
+        <!-- 商品卡片 -->
+        <view wx:elif="{{goodsList.length > 0}}" class="goods_grid">
+          <view class="goods_card" wx:for="{{goodsList}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+            <view class="goods_img_wrap">
+              <image src="{{item.mainPic}}" mode="aspectFill" binderror="handleImgError" data-list="goodsList" data-idx="{{index}}" data-field="mainPic" lazy-load />
+            </view>
+            <view class="goods_info">
+              <view class="goods_name">{{item.name}}</view>
+              <view class="goods_tags">
+                <text class="tag" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
+              </view>
+              <view class="goods_bottom">
+                <view class="price_row">
+                  <text class="price"><text class="price-symbol">¥</text><text class="price-int">{{item.price}}</text></text>
+                  <text class="price-origin">¥{{item.originalPrice}}</text>
+                </view>
+                <view class="sales">已售{{item.sales}}件</view>
+              </view>
+            </view>
+            <view class="add_btn" catchtap="handleAddCart" data-item="{{item}}">＋</view>
+          </view>
+        </view>
 
+        <!-- 空态 -->
+        <view wx:else class="empty-state">
+          <view class="empty-icon">🍞</view>
+          <view class="empty-text">没有找到相关商品</view>
+          <view class="btn-outline clear_btn" bindtap="clearFilter">清除筛选</view>
+        </view>
+
+        <!-- 到底提示 -->
+        <view wx:if="{{!skeleton && goodsList.length > 0 && noMore}}" class="no_more">—— 没有更多了 ——</view>
+        <view wx:if="{{loading && !skeleton}}" class="loading_tip">加载中…</view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 半屏筛选面板 -->
+  <view wx:if="{{showFilter}}" class="mask" bindtap="closeFilter"></view>
+  <view wx:if="{{showFilter}}" class="sheet filter_sheet">
+    <view class="sheet_header">
+      <text class="sheet_title">筛选</text>
+      <text class="sheet_close" bindtap="closeFilter">✕</text>
+    </view>
+    <view class="sheet_body">
+      <view class="filter_group">
+        <view class="filter_label">价格区间</view>
+        <view class="price_range">
+          <input type="number" placeholder="最低价" value="{{minPrice}}" bindinput="onMinPrice" />
+          <text class="dash">—</text>
+          <input type="number" placeholder="最高价" value="{{maxPrice}}" bindinput="onMaxPrice" />
+        </view>
+      </view>
+      <view class="filter_group">
+        <view class="filter_label">仅看有货</view>
+        <switch checked="{{onlyStock}}" bindchange="toggleStock" color="#eb4450" />
+      </view>
+    </view>
+    <view class="sheet_footer">
+      <view class="btn-outline reset_btn" bindtap="resetFilter">重置</view>
+      <view class="btn-primary apply_btn" bindtap="applyFilter">确定</view>
+    </view>
+  </view>
 </view>

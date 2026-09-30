@@ -1,48 +1,141 @@
-	<!-- 收货信息 -->
-	<view class="revice_address_row">
-		<view class="user_info_row">
-			<view class="user_info">
-				<view>收货人: {{address.userName}}</view>
-				<view>{{address.all}}</view>
-			</view>
-			<view class="user_phone">{{address.telNumber}}</view>
-		</view>
-	</view>
+<!--pages/pay/index.wxml —— 支付确认（含优惠券）-->
+<view class="pay_page">
+  <!-- 地址 -->
+  <view class="address_card" bindtap="chooseAddress">
+    <view class="addr_icon">📍</view>
+    <view class="addr_info" wx:if="{{address.name}}">
+      <view class="addr_line1">
+        <text class="addr_name">{{address.name}}</text>
+        <text class="addr_phone">{{address.phone}}</text>
+      </view>
+      <view class="addr_detail">{{address.region}} {{address.detail}}</view>
+    </view>
+    <view class="addr_info" wx:else>
+      <view class="addr_placeholder">请选择收货地址</view>
+    </view>
+    <view class="addr_arrow">›</view>
+  </view>
 
-	<!-- 购物车内容 -->
-	<view class="cart_content">
-		<view class="cart_title">购物车</view>
-		<!-- 商品 -->
-		<view class="cart_main">
-			<!-- 购物车商品 -->
-			<view class="cart_item" wx:for="{{cart}}" wx:key="goods_id">
-				<!-- 图片 -->
-				<navigator class="cart_img_wrap">
-					<image src="{{item.goods_small_logo}}" mode="widthFix" />
-				</navigator>
-				<!-- 信息 -->
-				<view class="cart_info_wrap">
-					<view class="goods_name">{{item.goods_name}}</view>
-					<view class="goods_price_wrap">
-						<view class="goods_price">￥{{item.goods_price}}</view>
-						<view class="num_tool">
-							<view class="goods_num">X {{item.num}}</view>
-						</view>
-					</view>
-				</view>
-			</view>
-		</view>
-	</view>
+  <!-- 商品清单 -->
+  <view class="card">
+    <view class="section_title">🛍 商品清单</view>
+    <view class="g_row" wx:for="{{items}}" wx:key="goodsId">
+      <image class="g_img" src="{{item.mainPic}}" mode="aspectFill" binderror="handleImgError" data-path="items[{{index}}].mainPic" />
+      <view class="g_info">
+        <view class="g_name">{{item.name}}</view>
+        <view class="g_spec">{{item.specText}}</view>
+      </view>
+      <view class="g_right">
+        <view class="g_price">¥{{item.price}} × {{item.count}}</view>
+      </view>
+    </view>
+  </view>
 
-	<!-- 底部结算栏 -->
-	<view class="footer_tool">
-		<!-- 总价格部分 -->
-		<view class="total_price_wrap">
-			<view class="total_price">
-				合计: <text class="price">￥{{totaPrice}}</text>
-			</view>
-			<view>包含运费</view>
-		</view>
-		<!-- 结算 -->
-		<view class="order_pay_wrap" bindtap="handleOrderPay">支付({{totaNum}})</view>
-	</view>
+  <!-- 优惠券选择 -->
+  <view class="card coupon_row" bindtap="openCoupon">
+    <view class="section_title">🎟 优惠券</view>
+    <view class="coupon_select">
+      <text wx:if="{{selectedCoupon}}" class="coupon_chosen">
+        -¥{{couponDiscount}}（{{selectedCoupon.template.name}}）
+      </text>
+      <text wx:else class="coupon_hint">{{couponHint}}</text>
+      <text class="coupon_arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 金额明细 -->
+  <view class="card">
+    <view class="section_title">💰 金额明细</view>
+    <view class="amount_row"><text>商品总价</text><text>¥{{totalAmount}}</text></view>
+    <view class="amount_row"><text>满减优惠</text><text class="discount">-¥{{promoDiscount}}</text></view>
+    <view class="amount_row" wx:if="{{couponDiscount > 0}}"><text>优惠券</text><text class="discount">-¥{{couponDiscount}}</text></view>
+    <view class="amount_row"><text>运费</text><text>免运费</text></view>
+    <view class="amount_row total">
+      <text>实付金额</text>
+      <text class="price big">¥{{payAmount}}</text>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="card">
+    <view class="section_title">📝 订单备注</view>
+    <textarea placeholder="选填，如有特殊需求请备注" value="{{remark}}" bindinput="onRemark" maxlength="100" class="remark_input" />
+  </view>
+
+  <!-- 支付方式 -->
+  <view class="card pay_method">
+    <view class="section_title">💳 支付方式</view>
+    <view class="method_row">
+      <view class="method_icon">💚</view>
+      <view class="method_name">微信支付</view>
+      <view class="method_check">✓</view>
+    </view>
+  </view>
+
+  <!-- 底部支付栏 -->
+  <view class="footer_bar">
+    <view class="total_area">
+      <view class="total_row">实付：<text class="price big">¥{{payAmount}}</text></view>
+    </view>
+    <view class="pay_btn {{paying ? 'btn-disabled' : ''}}" bindtap="handlePay">{{paying ? '支付中…' : '确认支付'}}</view>
+  </view>
+</view>
+
+<!-- 优惠券弹层 -->
+<view wx:if="{{showCoupon}}" class="mask" bindtap="closeCoupon"></view>
+<view wx:if="{{showCoupon}}" class="sheet coupon_sheet">
+  <view class="sheet_header">
+    <text class="sheet_title">选择优惠券</text>
+    <text class="sheet_close" bindtap="closeCoupon">✕</text>
+  </view>
+  <scroll-view scroll-y class="coupon_sheet_body">
+    <!-- 可用券 -->
+    <view class="coupon_group_title">可用券（{{availableCoupons.length}}）</view>
+    <view
+      class="coupon_option {{selectedCouponId === item.id ? 'selected' : ''}}"
+      wx:for="{{availableCoupons}}"
+      wx:key="id"
+      bindtap="selectCoupon"
+      data-id="{{item.id}}"
+    >
+      <view class="co_left type-{{item.tpl.color}}">
+        <text class="co_value">
+          <text wx:if="{{item.tpl.type === 'cash'}}">¥{{item.tpl.value}}</text>
+          <text wx:elif="{{item.tpl.type === 'discount'}}">{{item.tpl.value}}折</text>
+          <text wx:else>¥{{item.tpl.value}}</text>
+        </text>
+      </view>
+      <view class="co_right">
+        <view class="co_name">{{item.tpl.name}}</view>
+        <view class="co_desc">{{item.tpl.desc}} · 有效期至 {{item.expireText}}</view>
+      </view>
+      <view class="co_check">{{selectedCouponId === item.id ? '✓' : ''}}</view>
+    </view>
+
+    <!-- 不可用券 -->
+    <view wx:if="{{unavailableCoupons.length > 0}}" class="coupon_group_title">不可用（{{unavailableCoupons.length}}）</view>
+    <view
+      class="coupon_option disabled"
+      wx:for="{{unavailableCoupons}}"
+      wx:key="id"
+    >
+      <view class="co_left type-{{item.tpl.color}}">
+        <text class="co_value">
+          <text wx:if="{{item.tpl.type === 'cash'}}">¥{{item.tpl.value}}</text>
+          <text wx:elif="{{item.tpl.type === 'discount'}}">{{item.tpl.value}}折</text>
+          <text wx:else>¥{{item.tpl.value}}</text>
+        </text>
+      </view>
+      <view class="co_right">
+        <view class="co_name">{{item.tpl.name}}</view>
+        <view class="co_desc">{{item.reason}}</view>
+      </view>
+    </view>
+
+    <!-- 不使用 -->
+    <view class="coupon_option clear" bindtap="clearCoupon">
+      <view class="co_right clear_text">不使用优惠券</view>
+      <view class="co_check">{{selectedCouponId === null ? '✓' : ''}}</view>
+    </view>
+  </scroll-view>
+</view>

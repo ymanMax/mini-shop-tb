@@ -1,0 +1,48 @@
+<!--pages/message/index.wxml —— 消息中心-->
+<view class="message_page">
+  <!-- 顶部：全部已读 -->
+  <view class="msg_top">
+    <view class="msg_title">消息中心</view>
+    <view class="read_all" bindtap="readAll">全部已读</view>
+  </view>
+
+  <!-- 类型 Tab -->
+  <view class="msg_tabs">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="key"
+      class="msg_tab {{activeTab === item.key ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-key="{{item.key}}"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- 消息列表 -->
+  <view class="msg_list">
+    <view
+      class="msg_item {{item.expanded ? 'expanded' : ''}}"
+      wx:for="{{filtered}}"
+      wx:key="id"
+      bindtap="tapMessage"
+      data-id="{{item.id}}"
+      data-type="{{item.type}}"
+      data-relatedid="{{item.relatedId}}"
+    >
+      <view class="msg_icon">{{item.type === 1 ? '⚙️' : item.type === 2 ? '📦' : '🎉'}}</view>
+      <view class="msg_body">
+        <view class="msg_head">
+          <text class="msg_title_text">{{item.title}}</text>
+          <view wx:if="{{!item.isRead}}" class="unread_dot"></view>
+        </view>
+        <view class="msg_summary {{item.expanded ? '' : 'ellipsis'}}">{{item.content}}</view>
+        <view class="msg_time">{{item.timeText}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空态 -->
+  <view wx:if="{{filtered.length === 0 && !loading}}" class="empty-state">
+    <view class="empty-icon">📭</view>
+    <view class="empty-text">暂无消息</view>
+  </view>
+</view>

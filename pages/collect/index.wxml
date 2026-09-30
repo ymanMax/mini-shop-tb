@@ -1,23 +1,50 @@
-<!--pages/collect/index.wxml-->
-<Tabs tabs="{{tabs}}" bindtabsItenChange="handletabsItenChange">
-	<view class="collect_main">
-		<view class="collect_title">
-			<text class="collect_tips active">全部</text>
-			<text class="collect_tips">正在热卖</text>
-			<text class="collect_tips">即将上线</text>
-		</view>
-		<view class="collect_content">
-			<navigator class="goods_item" wx:for="{{collect}}" wx:key="goods_id" url="/pages/goods_detail/index?goods_id={{item.goods_id}}">
-				<!-- 左侧图片 -->
-				<view class="goods_img_wrap">
-					<image src="{{item.goods_small_logo? item.goods_small_logo :'https://ww1.sinaimg.cn/large/007rAy9hgy1g24by9t530j30i20i2glm.jpg'}}" mode="widthFix" />
-				</view>
-				<!-- 右侧商品数据 -->
-				<view class="goods_info_wrap">
-					<view class="goods_name">{{item.goods_name}}</view>
-					<view class="goods_price">￥{{item.goods_price}}</view>
-				</view>
-			</navigator>
-		</view>
-	</view>
-</Tabs>
+<!--pages/collect/index.wxml —— 商品收藏-->
+<view class="collect_page">
+  <!-- Tab 切换 -->
+  <view class="tabs_bar">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="key"
+      class="tab_item {{activeTab === item.key ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-key="{{item.key}}"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- 收藏列表 -->
+  <view wx:if="{{collect.length > 0}}" class="collect_list">
+    <view
+      class="collect_item {{swipedId === item.id ? 'swiped' : ''}}"
+      wx:for="{{collect}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtouchstart="touchStart"
+      bindtouchmove="touchMove"
+      bindtouchend="closeSwipe"
+    >
+      <!-- 左滑删除按钮 -->
+      <view class="delete_btn" catchtap="removeCollect" data-id="{{item.id}}">删除</view>
+      <view class="item_main" bindtap="goDetail" data-id="{{item.id}}">
+        <image class="c_img" src="{{item.mainPic}}" mode="aspectFill" binderror="handleImgError" data-path="collect[{{index}}].mainPic" />
+        <view class="c_info">
+          <view class="c_name">{{item.name}}</view>
+          <view class="c_tags">
+            <text class="tag" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
+          </view>
+          <view class="c_bottom">
+            <view class="c_price price big">¥{{item.price}}</view>
+            <view class="c_sales">已售{{item.sales}}件</view>
+          </view>
+        </view>
+        <view class="c_fav">❤️</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空态 -->
+  <view wx:else class="empty-state">
+    <view class="empty-icon">💔</view>
+    <view class="empty-text">还没有收藏商品，去逛逛~</view>
+    <view class="btn-primary go_shop" bindtap="goShop">去逛逛</view>
+  </view>
+</view>

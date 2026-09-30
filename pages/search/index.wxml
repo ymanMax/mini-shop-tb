@@ -1,9 +1,102 @@
-<!-- 搜索框及按钮 -->
-<view class="search_row">
-	<input value="{{inpValue}}" placeholder="请输入您要搜索的商品" bindinput="handleInput"></input>
-	<button bindtap="handleCancel" hidden="{{!isFocus}}" class="search_button">取消</button>
-</view>
-<!-- 推荐内容 -->
-<view class="search_content">
-	<navigator class="search_item" wx:for="{{goods}}" wx:key="goods_id" url="/pages/goods_detail/index?goods_id={{item.goods_id}}">{{item.goods_name}}</navigator>
+<!--pages/search/index.wxml —— 搜索-->
+<view class="search_page">
+  <!-- 搜索栏 -->
+  <view class="search_bar">
+    <view class="search_box">
+      <text class="search_icon">🔍</text>
+      <input
+        placeholder="搜索烧饼、糕点、零食…"
+        value="{{keyword}}"
+        bindinput="onInput"
+        bindconfirm="onConfirm"
+        bindfocus="onFocus"
+        confirm-type="search"
+        class="search_input"
+        focus="{{focused}}"
+      />
+      <text wx:if="{{keyword}}" class="clear_btn" bindtap="clearInput">✕</text>
+    </view>
+    <view class="search_btn" bindtap="onConfirm">搜索</view>
+  </view>
+
+  <!-- 焦点态：历史 + 热门 + 联想 -->
+  <block wx:if="{{focused && !searched}}">
+    <!-- 搜索历史 -->
+    <view wx:if="{{history.length > 0}}" class="history_section">
+      <view class="section_head">
+        <text class="section_title">🕐 搜索历史</text>
+        <text class="clear_history" bindtap="clearHistory">🗑 清空</text>
+      </view>
+      <view class="history_words">
+        <view class="history_word" wx:for="{{history}}" wx:key="*this" bindtap="tapHistory" data-word="{{item}}">
+          <text>{{item}}</text>
+          <text class="h_delete" catchtap="deleteHistory" data-word="{{item}}">✕</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 搜索联想 -->
+    <view wx:if="{{suggestions.length > 0}}" class="suggest_section">
+      <view class="section_title">🔮 搜索联想</view>
+      <view class="suggest_item" wx:for="{{suggestions}}" wx:key="id" bindtap="tapSuggest" data-id="{{item.id}}" data-name="{{item.name}}">
+        <image class="sug_img" src="{{item.mainPic}}" mode="aspectFill" binderror="handleImgError" data-path="suggestions[{{index}}].mainPic" />
+        <view class="sug_name">
+          <text wx:for="{{item.parts}}" wx:for-item="p" wx:key="*this" class="{{p.highlight ? 'hl' : ''}}">{{p.text}}</text>
+        </view>
+        <view class="sug_price price">¥{{item.price}}</view>
+      </view>
+    </view>
+
+    <!-- 热门搜索 -->
+    <view wx:if="{{suggestions.length === 0}}" class="hot_section">
+      <view class="section_title">🔥 热门搜索</view>
+      <view class="hot_words">
+        <view class="hot_word" wx:for="{{hotWords}}" wx:key="*this" bindtap="tapHot" data-word="{{item}}">{{item}}</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 搜索结果 -->
+  <block wx:if="{{searched}}">
+    <!-- 排序栏 -->
+    <view class="sort_bar">
+      <view
+        wx:for="{{sorts}}"
+        wx:key="key"
+        class="sort_item {{activeSort === item.key ? 'active' : ''}}"
+        bindtap="switchSort"
+        data-key="{{item.key}}"
+      >{{item.label}}</view>
+    </view>
+
+    <view wx:if="{{results.length > 0}}" class="result_list">
+      <view class="result_item" wx:for="{{results}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+        <image class="r_img" src="{{item.mainPic}}" mode="aspectFill" binderror="handleImgError" data-path="results[{{index}}].mainPic" />
+        <view class="r_info">
+          <view class="r_name">{{item.name}}</view>
+          <view class="r_tags">
+            <text class="tag" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
+          </view>
+          <view class="r_bottom">
+            <view class="r_price_row">
+              <text class="price big">¥{{item.price}}</text>
+              <text class="price-origin">¥{{item.originalPrice}}</text>
+            </view>
+            <view class="r_sales">已售{{item.sales}}件</view>
+          </view>
+        </view>
+        <view class="add_btn" catchtap="addToCart" data-item="{{item}}">＋</view>
+      </view>
+      <view wx:if="{{noMore}}" class="no_more">—— 没有更多了 ——</view>
+      <view wx:if="{{loading}}" class="loading_tip">加载中…</view>
+    </view>
+
+    <!-- 空态 -->
+    <view wx:elif="{{!loading}}" class="empty-state">
+      <view class="empty-icon">🔍</view>
+      <view class="empty-text">没有找到相关商品，换个关键词试试~</view>
+    </view>
+  </block>
+
+  <view wx:if="{{searching}}" class="loading_tip">搜索中…</view>
 </view>

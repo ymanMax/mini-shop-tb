@@ -1,6 +1,6 @@
 @import "./styles/iconfont.wxss";
 
-page, view, text, swipe, swipe-item, image,navigator {
+page, view, text, swipe, swipe-item, image, navigator, button, input, textarea, scroll-view {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
@@ -8,10 +8,173 @@ page, view, text, swipe, swipe-item, image,navigator {
 
 page {
   --themeColor: #eb4450;
-
+  --themeLight: #fff0f1;
+  --orange: #ff9500;
+  --blue: #3a8ee6;
+  --green: #52c41a;
+  --gray: #999;
+  --border: #eee;
   font-size: 28rpx;
+  background-color: #f5f5f5;
+  color: #333;
 }
 
 image {
   width: 100%;
 }
+
+/* ===== 通用价格 ===== */
+.price {
+  color: var(--themeColor);
+  font-weight: 700;
+}
+.price-symbol {
+  font-size: 24rpx;
+}
+.price-int {
+  font-size: 36rpx;
+}
+.price-dec {
+  font-size: 24rpx;
+}
+.price-origin {
+  color: #999;
+  font-size: 24rpx;
+  text-decoration: line-through;
+  margin-left: 10rpx;
+}
+
+/* ===== 按钮 ===== */
+.btn-primary {
+  background: linear-gradient(90deg, #ff5b6a, #eb4450);
+  color: #fff;
+  border-radius: 999rpx;
+  text-align: center;
+  font-weight: 600;
+}
+.btn-outline {
+  border: 1rpx solid var(--themeColor);
+  color: var(--themeColor);
+  border-radius: 999rpx;
+  text-align: center;
+  background: #fff;
+}
+.btn-disabled {
+  background: #ccc !important;
+  color: #fff !important;
+}
+
+/* ===== 骨架屏呼吸动画 ===== */
+.skeleton {
+  background: #eee;
+  border-radius: 8rpx;
+  animation: breathe 1.4s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ===== 星级 ===== */
+.stars {
+  display: inline-flex;
+  align-items: center;
+}
+.stars .star {
+  font-size: 28rpx;
+  color: #ddd;
+  margin-right: 2rpx;
+}
+.stars .star.on {
+  color: #ffb400;
+}
+
+/* ===== 标签胶囊 ===== */
+.tag {
+  display: inline-block;
+  font-size: 20rpx;
+  color: var(--themeColor);
+  background: var(--themeLight);
+  border-radius: 6rpx;
+  padding: 2rpx 10rpx;
+  margin-right: 8rpx;
+}
+.tag-gray {
+  color: #999;
+  background: #f2f2f2;
+}
+
+/* ===== 空态 ===== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 40rpx;
+  color: #999;
+}
+.empty-state .empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 20rpx;
+}
+.empty-state .empty-text {
+  font-size: 28rpx;
+  margin-bottom: 30rpx;
+}
+
+/* ===== 半屏弹层 ===== */
+.mask {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 90;
+}
+.sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: #fff;
+  border-radius: 24rpx 24rpx 0 0;
+  z-index: 100;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== 数量 stepper ===== */
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1rpx solid #ddd;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+.stepper .step-btn {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  font-size: 32rpx;
+  color: #666;
+}
+.stepper .step-btn.disabled {
+  color: #ccc;
+}
+.stepper .step-num {
+  width: 72rpx;
+  text-align: center;
+  height: 56rpx;
+  line-height: 56rpx;
+  font-size: 28rpx;
+}
+
+/* ===== 通用卡片 ===== */
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 20rpx;
+  padding: 24rpx;
+}
+
+/* 隐藏滚动条 */
+.scroll-hide ::-webkit-scrollbar { display: none; }

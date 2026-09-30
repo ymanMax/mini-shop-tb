@@ -1,0 +1,48 @@
+<!--pages/points/index.wxml —— 积分中心-->
+<view class="points_page">
+  <!-- 头部积分卡 -->
+  <view class="points_header">
+    <view class="ph_points">{{points}}</view>
+    <view class="ph_label">当前可用积分</view>
+    <view class="ph_actions">
+      <view class="ph_btn" bindtap="goCheckin">📅 签到赚积分</view>
+      <view class="ph_btn" bindtap="goCoupon">🎟 积分兑券</view>
+    </view>
+  </view>
+
+  <!-- 积分兑换专区 -->
+  <view class="card">
+    <view class="section_title">🎁 积分兑换专区</view>
+    <view class="exchange_grid">
+      <view class="ex_item" wx:for="{{exchangeItems}}" wx:key="id">
+        <view class="ex_cost">{{item.cost}}积分</view>
+        <view class="ex_name">{{item.name}}</view>
+        <view class="ex_desc">{{item.desc}}</view>
+        <view
+          class="ex_btn {{points >= item.cost ? '' : 'disabled'}}"
+          bindtap="exchange"
+          data-id="{{item.id}}"
+          data-cost="{{item.cost}}"
+          data-name="{{item.name}}"
+        >{{points >= item.cost ? '立即兑换' : '积分不够'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 积分明细 -->
+  <view class="card">
+    <view class="section_title">📊 积分明细</view>
+    <view class="record_list">
+      <view class="record_item" wx:for="{{records}}" wx:key="id">
+        <view class="r_left">
+          <view class="r_source">{{item.source}}</view>
+          <view class="r_desc">{{item.desc}}</view>
+          <view class="r_time">{{item.timeText}}</view>
+        </view>
+        <view class="r_change {{item.change > 0 ? 'plus' : 'minus'}}">
+          {{item.change > 0 ? '+' : ''}}{{item.change}}
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

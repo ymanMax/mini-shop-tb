@@ -1,0 +1,122 @@
+<!--pages/order/detail/index.wxml —— 订单详情-->
+<view class="detail_page" wx:if="{{order}}">
+  <!-- 状态头部 -->
+  <view class="status_header status-{{order.status}}">
+    <view class="status_icon">{{order.status === 1 ? '💳' : order.status === 2 ? '📦' : order.status === 3 ? '🚚' : order.status === 4 ? '🏠' : order.status === 5 ? '✅' : '❌'}}</view>
+    <view class="status_title">{{order.statusText}}</view>
+    <view class="status_desc">{{order.status === 1 ? '请尽快完成支付，订单将为您保留30分钟' : order.status === 2 ? '商家正在为您备货，请耐心等待' : order.status === 3 ? '您的订单正在配送途中' : order.status === 4 ? '包裹正在派送中，请保持电话畅通' : order.status === 5 ? '订单已完成，感谢您的购买，欢迎再次光临' : '订单已取消'}}</view>
+  </view>
+
+  <!-- 物流跟踪（待发货及以上） -->
+  <view wx:if="{{order.status >= 2 && order.logistics}}" class="card">
+    <view class="section_title">🚚 物流跟踪</view>
+    <view class="logistics_info" wx:if="{{order.status >= 3}}">
+      <text>物流公司：{{order.logistics.company}}</text>
+      <text class="tracking" bindtap="copyOrderNo">快递单号：{{order.logistics.trackingNo}} 📋</text>
+    </view>
+    <view class="timeline">
+      <view class="tl_node {{node.done ? 'done' : 'pending'}}" wx:for="{{order.logistics.timeline}}" wx:key="title">
+        <view class="tl_dot"></view>
+        <view class="tl_content">
+          <view class="tl_title">{{node.title}}</view>
+          <view class="tl_desc">{{node.desc}}</view>
+          <view class="tl_time" wx:if="{{node.time}}">{{node.time}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收货地址 -->
+  <view class="card">
+    <view class="section_title">📍 收货信息</view>
+    <view class="addr_line">
+      <text class="addr_name">{{order.addressSnapshot.name}}</text>
+      <text class="addr_phone">{{order.addressSnapshot.phone}}</text>
+    </view>
+    <view class="addr_detail">{{order.addressSnapshot.region}} {{order.addressSnapshot.detail}}</view>
+  </view>
+
+  <!-- 商品清单 -->
+  <view class="card">
+    <view class="section_title">🛍 商品清单（共{{itemCount}}件）</view>
+    <view class="g_row" wx:for="{{order.items}}" wx:key="goodsId">
+      <image class="g_img" src="{{item.mainPic}}" mode="aspectFill" binderror="handleImgError" data-path="order.items[{{index}}].mainPic" />
+      <view class="g_info">
+        <view class="g_name">{{item.name}}</view>
+        <view class="g_spec">{{item.specText}}</view>
+      </view>
+      <view class="g_right">
+        <view class="g_price">¥{{item.price}} × {{item.count}}</view>
+        <view class="g_sub total-price">¥{{item.price * item.count}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 金额明细 -->
+  <view class="card">
+    <view class="section_title">💰 金额明细</view>
+    <view class="amount_row">
+      <text>商品总价</text><text>¥{{order.totalAmount}}</text>
+    </view>
+    <view class="amount_row">
+      <text>优惠减免</text><text class="discount">-¥{{order.discountAmount}}</text>
+    </view>
+    <view class="amount_row">
+      <text>运费</text><text>{{order.freight === 0 ? '免运费' : '¥' + order.freight}}</text>
+    </view>
+    <view class="amount_row total">
+      <text>实付金额</text><text class="price big">¥{{order.payAmount}}</text>
+    </view>
+  </view>
+
+  <!-- 订单信息 -->
+  <view class="card">
+    <view class="section_title">📋 订单信息</view>
+    <view class="info_row">
+      <text class="info_label">订单编号</text>
+      <text class="info_value" bindtap="copyOrderNo">{{order.orderNo}} 📋</text>
+    </view>
+    <view class="info_row">
+      <text class="info_label">下单时间</text>
+      <text class="info_value">{{order.createTimeText}}</text>
+    </view>
+    <view class="info_row">
+      <text class="info_label">支付方式</text>
+      <text class="info_value">{{order.payMethod}}</text>
+    </view>
+    <view class="info_row" wx:if="{{order.remark}}">
+      <text class="info_label">订单备注</text>
+      <text class="info_value">{{order.remark}}</text>
+    </view>
+  </view>
+
+  <!-- 演示：模拟配送进度 -->
+  <view wx:if="{{order.status === 2 || order.status === 3 || order.status === 4}}" class="card demo_card">
+    <view class="section_title">🎮 演示操作（模拟状态流转）</view>
+    <view class="demo_btns">
+      <view wx:if="{{order.status === 2}}" class="btn-outline demo_btn" bindtap="mockShip">模拟发货</view>
+      <view wx:if="{{order.status === 3}}" class="btn-outline demo_btn" bindtap="mockDeliver">模拟派送</view>
+      <view wx:if="{{order.status === 4}}" class="btn-outline demo_btn" bindtap="confirmReceive">模拟送达（确认收货）</view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom_bar">
+    <view wx:if="{{order.status === 1}}" class="btn-outline bar_btn" bindtap="cancelOrder">取消订单</view>
+    <view wx:if="{{order.status === 1}}" class="btn-primary bar_btn primary" bindtap="payOrder">去支付</view>
+    <view wx:if="{{order.status === 2}}" class="btn-outline bar_btn" bindtap="urgeOrder">催发货</view>
+    <view wx:if="{{order.status === 3}}" class="btn-outline bar_btn" bindtap="mockDeliver">模拟派送</view>
+    <view wx:if="{{order.status === 4}}" class="btn-outline bar_btn" bindtap="confirmReceive">确认收货</view>
+    <view wx:if="{{order.status === 5 && !order.isReviewed}}" class="btn-outline bar_btn" bindtap="goReview">去评价</view>
+    <view wx:if="{{order.status === 5}}" class="btn-primary bar_btn primary" bindtap="againOrder">再来一单</view>
+    <view wx:if="{{order.status === 6}}" class="bar_btn disabled_text">订单已取消</view>
+  </view>
+</view>
+
+<!-- 骨架屏 -->
+<view wx:if="{{loading}}" class="detail_skeleton">
+  <view class="skeleton sk_header"></view>
+  <view class="skeleton sk_card"></view>
+  <view class="skeleton sk_card"></view>
+  <view class="skeleton sk_card"></view>
+</view>

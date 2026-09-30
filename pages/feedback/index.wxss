@@ -1,57 +1,55 @@
-page {
-  background-color: #eeee;
-}
-.fb_main {
-  padding: 20rpx;
-}
-.fb_main .fb_item {
+/* pages/feedback/index.wxss */
+page { background: #f5f5f5; }
+.fb_page { padding: 20rpx; }
+.type_row {
   display: flex;
-  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
 }
-.fb_main .fb_item text {
-  padding: 10rpx;
-  margin: 20rpx 10rpx;
-  width: 30%;
-  text-align: center;
-  background-color: #fff;
+.type_item {
+  padding: 12rpx 28rpx;
+  background: #fff;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  color: #666;
 }
-.fb_main .fb_content {
-  margin-top: 20rpx;
-  background-color: #fff;
+.type_item.active {
+  background: var(--themeColor);
+  color: #fff;
 }
-.fb_main .fb_content textarea {
-  padding: 10rpx;
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
 }
-.fb_main .fb_content .fb_tool {
+.fb_input {
+  width: 100%;
+  height: 200rpx;
+  font-size: 28rpx;
+}
+.char_count { text-align: right; font-size: 22rpx; color: #999; }
+.section_title { font-size: 28rpx; font-weight: 600; margin-bottom: 16rpx; }
+.img_list { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.fb_img {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 12rpx;
+}
+.upload_add {
+  width: 140rpx;
+  height: 140rpx;
+  border: 2rpx dashed #ddd;
+  border-radius: 12rpx;
   display: flex;
-  flex-wrap: wrap;
-  padding-bottom: 30rpx;
-}
-.fb_main .fb_content .fb_tool button {
-  display: flex;
-  margin: 0;
-  padding: 0;
-  margin-top: 20rpx;
-  margin-left: 20rpx;
-  width: 90rpx;
-  height: 90rpx;
-  justify-content: center;
   align-items: center;
-  font-size: 60rpx;
-  color: #ccc;
+  justify-content: center;
+  color: #999;
 }
-.fb_main .fb_content .fb_tool .image_item {
+.upload_add .plus { font-size: 48rpx; }
+.submit_btn {
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 32rpx;
   margin-top: 20rpx;
-  margin-left: 20rpx;
-}
-.fb_main .fb_btn {
-  margin-top: 20rpx;
-  display: flex;
-  justify-content: flex-end;
-}
-.fb_main .fb_btn button {
-  width: 30%;
-  margin: 0;
-  padding: 20rpx;
-  background-color: var(--themeColor);
 }

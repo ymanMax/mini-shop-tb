@@ -7,12 +7,22 @@
     "pages/cart/index",
     "pages/collect/index",
     "pages/order/index",
+    "pages/order/detail/index",
+    "pages/order/review/index",
+    "pages/address/list/index",
+    "pages/address/edit/index",
+    "pages/history/index",
     "pages/search/index",
     "pages/user/index",
     "pages/feedback/index",
     "pages/login/index",
     "pages/auth/index",
-    "pages/pay/index"
+    "pages/pay/index",
+    "pages/seckill/index",
+    "pages/coupon/index",
+    "pages/points/index",
+    "pages/checkin/index",
+    "pages/message/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

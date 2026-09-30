@@ -1,0 +1,72 @@
+/* pages/address/edit/index.wxss */
+page { background: #f5f5f5; }
+.edit_page { padding: 20rpx; }
+.form_card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+.form_item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+.form_item.column {
+  flex-direction: column;
+  align-items: stretch;
+}
+.form_item .label {
+  width: 160rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+.form_item input {
+  flex: 1;
+  font-size: 28rpx;
+}
+.region_picker {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.region_picker.placeholder { color: #999; }
+.picker_arrow { color: #ccc; font-size: 32rpx; }
+.detail_input {
+  width: 100%;
+  height: 140rpx;
+  background: #f9f9f9;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  margin-top: 16rpx;
+}
+.tag_list {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+.tag_opt {
+  padding: 10rpx 28rpx;
+  background: #f5f5f5;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  color: #666;
+  border: 2rpx solid transparent;
+}
+.tag_opt.active {
+  background: var(--themeLight);
+  color: var(--themeColor);
+  border-color: var(--themeColor);
+  font-weight: 600;
+}
+.save_btn {
+  margin-top: 40rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 32rpx;
+}

@@ -1,0 +1,45 @@
+<!--pages/history/index.wxml —— 浏览足迹-->
+<view class="history_page">
+  <!-- 顶部工具条 -->
+  <view class="top_bar">
+    <view class="top_title">浏览足迹</view>
+    <view wx:if="{{groups.length > 0}}" class="clear_all" bindtap="clearAll">🗑 清空全部</view>
+  </view>
+
+  <!-- 分组列表 -->
+  <view wx:if="{{groups.length > 0}}" class="groups">
+    <view class="group" wx:for="{{groups}}" wx:key="label" wx:for-item="group" wx:for-index="groupIndex">
+      <view class="group_label">{{group.label}}</view>
+      <view
+        class="history_item {{swipedId === item.goodsId ? 'swiped' : ''}}"
+        wx:for="{{group.items}}"
+        wx:for-item="item"
+        wx:for-index="itemIndex"
+        wx:key="goodsId"
+        data-id="{{item.goodsId}}"
+        bindtouchstart="touchStart"
+        bindtouchmove="touchMove"
+        bindtouchend="closeSwipe"
+      >
+        <view class="delete_btn" catchtap="deleteItem" data-id="{{item.goodsId}}">删除</view>
+        <view class="item_main" bindtap="goDetail" data-id="{{item.goodsId}}">
+          <image class="h_img" src="{{item.mainPic}}" mode="aspectFill" binderror="handleImgError" data-path="groups[{{groupIndex}}].items[{{itemIndex}}].mainPic" />
+          <view class="h_info">
+            <view class="h_name">{{item.name}}</view>
+            <view class="h_bottom">
+              <view class="h_price price big">¥{{item.price}}</view>
+              <view class="h_time">{{item.timeText}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空态 -->
+  <view wx:else class="empty-state">
+    <view class="empty-icon">👣</view>
+    <view class="empty-text">还没有浏览记录，去逛逛~</view>
+    <view class="btn-primary go_shop" bindtap="goShop">去逛逛</view>
+  </view>
+</view>

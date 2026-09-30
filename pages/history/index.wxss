@@ -1,0 +1,82 @@
+/* pages/history/index.wxss */
+page { background: #f5f5f5; }
+.history_page { padding-bottom: 40rpx; }
+
+.top_bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 24rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.top_title { font-size: 32rpx; font-weight: 700; }
+.clear_all { font-size: 26rpx; color: var(--themeColor); }
+
+.groups { padding: 20rpx; }
+.group_label {
+  font-size: 26rpx;
+  color: #999;
+  padding: 16rpx 8rpx;
+}
+.history_item {
+  position: relative;
+  background: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 16rpx;
+  overflow: hidden;
+}
+.delete_btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 140rpx;
+  background: var(--themeColor);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+}
+.item_main {
+  display: flex;
+  padding: 20rpx;
+  align-items: center;
+  background: #fff;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.2s;
+}
+.history_item.swiped .item_main {
+  transform: translateX(-140rpx);
+}
+.h_img {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 12rpx;
+  margin-right: 16rpx;
+}
+.h_info { flex: 1; }
+.h_name {
+  font-size: 28rpx;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 40rpx;
+}
+.h_bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 8rpx;
+}
+.h_price { font-size: 30rpx; font-weight: 700; }
+.h_time { font-size: 22rpx; color: #999; }
+
+.empty-state .empty-icon { font-size: 100rpx; }
+.go_shop { padding: 16rpx 60rpx; font-size: 28rpx; display: inline-block; margin-top: 20rpx; }

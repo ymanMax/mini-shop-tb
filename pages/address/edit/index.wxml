@@ -1,0 +1,56 @@
+<!--pages/address/edit/index.wxml —— 新增/编辑地址-->
+<view class="edit_page">
+  <view class="form_card">
+    <!-- 收货人 -->
+    <view class="form_item">
+      <text class="label">收货人</text>
+      <input placeholder="请输入姓名" value="{{form.name}}" data-field="name" bindinput="onInput" />
+    </view>
+
+    <!-- 手机号 -->
+    <view class="form_item">
+      <text class="label">手机号</text>
+      <input type="number" maxlength="11" placeholder="请输入11位手机号" value="{{form.phone}}" data-field="phone" bindinput="onInput" />
+    </view>
+
+    <!-- 所在地区（三级联动） -->
+    <view class="form_item">
+      <text class="label">所在地区</text>
+      <picker mode="region" bindchange="onRegionChange" value="{{form.region}}">
+        <view class="region_picker {{regionText ? '' : 'placeholder'}}">
+          {{regionText || '请选择省/市/区'}}
+          <text class="picker_arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 详细地址 -->
+    <view class="form_item column">
+      <text class="label">详细地址</text>
+      <textarea placeholder="街道、楼牌号等详细信息" value="{{form.detail}}" data-field="detail" bindinput="onInput" class="detail_input" />
+    </view>
+
+    <!-- 地址标签 -->
+    <view class="form_item column">
+      <text class="label">地址标签</text>
+      <view class="tag_list">
+        <view
+          wx:for="{{tags}}"
+          wx:key="*this"
+          class="tag_opt {{form.tag === item ? 'active' : ''}}"
+          bindtap="selectTag"
+          data-tag="{{item}}"
+        >{{item}}</view>
+      </view>
+    </view>
+
+    <!-- 设为默认 -->
+    <view class="form_item">
+      <text class="label">设为默认地址</text>
+      <switch checked="{{form.isDefault}}" bindchange="toggleDefault" color="#eb4450" />
+    </view>
+  </view>
+
+  <!-- 保存 -->
+  <view class="save_btn btn-primary" bindtap="handleSave">保存地址</view>
+</view>

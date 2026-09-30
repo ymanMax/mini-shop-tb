@@ -2,5 +2,7 @@
   "usingComponents": {
     "SearchInput": "../../components/SearchInput/SearchInput"
   },
-  "navigationBarTitleText": "烧饼首页"
+  "navigationBarTitleText": "烧饼工坊",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
 }

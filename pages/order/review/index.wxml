@@ -1,0 +1,88 @@
+<!--pages/order/review/index.wxml —— 订单评价-->
+<view class="review_page">
+  <view class="tip_bar">⭐ 评价分享真实感受，帮助更多小伙伴选购</view>
+
+  <view class="form_card" wx:for="{{forms}}" wx:key="goodsId" wx:for-index="idx">
+    <!-- 商品信息 -->
+    <view class="goods_row">
+      <image class="g_img" src="{{item.mainPic}}" mode="aspectFill" binderror="handleImgError" data-path="forms[{{idx}}].mainPic" />
+      <view class="g_info">
+        <view class="g_name">{{item.name}}</view>
+        <view class="g_spec">{{item.specText}} × {{item.count}}</view>
+      </view>
+      <view class="g_price price">¥{{item.price}}</view>
+    </view>
+
+    <!-- 星级 -->
+    <view class="rating_row">
+      <text class="rating_label">评分</text>
+      <view class="stars big">
+        <text
+          wx:for="{{[1,2,3,4,5]}}"
+          wx:key="*this"
+          class="star {{item <= forms[idx].rating ? 'on' : ''}}"
+          bindtap="setRating"
+          data-index="{{idx}}"
+          data-star="{{item}}"
+        >★</text>
+      </view>
+      <text class="rating_text">{{forms[idx].rating >= 4 ? '好评' : forms[idx].rating === 3 ? '中评' : '差评'}}</text>
+    </view>
+
+    <!-- 快捷标签 -->
+    <view class="tags_row">
+      <text class="rating_label">标签</text>
+      <view class="tag_list">
+        <view
+          wx:for="{{quickTags}}"
+          wx:key="*this"
+          class="quick_tag {{forms[idx].tagMap[item] ? 'active' : ''}}"
+          bindtap="toggleTag"
+          data-index="{{idx}}"
+          data-tag="{{item}}"
+        >{{item}}</view>
+      </view>
+    </view>
+
+    <!-- 文字评价 -->
+    <view class="content_row">
+      <textarea
+        placeholder="说说这份商品的真实体验吧～（100字以内）"
+        value="{{item.content}}"
+        bindinput="onContent"
+        data-index="{{idx}}"
+        maxlength="100"
+        class="content_input"
+      />
+      <view class="char_count">{{item.content.length}}/{{maxLen}}</view>
+    </view>
+
+    <!-- 晒图 -->
+    <view class="upload_row">
+      <text class="rating_label">晒图</text>
+      <view class="img_list">
+        <image
+          wx:for="{{item.images}}"
+          wx:for-item="img"
+          wx:for-index="imgidx"
+          wx:key="*this"
+          src="{{img}}"
+          mode="aspectFill"
+          class="upload_img"
+          bindtap="previewImg"
+          data-index="{{idx}}"
+          data-imgidx="{{imgidx}}"
+        />
+        <view wx:if="{{item.images.length < 6}}" class="upload_add" bindtap="chooseImg" data-index="{{idx}}">
+          <text class="plus">＋</text>
+          <text class="add_text">晒图</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 提交 -->
+  <view class="submit_bar">
+    <view class="btn-primary submit_btn {{submitting ? 'btn-disabled' : ''}}" bindtap="submit">提交评价</view>
+  </view>
+</view>

@@ -1,0 +1,178 @@
+/* pages/order/detail/index.wxss */
+page { background: #f5f5f5; padding-bottom: 140rpx; }
+.detail_page { padding-bottom: 140rpx; }
+
+/* 状态头部 */
+.status_header {
+  padding: 60rpx 30rpx 50rpx;
+  text-align: center;
+  color: #fff;
+}
+.status_header.status-1 { background: linear-gradient(135deg, #ff5b6a, #eb4450); }
+.status_header.status-2 { background: linear-gradient(135deg, #ffb400, #ff9500); }
+.status_header.status-3 { background: linear-gradient(135deg, #5aa9e6, #3a8ee6); }
+.status_header.status-4 { background: linear-gradient(135deg, #5aa9e6, #3a8ee6); }
+.status_header.status-5 { background: linear-gradient(135deg, #7bc96f, #52c41a); }
+.status_header.status-6 { background: linear-gradient(135deg, #bbb, #999); }
+.status_icon { font-size: 80rpx; }
+.status_title { font-size: 36rpx; font-weight: 700; margin-top: 12rpx; }
+.status_desc { font-size: 24rpx; opacity: 0.9; margin-top: 8rpx; }
+
+/* 卡片 */
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 20rpx;
+  padding: 24rpx;
+}
+.section_title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+
+/* 物流 */
+.logistics_info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 26rpx;
+  color: #666;
+  background: #f9f9f9;
+  padding: 16rpx;
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
+}
+.tracking { color: var(--themeColor); }
+.timeline { padding-left: 10rpx; }
+.tl_node {
+  display: flex;
+  gap: 16rpx;
+  position: relative;
+  padding-bottom: 24rpx;
+}
+.tl_node::before {
+  content: '';
+  position: absolute;
+  left: 11rpx;
+  top: 24rpx;
+  bottom: 0;
+  width: 2rpx;
+  background: #eee;
+}
+.tl_node:last-child::before { display: none; }
+.tl_dot {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6rpx;
+  z-index: 1;
+}
+.tl_node.done .tl_dot {
+  background: var(--themeColor);
+  box-shadow: 0 0 0 6rpx var(--themeLight);
+}
+.tl_node.pending .tl_dot {
+  background: #fff;
+  border: 2rpx solid #ccc;
+}
+.tl_content { flex: 1; }
+.tl_title { font-size: 28rpx; font-weight: 600; }
+.tl_node.pending .tl_title { color: #999; font-weight: 400; }
+.tl_desc { font-size: 24rpx; color: #666; margin-top: 4rpx; }
+.tl_time { font-size: 22rpx; color: #999; margin-top: 4rpx; }
+
+/* 地址 */
+.addr_line { display: flex; gap: 16rpx; }
+.addr_name { font-size: 30rpx; font-weight: 600; }
+.addr_phone { font-size: 26rpx; color: #666; }
+.addr_detail { font-size: 26rpx; color: #666; margin-top: 8rpx; }
+
+/* 商品 */
+.g_row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+.g_row:last-child { border-bottom: none; }
+.g_img {
+  width: 110rpx;
+  height: 110rpx;
+  border-radius: 12rpx;
+  margin-right: 16rpx;
+}
+.g_info { flex: 1; }
+.g_name {
+  font-size: 27rpx;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 38rpx;
+}
+.g_spec { font-size: 22rpx; color: #999; margin-top: 6rpx; }
+.g_right { text-align: right; }
+.g_price { font-size: 26rpx; color: #666; }
+.g_sub { font-size: 28rpx; font-weight: 600; margin-top: 4rpx; }
+
+/* 金额 */
+.amount_row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10rpx 0;
+  font-size: 26rpx;
+  color: #666;
+}
+.amount_row.discount { color: #ff9500; }
+.amount_row.total {
+  border-top: 1rpx solid #f5f5f5;
+  margin-top: 10rpx;
+  padding-top: 16rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+}
+.amount_row.total .big { font-size: 36rpx; }
+
+/* 订单信息 */
+.info_row {
+  display: flex;
+  padding: 10rpx 0;
+  font-size: 26rpx;
+}
+.info_label { width: 160rpx; color: #999; }
+.info_value { flex: 1; color: #333; }
+
+/* 演示 */
+.demo_card { border: 2rpx dashed #ffb400; }
+.demo_btns { display: flex; gap: 16rpx; }
+.demo_btn { flex: 1; text-align: center; padding: 16rpx; font-size: 26rpx; }
+
+/* 底部栏 */
+.bottom_bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: #fff;
+  border-top: 1rpx solid #eee;
+  display: flex;
+  gap: 16rpx;
+  padding: 16rpx 24rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  z-index: 80;
+}
+.bar_btn {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  font-size: 28rpx;
+  border-radius: 999rpx;
+}
+.bar_btn.primary { flex: 2; }
+.disabled_text { color: #bbb; text-align: center; line-height: 80rpx; }
+
+/* 骨架屏 */
+.detail_skeleton { padding: 24rpx; }
+.sk_header { height: 240rpx; border-radius: 16rpx; margin-bottom: 20rpx; }
+.sk_card { height: 160rpx; border-radius: 16rpx; margin-bottom: 20rpx; }

@@ -1,0 +1,43 @@
+<!--pages/address/list/index.wxml —— 地址列表-->
+<view class="addr_list_page">
+  <!-- 地址卡片列表 -->
+  <view class="addr_cards">
+    <view
+      class="addr_card {{swipedId === item.id ? 'swiped' : ''}}"
+      wx:for="{{addresses}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtouchstart="touchStart"
+      bindtouchmove="touchMove"
+      bindtouchend="closeSwipe"
+    >
+      <!-- 左滑删除 -->
+      <view class="delete_btn" catchtap="deleteAddress" data-id="{{item.id}}">删除</view>
+
+      <view class="card_main" bindtap="tapAddress" data-id="{{item.id}}">
+        <view class="card_top">
+          <text class="a_name">{{item.name}}</text>
+          <text class="a_phone">{{item.phone}}</text>
+          <text class="a_tag">{{item.tag}}</text>
+          <text wx:if="{{item.isDefault}}" class="default_badge">✓ 默认</text>
+        </view>
+        <view class="a_region">{{item.region}} {{item.detail}}</view>
+        <view class="card_actions" catchtap="stopPropagation">
+          <view class="act_btn" bindtap="goEdit" data-id="{{item.id}}">✏️ 编辑</view>
+          <view wx:if="{{!item.isDefault}}" class="act_btn" bindtap="setDefault" data-id="{{item.id}}">设为默认</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空态 -->
+  <view wx:if="{{addresses.length === 0}}" class="empty-state">
+    <view class="empty-icon">📍</view>
+    <view class="empty-text">还没有收货地址，点击下方按钮新增~</view>
+  </view>
+
+  <!-- 底部新增按钮 -->
+  <view class="bottom_bar">
+    <view class="add_btn" bindtap="goAdd">＋ 新增地址</view>
+  </view>
+</view>

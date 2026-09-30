@@ -1,9 +1,23 @@
 /* pages/auth/index.wxss */
-button {
-  margin-top: 30rpx;
+page { background: #f5f5f5; }
+.auth_page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 40rpx;
 }
-
-.caution {
-  padding: 30rpx;
-  font-size: 50rpx;
+.auth_icon { font-size: 100rpx; }
+.auth_title { font-size: 36rpx; font-weight: 700; margin-top: 20rpx; }
+.auth_desc {
+  font-size: 28rpx;
+  color: #666;
+  text-align: center;
+  margin-top: 20rpx;
+  line-height: 44rpx;
+}
+.auth_btn {
+  width: 80%;
+  margin-top: 60rpx;
+  background: var(--themeColor);
+  border-radius: 999rpx;
 }
