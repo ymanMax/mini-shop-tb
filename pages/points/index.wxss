@@ -1,0 +1,71 @@
+/* pages/points/index.wxss */
+.page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+.points_card {
+  background: linear-gradient(135deg, #eb4450, #ff6b6b);
+  margin: 20rpx;
+  border-radius: 16rpx;
+  padding: 40rpx 32rpx;
+  color: #fff;
+  text-align: center;
+}
+.points_label { font-size: 26rpx; opacity: 0.9; }
+.points_value { font-size: 80rpx; font-weight: bold; margin: 16rpx 0; }
+.checkin_entry {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  padding: 12rpx 32rpx;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+}
+.section {
+  background: #fff;
+  margin: 20rpx;
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+.section_title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #eee;
+}
+.exchange_list { padding: 16rpx 0; }
+.exchange_item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.ex_left { flex: 1; }
+.ex_points { font-size: 28rpx; color: #eb4450; font-weight: bold; }
+.ex_name { font-size: 26rpx; color: #333; margin-top: 4rpx; }
+.ex_desc { font-size: 22rpx; color: #999; margin-top: 4rpx; }
+.ex_btn {
+  padding: 12rpx 32rpx;
+  background: #eb4450;
+  color: #fff;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+}
+.ex_btn.disabled { background: #eee; color: #999; }
+.records_list { padding: 16rpx 0; }
+.record_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.record_source { font-size: 26rpx; color: #333; }
+.record_time { font-size: 22rpx; color: #999; margin-top: 4rpx; }
+.record_amount { font-size: 30rpx; font-weight: bold; }
+.record_amount.earn { color: #4caf50; }
+.record_amount.spend { color: #eb4450; }
+.empty_state { text-align: center; padding: 60rpx 0; }
+.empty_icon { font-size: 80rpx; }
+.empty_text { color: #999; margin: 16rpx 0; font-size: 26rpx; }

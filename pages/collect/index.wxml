@@ -1,23 +1,51 @@
 <!--pages/collect/index.wxml-->
-<Tabs tabs="{{tabs}}" bindtabsItenChange="handletabsItenChange">
-	<view class="collect_main">
-		<view class="collect_title">
-			<text class="collect_tips active">全部</text>
-			<text class="collect_tips">正在热卖</text>
-			<text class="collect_tips">即将上线</text>
-		</view>
-		<view class="collect_content">
-			<navigator class="goods_item" wx:for="{{collect}}" wx:key="goods_id" url="/pages/goods_detail/index?goods_id={{item.goods_id}}">
-				<!-- 左侧图片 -->
-				<view class="goods_img_wrap">
-					<image src="{{item.goods_small_logo? item.goods_small_logo :'https://ww1.sinaimg.cn/large/007rAy9hgy1g24by9t530j30i20i2glm.jpg'}}" mode="widthFix" />
-				</view>
-				<!-- 右侧商品数据 -->
-				<view class="goods_info_wrap">
-					<view class="goods_name">{{item.goods_name}}</view>
-					<view class="goods_price">￥{{item.goods_price}}</view>
-				</view>
-			</navigator>
-		</view>
-	</view>
-</Tabs>
+<view class="page">
+  <Tabs tabs="{{tabs}}" bind:tabsItenChange="handleTabChange" />
+
+  <view class="collect_list" wx:if="{{!loading && filtered.length}}">
+    <view
+      class="collect_card"
+      wx:for="{{filtered}}"
+      wx:key="id"
+      bindtouchstart="handleTouchStart"
+      bindtouchend="handleTouchEnd"
+      data-id="{{item.id}}"
+    >
+      <!-- 删除按钮（左滑露出） -->
+      <view class="delete_btn" bindtap="removeCollect" data-id="{{item.id}}">取消收藏</view>
+      <view class="card_main" style="transform: translateX({{swipedId === item.id ? '-180rpx' : '0'}});">
+        <image
+          class="collect_img"
+          src="{{item.mainPic}}"
+          mode="aspectFill"
+          data-index="{{index}}"
+          binderror="handleImgError"
+          bindtap="goDetail"
+          data-id="{{item.id}}"
+        />
+        <view class="collect_info" bindtap="goDetail" data-id="{{item.id}}">
+          <view class="collect_name">{{item.name}}</view>
+          <view class="collect_price">{{item.priceText}}</view>
+          <view class="collect_meta">
+            <text class="collect_tag">已收藏</text>
+            <text class="collect_sales">已售{{item.sales}}件</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="skeleton" wx:if="{{loading}}">
+    <view class="sk_card breath" wx:for="{{[1,2,3]}}" wx:key="*this">
+      <view class="sk_img"></view>
+      <view class="sk_line w80"></view>
+      <view class="sk_line w60"></view>
+    </view>
+  </view>
+
+  <view class="empty_state" wx:if="{{!loading && !filtered.length}}">
+    <view class="empty_icon">⭐</view>
+    <view class="empty_text">还没有收藏商品，去逛逛~</view>
+    <view class="empty_btn" bindtap="goHome">去逛逛</view>
+  </view>
+</view>

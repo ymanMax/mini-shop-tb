@@ -1,0 +1,53 @@
+<!--pages/checkin/index.wxml-->
+<view class="page">
+  <!-- 连续签到奖励条 -->
+  <view class="streak_bar">
+    <view class="streak_title">连续签到奖励</view>
+    <view class="streak_days">
+      <view class="streak_day" wx:for="{{streakRewards}}" wx:key="day">
+        <view class="day_num {{day <= streak ? 'done' : ''}}">第{{item.day}}天</view>
+        <view class="day_points">+{{item.points}}</view>
+      </view>
+    </view>
+    <view class="streak_info">当前连续签到 {{streak}} 天 · 断签重新计算</view>
+  </view>
+
+  <!-- 日历 -->
+  <view class="calendar_card">
+    <view class="calendar_head">
+      <view class="cal_prev" bindtap="prevMonth">‹</view>
+      <view class="cal_title">{{currentYear}}年{{currentMonth + 1}}月</view>
+      <view class="cal_next" bindtap="nextMonth">›</view>
+    </view>
+    <view class="week_row">
+      <view class="week_cell" wx:for="{{['日','一','二','三','四','五','六']}}" wx:key="*this">{{item}}</view>
+    </view>
+    <view class="calendar_grid">
+      <view
+        class="cal_cell {{item.signed ? 'signed' : ''}} {{item.isToday ? 'today' : ''}} {{item.future ? 'future' : ''}}"
+        wx:for="{{calendarDays}}"
+        wx:key="day"
+      >
+        <view class="cal_day" wx:if="{{!item.empty}}">{{item.day}}</view>
+        <view class="cal_check" wx:if="{{item.signed}}">✓</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 签到按钮 -->
+  <view class="checkin_bar">
+    <view class="checkin_btn {{todaySigned ? 'disabled' : ''}}" bindtap="handleCheckin">
+      {{todaySigned ? '今日已签到 ✓' : '立即签到 +5'}}
+    </view>
+  </view>
+
+  <!-- 签到成功弹层 -->
+  <view class="mask" wx:if="{{showSuccess}}" bindtap="closeSuccess"></view>
+  <view class="success_panel {{showSuccess ? 'open' : ''}}">
+    <view class="success_icon">🎉</view>
+    <view class="success_title">签到成功</view>
+    <view class="success_reward">+{{reward}} 积分</view>
+    <view class="success_streak">已连续签到 {{streak}} 天</view>
+    <view class="success_btn" bindtap="closeSuccess">太棒了</view>
+  </view>
+</view>

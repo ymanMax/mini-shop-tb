@@ -12,7 +12,16 @@
     "pages/feedback/index",
     "pages/login/index",
     "pages/auth/index",
-    "pages/pay/index"
+    "pages/pay/index",
+    "pages/order/detail",
+    "pages/order/review",
+    "pages/history/index",
+    "pages/address/list",
+    "pages/address/edit",
+    "pages/coupon/index",
+    "pages/points/index",
+    "pages/checkin/index",
+    "pages/message/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

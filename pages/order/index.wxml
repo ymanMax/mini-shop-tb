@@ -1,39 +1,74 @@
 <!--pages/order/index.wxml-->
-<Tabs tabs="{{tabs}}" bindtabsItenChange="handletabsItenChange">
-	<!-- 购物车内容 -->
-	<view class="cart_content">
-		<!-- 商品 -->
-		<view class="cart_main">
-			<!-- 购物车商品 -->
-			<view class="cart_item" wx:for="{{orders}}" wx:key="*this">
-				<view class="cart_top">
-					<!-- 图片 -->
-					<navigator class="cart_img_wrap">
-						<image src="{{item.goods_small_logo}}" mode="widthFix" />
-					</navigator>
-					<!-- 信息 -->
-					<view class="cart_info_wrap">
-						<view class="goods_name">{{item.goods_name}}</view>
-						<view class="goods_price_wrap">
-							<view class="goods_price">￥{{item.goods_price}}</view>
-							<view class="num_tool">
-								<view class="goods_num">X {{item.num}}</view>
-							</view>
-						</view>
-					</view>
-				</view>
-				<!-- 订单编号 日期 -->
-				<view class="order_bottom">
-					<view class="order_number">
-						<view class="number_title">订单编号</view>
-						<view class="number_value">{{item.order_number}}</view>
-					</view>
-					<view class="order_date">
-						<view class="date_title">订单日期</view>
-						<view class="date_value">{{item.create_time_cn}}</view>
-					</view>
-				</view>
-			</view>
-		</view>
-	</view>
-</Tabs>
+<view class="page">
+  <!-- 状态 Tabs -->
+  <Tabs tabs="{{tabs}}" bind:tabsItenChange="handleTabChange" />
+
+  <!-- 订单列表 -->
+  <view class="order_list" wx:if="{{!loading && orders.length}}">
+    <view class="order_card" wx:for="{{orders}}" wx:key="id">
+      <view class="order_head">
+        <text class="order_no">订单号：{{item.orderNo}}</text>
+        <text class="order_status status_{{item.status}}">
+          {{item.status === 1 ? '待付款' : item.status === 2 ? '待发货' : item.status === 3 ? '配送中' : item.status === 4 ? '待收货' : item.status === 5 ? '已完成' : '已取消'}}
+        </text>
+      </view>
+      <view class="order_items" bindtap="goDetail" data-id="{{item.id}}">
+        <block wx:for="{{item.items}}" wx:for-item="goods" wx:key="goodsId">
+          <view class="order_item">
+            <image
+              class="item_img"
+              src="{{goods.mainPic}}"
+              mode="aspectFill"
+              data-index="{{index}}"
+              binderror="handleImgError"
+            />
+            <view class="item_info">
+              <view class="item_name">{{goods.name}}</view>
+              <view class="item_spec">{{goods.specText}}</view>
+              <view class="item_bottom">
+                <text class="item_price">{{goods.priceText}}</text>
+                <text class="item_count">x{{goods.count}}</text>
+              </view>
+            </view>
+          </view>
+        </block>
+        <view class="more_items" wx:if="{{item.items.length > 1}}">共 {{item.items.length}} 件商品</view>
+      </view>
+      <view class="order_foot">
+        <view class="order_time">{{item.timeText}}下单</view>
+        <view class="order_pay">
+          <text class="pay_label">实付：</text>
+          <text class="pay_amount">{{item.payAmountText}}</text>
+        </view>
+      </view>
+      <!-- 操作按钮 -->
+      <view class="order_actions">
+        <view class="action_btn" bindtap="goDetail" data-id="{{item.id}}">查看详情</view>
+        <view class="action_btn" wx:if="{{item.status === 1}}" bindtap="handleCancel" data-id="{{item.id}}">取消订单</view>
+        <view class="action_btn primary" wx:if="{{item.status === 1}}" bindtap="handlePay" data-id="{{item.id}}">去支付</view>
+        <view class="action_btn" wx:if="{{item.status === 2}}" bindtap="handleRemind" data-id="{{item.id}}">催发货</view>
+        <view class="action_btn" wx:if="{{item.status === 4}}" bindtap="goLogistics" data-id="{{item.id}}">查看物流</view>
+        <view class="action_btn primary" wx:if="{{item.status === 4}}" bindtap="handleConfirm" data-id="{{item.id}}">确认收货</view>
+        <view class="action_btn" wx:if="{{item.status === 5 && !item.isReviewed}}" bindtap="goReview" data-id="{{item.id}}">去评价</view>
+        <view class="action_btn" wx:if="{{item.status === 5}}" bindtap="handleRepurchase" data-id="{{item.id}}">再来一单</view>
+      </view>
+    </view>
+    <view class="no_more" wx:if="{{noMore}}">—— 没有更多了 ——</view>
+  </view>
+
+  <!-- 骨架屏 -->
+  <view class="skeleton" wx:if="{{loading}}">
+    <view class="sk_card breath" wx:for="{{[1,2,3]}}" wx:key="*this">
+      <view class="sk_line w90"></view>
+      <view class="sk_line w60"></view>
+      <view class="sk_line w80"></view>
+    </view>
+  </view>
+
+  <!-- 空态 -->
+  <view class="empty_state" wx:if="{{!loading && !orders.length}}">
+    <view class="empty_icon">📦</view>
+    <view class="empty_text">还没有相关订单</view>
+    <view class="empty_btn" bindtap="goHome">去逛逛</view>
+  </view>
+</view>

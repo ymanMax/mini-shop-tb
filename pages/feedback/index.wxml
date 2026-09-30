@@ -1,31 +1,28 @@
-<SearchInput></SearchInput>
-<Tabs tabs="{{tabs}}" bindtabsItenChange="handletabsItenChange">
-	<view class="fb_main">
-		<view class="fb_title">问题的种类</view>
-		<view class="fb_item">
-			<text>功能建议</text>
-			<text>功能建议</text>
-			<text>功能建议</text>
-			<text>功能建议</text>
-		</view>
-		<view class="fb_content">
-			<!-- 文本 -->
-			<textarea placeholder="请描述一下您的问题" bindinput="handleTextInput"></textarea>
-			<!-- 选择上传图片区域 -->
-			<view class="fb_tool">
-				<button bindtap="handleChooseImg">+</button>
-				<view class="image_item" wx:for="{{chooseImgs}}" wx:key="*this" bindtap="handleRemoveImg" data-index="{{index}}">
-					<UpImg src="{{item}}"></UpImg>
-				</view>
-			</view>
-		</view>
-		<!-- 按钮 -->
-		<view class="fb_btn">
-			<button type="primary" bindtap="handleFormSubmit">
-				<icon type="success_no_circle" size="23" color="white">
-				</icon>
-				提交
-			</button>
-		</view>
-	</view>
-</Tabs>
+<!--pages/feedback/index.wxml-->
+<view class="page">
+  <Tabs tabs="{{tabs}}" bind:tabsItenChange="handleTabsItemChange" />
+
+  <view class="feedback_card">
+    <textarea
+      class="content_input"
+      placeholder="请描述您遇到的问题或建议，我们会尽快处理~"
+      maxlength="500"
+      value="{{textVal}}"
+      bindinput="handleTextInput"
+    />
+    <view class="word_count">{{textVal.length}}/500</view>
+
+    <view class="upload_list">
+      <view class="upload_item" wx:for="{{chooseImgs}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill" binderror="handleImgError" data-field="chooseImgs[{{index}}]" />
+        <view class="remove_btn" bindtap="handleRemoveImg" data-index="{{index}}">✕</view>
+      </view>
+      <view class="upload_add" bindtap="handleChooseImg" wx:if="{{chooseImgs.length < 9}}">
+        <text class="add_icon">＋</text>
+        <text class="add_text">上传图片</text>
+      </view>
+    </view>
+
+    <view class="submit_btn" bindtap="handleFormSubmit">提交反馈</view>
+  </view>
+</view>

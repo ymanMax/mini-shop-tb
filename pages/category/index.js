@@ -1,104 +1,183 @@
-// pages/category/index.js
-import { request } from '../../request/index.js'
-import regeneratorRuntime from '../../lib/runtime/runtime'
+// pages/category/index.js —— 分类页（模块 1）
+import { get, post } from '../../api/http.js'
+import { success } from '../../utils/toast.js'
+import { formatPrice } from '../../utils/format.js'
 
 Page({
-  /**
-    * 页面的初始数据
-    */
   data: {
-    // 左侧菜单数据
-    leftMenuList: [],
-    // 右侧商品数据
-    rightContent: [],
-    // 左侧被点击的菜单
-    currentIndex: 0,
-    // 右侧商品滚动条
-    scrollTop: 0
+    categories: [],
+    currentCategoryId: 1,
+    subCategories: [],
+    currentSubId: 0,
+    goodsList: [],
+    sort: 'comprehensive',
+    sortOptions: [
+      { key: 'comprehensive', label: '综合' },
+      { key: 'priceAsc', label: '价格升序' },
+      { key: 'priceDesc', label: '价格降序' },
+      { key: 'sales', label: '销量' }
+    ],
+    showFilter: false,
+    priceMin: '',
+    priceMax: '',
+    onlyStock: false,
+    page: 1,
+    size: 10,
+    total: 0,
+    noMore: false,
+    loading: true,
+    empty: false,
+    cartCount: 0,
+    refreshing: false
   },
-  // 接口返回的数据
-  Cates: [],
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-    // 1/先判断本地存储有没有数据
-    // 2。没数据再发送请求 有数据判断是否过期 若过期则发送请求
-
-    const Cates = wx.getStorageSync("cates");
-    // 2 判断
-    if (!Cates) {
-      // 不存在  发送请求获取数据
-      this.getCates();
-    } else {
-      // 有旧的数据 定义过期时间
-      if (Date.now() - Cates.time > 1000 * 10) {
-        // 重新发送请求
-        this.getCates();
-      } else {
-        // 可以使用旧的数据
-        this.Cates = Cates.data;
-        let leftMenuList = this.Cates.map(n => n.cat_name);
-        let rightContent = this.Cates[0].children;
-        this.setData({
-          leftMenuList,
-          rightContent
-        })
-      }
+  onLoad(options) {
+    const pending = wx.getStorageSync('pendingCategoryId')
+    if (pending) {
+      this.setData({ currentCategoryId: pending })
+      wx.removeStorageSync('pendingCategoryId')
+    } else if (options.categoryId) {
+      this.setData({ currentCategoryId: Number(options.categoryId) })
     }
+    this.loadCategories()
   },
-  // 获取分类数据
-  async getCates() {
-    // request({
-    //   url: "/categories"
-    // })
-    //   .then(res => {
-    //     // console.log(res);
-    //     this.Cates = res
 
-    //     // 把接口数据存入本地存储
-    //     wx.setStorageSync("cates", { time: Date.now(), data: this.Cates });
+  onShow() {
+    const app = getApp()
+    app.refreshCartCount && app.refreshCartCount()
+    this.setData({ cartCount: app.globalData.cartCount || 0 })
+  },
 
-    //     // 构造左侧菜单数据
-    //     let leftMenuList = this.Cates.map(n => n.cat_name)
-    //     // 构造右侧商品数据
-    //     let rightContent = this.Cates[0].children
+  async loadCategories() {
+    const categories = await get('/categories')
+    this.setData({ categories })
+    this.initSubCategories()
+    this.loadGoods()
+  },
 
-    //     this.setData({
-    //       leftMenuList,
-    //       rightContent
-    //     })
-    //   })
+  initSubCategories() {
+    const cat = this.data.categories.find(c => c.id === this.data.currentCategoryId)
+    const subs = cat ? cat.children : []
+    this.setData({ subCategories: subs, currentSubId: 0 })
+  },
 
-    // 使用ES7的async await 发送请求
-    const res = await request({ url: "/categories" })
-    this.Cates = res
-    // 把接口数据存入本地存储
-    wx.setStorageSync("cates", { time: Date.now(), data: this.Cates });
-
-    // 构造左侧菜单数据
-    let leftMenuList = this.Cates.map(n => n.cat_name)
-    // 构造右侧商品数据
-    let rightContent = this.Cates[0].children
-
+  async loadGoods(reset = true) {
+    if (reset) {
+      this.setData({ loading: true, page: 1, goodsList: [], noMore: false, empty: false })
+    }
+    const params = {
+      categoryId: this.data.currentCategoryId,
+      subCategoryId: this.data.currentSubId || undefined,
+      sort: this.data.sort,
+      page: this.data.page,
+      size: this.data.size,
+      priceMin: this.data.priceMin || undefined,
+      priceMax: this.data.priceMax || undefined,
+      onlyStock: this.data.onlyStock ? 1 : undefined
+    }
+    const res = await get('/goods/search', params)
+    const records = res.records || []
+    const goodsList = reset ? records : [...this.data.goodsList, ...records]
     this.setData({
-      leftMenuList,
-      rightContent
+      goodsList,
+      total: res.total,
+      loading: false,
+      noMore: goodsList.length >= res.total,
+      empty: res.total === 0
     })
   },
 
-  // 监听左侧菜单点击
-  handleItemTap(e) {
-    // 获取左侧菜单被点击的索引
-    const { index } = e.currentTarget.dataset;
-    // 构造右侧商品数据
-    let rightContent = this.Cates[index].children
-    this.setData({
-      currentIndex: index,
-      rightContent,
-      // 右侧商品滚动距离
-      scrollTop: 0
+  handleCategoryTap(e) {
+    const { id } = e.currentTarget.dataset
+    this.setData({ currentCategoryId: id })
+    this.initSubCategories()
+    this.loadGoods()
+  },
+
+  handleSubTap(e) {
+    const { id } = e.currentTarget.dataset
+    this.setData({ currentSubId: id })
+    this.loadGoods()
+  },
+
+  handleSortTap(e) {
+    const { key } = e.currentTarget.dataset
+    this.setData({ sort: key })
+    this.loadGoods()
+  },
+
+  toggleFilter() {
+    this.setData({ showFilter: !this.data.showFilter })
+  },
+
+  handlePriceInput(e) {
+    const { field } = e.currentTarget.dataset
+    this.setData({ [field]: e.detail.value })
+  },
+
+  handleOnlyStockChange(e) {
+    this.setData({ onlyStock: e.detail.value })
+  },
+
+  applyFilter() {
+    this.setData({ showFilter: false })
+    this.loadGoods()
+  },
+
+  resetFilter() {
+    this.setData({ priceMin: '', priceMax: '', onlyStock: false })
+  },
+
+  clearFilter() {
+    this.setData({ priceMin: '', priceMax: '', onlyStock: false, currentSubId: 0, sort: 'comprehensive' })
+    this.loadGoods()
+  },
+
+  async handleAddCart(e) {
+    const { goods } = e.currentTarget.dataset
+    await post('/cart/add', {
+      goodsId: goods.id,
+      specText: '标准装',
+      price: goods.price,
+      count: 1
     })
+    success('已加入购物车')
+    const app = getApp()
+    app.refreshCartCount && app.refreshCartCount()
+    this.setData({ cartCount: app.globalData.cartCount || 0 })
+  },
+
+  goDetail(e) {
+    const { id } = e.currentTarget.dataset
+    wx.navigateTo({ url: `/pages/goods_detail/index?goods_id=${id}` })
+  },
+
+  goSearch() {
+    wx.navigateTo({ url: '/pages/search/index' })
+  },
+
+  handleScrollToLower() {
+    if (this.data.noMore || this.data.loading) return
+    this.setData({ page: this.data.page + 1 })
+    this.loadGoods(false)
+  },
+
+  onReachBottom() {
+    this.handleScrollToLower()
+  },
+
+  async handleRefresh() {
+    this.setData({ refreshing: true })
+    await this.loadGoods()
+    this.setData({ refreshing: false })
+  },
+
+  onPullDownRefresh() {
+    this.handleRefresh()
+  },
+
+  handleImgError(e) {
+    const { index } = e.currentTarget.dataset
+    this.setData({ [`goodsList[${index}].mainPic`]: '/static/images/default.png' })
   }
 })

@@ -1,77 +1,113 @@
-<!-- 收获地址按钮 -->
-<view class="revice_address_row">
-	<view class="address_btn" wx:if="{{!address.userName}}">
-		<button bindtap="handleChooseAddress" type="primary" plain>获取收获地址</button>
-	</view>
-	<!-- 收货信息 -->
-	<view wx:else class="user_info_row">
-		<view class="user_info">
-			<view>收货人: {{address.userName}}</view>
-			<view>{{address.all}}</view>
-		</view>
-		<view class="user_phone">{{address.telNumber}}</view>
-	</view>
-	<!--  -->
-</view>
+<!--pages/cart/index.wxml-->
+<view class="page">
+  <!-- 收货地址区 -->
+  <view class="address_card" bindtap="handleChooseAddress">
+    <view class="addr_icon">📍</view>
+    <view class="addr_info" wx:if="{{address}}">
+      <view class="addr_row">
+        <text class="addr_name">{{address.name}}</text>
+        <text class="addr_phone">{{address.phone}}</text>
+      </view>
+      <view class="addr_detail">{{address.region}}{{address.detail}}</view>
+    </view>
+    <view class="addr_info" wx:else>
+      <view class="addr_row">
+        <text class="addr_name">请选择收货地址</text>
+      </view>
+    </view>
+    <view class="addr_arrow" bindtap="handleAddAddress">＋</view>
+  </view>
 
-<!-- 购物车内容 -->
-<view class="cart_content">
-	<view class="cart_title">购物车</view>
-	<!-- 商品 -->
-	<view class="cart_main">
-		<!-- 购物车有商品时显示 -->
-		<block wx:if="{{cart.length !== 0}}">
-			<view class="cart_item" wx:for="{{cart}}" wx:key="goods_id">
-				<!-- 复选框 -->
-				<view class="caer_chk_wrap">
-					<checkbox-group bindchange="handleItemChange" data-id="{{item.goods_id}}">
-						<checkbox checked="{{item.checked}}" color="#FF2D4A"></checkbox>
-					</checkbox-group>
-				</view>
-				<!-- 图片 -->
-				<navigator class="cart_img_wrap">
-					<image src="{{item.goods_small_logo}}" mode="widthFix" />
-				</navigator>
-				<!-- 信息 -->
-				<view class="cart_info_wrap">
-					<view class="goods_name">{{item.goods_name}}</view>
-					<view class="goods_price_wrap">
-						<view class="goods_price">￥{{item.goods_price}}</view>
-						<view class="num_tool">
-							<view class="num_edit" bindtap="handleItemNumEdit" data-id="{{item.goods_id}}" data-operation="{{-1}}">-</view>
-							<view class="goods_num">{{item.num}}</view>
-							<view class="num_edit" bindtap="handleItemNumEdit" data-id="{{item.goods_id}}" data-operation="{{1}}">+</view>
-						</view>
-					</view>
-				</view>
-			</view>
-		</block>
-		<!-- 购物车没商品时显示 -->
-		<block wx:else>
-			<image src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1285087026,2572595179&fm=26&gp=0.jpg" mode="widthFix" />
+  <!-- 商品列表 -->
+  <view class="section_title" wx:if="{{cart.length}}">已选商品 ({{cart.length}})</view>
 
-		</block>
+  <view class="cart_list" wx:if="{{cart.length}}">
+    <view
+      class="cart_row"
+      wx:for="{{cart}}"
+      wx:key="id"
+      bindtouchstart="handleTouchStart"
+      bindtouchend="handleTouchEnd"
+      data-id="{{item.id}}"
+    >
+      <!-- 删除按钮（左滑露出） -->
+      <view class="delete_btn" bindtap="handleSwipeDelete" data-id="{{item.id}}">删除</view>
+      <!-- 行内容 -->
+      <view class="row_main" style="transform: translateX({{swipedId === item.id ? '-160rpx' : '0'}});">
+        <view class="check_box {{item.checked ? 'checked' : ''}}" bindtap="handleItemChange" data-id="{{item.id}}">
+          <text wx:if="{{item.checked}}">✓</text>
+        </view>
+        <image
+          class="row_img"
+          src="{{item.mainPic}}"
+          mode="aspectFill"
+          data-index="{{index}}"
+          binderror="handleImgError"
+        />
+        <view class="row_info">
+          <view class="row_name">{{item.name}}</view>
+          <view class="row_spec">{{item.specText}}</view>
+          <view class="row_bottom">
+            <text class="row_price">{{item.priceText}}</text>
+            <view class="stepper">
+              <view class="stepper_btn" bindtap="handleItemNumEdit" data-id="{{item.id}}" data-operation="{{-1}}">−</view>
+              <view class="stepper_num">{{item.count}}</view>
+              <view class="stepper_btn" bindtap="handleItemNumEdit" data-id="{{item.id}}" data-operation="{{1}}">＋</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
 
-	</view>
-</view>
+  <!-- 失效商品 -->
+  <view class="section_title" wx:if="{{invalidItems.length}}">失效商品 ({{invalidItems.length}})</view>
+  <view class="invalid_list" wx:if="{{invalidItems.length}}">
+    <view class="invalid_row" wx:for="{{invalidItems}}" wx:key="id">
+      <view class="check_box disabled"></view>
+      <image class="row_img" src="{{item.mainPic}}" mode="aspectFill" binderror="handleImgError" data-field="invalidItems[{{index}}].mainPic" />
+      <view class="row_info">
+        <view class="row_name disabled_text">{{item.name}}</view>
+        <view class="row_spec">{{item.specText}}</view>
+        <view class="row_bottom">
+          <text class="row_price disabled_text">{{item.priceText}}</text>
+          <text class="invalid_tag">已失效</text>
+        </view>
+      </view>
+    </view>
+    <view class="clear_invalid" bindtap="clearInvalid">清空失效商品</view>
+  </view>
 
-<!-- 底部结算栏 -->
-<view class="footer_tool">
-	<!-- 全选按钮 -->
-	<view class="all_chk_wrap">
-		<checkbox-group bindchange="handleAllChecked">
-			<checkbox checked="{{allChecked}}" color="#F8554F">
-				全选
-			</checkbox>
-		</checkbox-group>
-	</view>
-	<!-- 总价格部分 -->
-	<view class="total_price_wrap">
-		<view class="total_price">
-			合计: <text class="price">￥{{totaPrice}}</text>
-		</view>
-		<view>包含运费</view>
-	</view>
-	<!-- 结算 -->
-	<view bindtap="handlePay" class="order_pay_wrap">结算({{totaNum}})</view>
+  <!-- 空态 -->
+  <view class="empty_state" wx:if="{{!loading && !cart.length && !invalidItems.length}}">
+    <view class="empty_icon">🛒</view>
+    <view class="empty_text">购物车还是空的</view>
+    <view class="empty_btn" bindtap="goHome">去逛逛</view>
+  </view>
+
+  <!-- 猜你喜欢 -->
+  <view class="section_title" wx:if="{{recommends.length && cart.length}}">猜你喜欢</view>
+  <scroll-view class="recommend_scroll" scroll-x wx:if="{{recommends.length && cart.length}}">
+    <view class="recommend_item" wx:for="{{recommends}}" wx:key="id" bindtap="goRecommend" data-id="{{item.id}}">
+      <image src="{{item.mainPic}}" mode="aspectFill" class="recommend_img" binderror="handleImgError" data-field="recommends[{{index}}].mainPic" />
+      <view class="recommend_name">{{item.name}}</view>
+      <view class="recommend_price">{{item.priceText}}</view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部结算栏 -->
+  <view class="settle_bar" wx:if="{{cart.length}}">
+    <view class="all_check" bindtap="handleAllChecked">
+      <view class="check_box {{allChecked ? 'checked' : ''}}"><text wx:if="{{allChecked}}">✓</text></view>
+      <text class="all_check_label">全选</text>
+    </view>
+    <view class="settle_info">
+      <view class="total_row">
+        <text class="total_label">合计：</text>
+        <text class="total_price">{{payPriceText}}</text>
+      </view>
+      <view class="discount_row" wx:if="{{discount > 0}}">已减 {{discountText}}（满39减5/满99减15）</view>
+    </view>
+    <view class="settle_btn" bindtap="handlePay">去结算({{totalCount}})</view>
+  </view>
 </view>

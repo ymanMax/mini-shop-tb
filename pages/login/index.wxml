@@ -1,4 +1,10 @@
 <!--pages/login/index.wxml-->
-<button type="primary" plain open-type="getUserInfo" bindgetuserinfo="handleGetUserInfo">
-	登入
-</button>
+<view class="page">
+  <view class="login_card">
+    <view class="logo">🫓</view>
+    <view class="title">烧饼商城</view>
+    <view class="subtitle">手工现烤 · 坏果包赔</view>
+    <button class="login_btn" bindtap="handleGetUserInfo">微信一键登录</button>
+    <view class="tip">登录即代表同意《用户协议》和《隐私政策》</view>
+  </view>
+</view>

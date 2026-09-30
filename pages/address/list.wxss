@@ -1,0 +1,112 @@
+/* pages/address/list.wxss */
+.page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 140rpx;
+}
+.addr_list { padding: 20rpx; }
+.addr_card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16rpx;
+  margin-bottom: 16rpx;
+}
+.delete_btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 160rpx;
+  background: #eb4450;
+  color: #fff;
+  text-align: center;
+  line-height: 200rpx;
+  font-size: 26rpx;
+}
+.card_main {
+  background: #fff;
+  padding: 24rpx;
+  border-radius: 16rpx;
+  transition: transform 0.25s;
+  position: relative;
+  z-index: 2;
+}
+.addr_head {
+  display: flex;
+  align-items: center;
+}
+.addr_name { font-size: 30rpx; font-weight: bold; color: #333; }
+.addr_phone { font-size: 26rpx; color: #666; margin-left: 20rpx; }
+.addr_tag {
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 6rpx;
+  margin-left: 16rpx;
+}
+.tag_home { background: #e8f5e9; color: #4caf50; }
+.tag_school { background: #e3f2fd; color: #1e88e5; }
+.tag_company { background: #fff3ee; color: #ff6b35; }
+.tag_other { background: #f5f5f5; color: #999; }
+.default_badge {
+  font-size: 20rpx;
+  color: #fff;
+  background: #4caf50;
+  padding: 4rpx 12rpx;
+  border-radius: 6rpx;
+  margin-left: 12rpx;
+}
+.addr_detail {
+  font-size: 26rpx;
+  color: #666;
+  margin-top: 12rpx;
+  line-height: 1.6;
+}
+.addr_actions {
+  display: flex;
+  margin-top: 16rpx;
+  gap: 24rpx;
+}
+.action_link {
+  font-size: 24rpx;
+  color: #666;
+  padding: 8rpx 16rpx;
+  border: 1rpx solid #ddd;
+  border-radius: 20rpx;
+}
+
+.skeleton { padding: 20rpx; }
+.sk_card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+}
+.sk_line { height: 28rpx; background: #eee; border-radius: 8rpx; margin-top: 16rpx; }
+.w90 { width: 90%; }
+.w60 { width: 60%; }
+.breath { animation: breath 1.2s infinite ease-in-out; }
+@keyframes breath {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+.empty_state { text-align: center; padding: 120rpx 0; }
+.empty_icon { font-size: 100rpx; }
+.empty_text { color: #999; margin: 20rpx 0; font-size: 28rpx; }
+
+.bottom_bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 20rpx 24rpx;
+  background: #fff;
+  box-shadow: 0 -2rpx 12rpx rgba(0,0,0,0.06);
+  z-index: 100;
+}
+.add_btn {
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background: #eb4450;
+  color: #fff;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+}

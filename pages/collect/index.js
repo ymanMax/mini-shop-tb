@@ -1,52 +1,83 @@
-// pages/collect/index.js
-Page({
+// pages/collect/index.js —— 收藏页
+import { get, post } from '../../api/http.js'
+import { success, confirm } from '../../utils/toast.js'
 
-  /**
-   * 页面的初始数据
-   */
+Page({
   data: {
-    collect: [],
     tabs: [
-      {
-        id: 0,
-        value: '商品收藏',
-        isActive: true
-      },
-      {
-        id: 1,
-        value: '品牌收藏',
-        isActive: false
-      },
-      {
-        id: 2,
-        value: '店铺收藏',
-        isActive: false
-      },
-      {
-        id: 3,
-        value: '浏览足迹',
-        isActive: false
-      }
+      { id: 0, value: '全部', isActive: true },
+      { id: 1, value: '正在热卖', isActive: false },
+      { id: 2, value: '即将上线', isActive: false }
     ],
+    collect: [],
+    filtered: [],
+    loading: true,
+    swipedId: null
   },
 
   onShow() {
-    // 获取收藏商品数组
-    const collect = wx.getStorageSync('collect') || [];
-    this.setData({
-      collect
-    })
+    this.loadCollect()
   },
 
-  handletabsItenChange(e) {
-    // 1 获取被点击的索引
-    const { index } = e.detail
-    // 2 获取原数据 进行遍历 修改
-    let { tabs } = this.data
-    tabs.forEach((n, i) => i === index ? n.isActive = true : n.isActive = false);
-    // 3 赋值
-    this.setData({
-      tabs
-    })
+  async loadCollect() {
+    const collect = await get('/collect/list')
+    this.setData({ collect, loading: false })
+    this.applyFilter()
   },
+
+  applyFilter() {
+    const { collect, tabs } = this.data
+    const activeTab = tabs.find(t => t.isActive)
+    let filtered = collect
+    if (activeTab.id === 1) {
+      // 正在热卖：销量 > 3000
+      filtered = collect.filter(g => g.sales > 3000)
+    } else if (activeTab.id === 2) {
+      // 即将上线：新品分类
+      filtered = collect.filter(g => g.categoryId === 7)
+    }
+    this.setData({ filtered })
+  },
+
+  handleTabChange(e) {
+    const { index } = e.detail
+    const tabs = this.data.tabs.map((t, i) => ({ ...t, isActive: i === index }))
+    this.setData({ tabs })
+    this.applyFilter()
+  },
+
+  goDetail(e) {
+    const { id } = e.currentTarget.dataset
+    wx.navigateTo({ url: `/pages/goods_detail/index?goods_id=${id}` })
+  },
+
+  async removeCollect(e) {
+    const { id } = e.currentTarget.dataset
+    const ok = await confirm('确定取消收藏吗?')
+    if (!ok) return
+    await post('/collect/toggle', { goodsId: id })
+    success('已取消收藏')
+    this.loadCollect()
+  },
+
+  // 左滑删除
+  touchStartX: 0,
+  handleTouchStart(e) {
+    this.touchStartX = e.touches[0].clientX
+  },
+  handleTouchEnd(e) {
+    const delta = e.changedTouches[0].clientX - this.touchStartX
+    const { id } = e.currentTarget.dataset
+    if (delta < -50) this.setData({ swipedId: id })
+    else if (delta > 50) this.setData({ swipedId: null })
+  },
+
+  handleImgError(e) {
+    const { index } = e.currentTarget.dataset
+    this.setData({ [`filtered[${index}].mainPic`]: '/static/images/default.png' })
+  },
+
+  goHome() {
+    wx.switchTab({ url: '/pages/index/index' })
+  }
 })

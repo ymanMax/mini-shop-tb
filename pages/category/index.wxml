@@ -1,32 +1,144 @@
 <!--pages/category/index.wxml-->
-<view class="cates">
-	<SearchInput></SearchInput>
-	<view class="cates_container">
-		<!-- 左侧菜单 -->
-		<scroll-view class="left_mune" scroll-y>
-			<view bindtap="handleItemTap" class="mune_item {{index===currentIndex?'active':''}}" wx:for="{{leftMenuList}}" wx:key="*this" data-index="{{index}}">{{item}}
-			</view>
+<view class="page">
+  <!-- 顶部搜索栏 -->
+  <view class="search_bar" bindtap="goSearch">
+    <view class="search_inner">
+      <text class="search_icon">🔍</text>
+      <text class="search_placeholder">搜索烧饼、糕点、零食…</text>
+    </view>
+  </view>
 
-		</scroll-view>
-		<!-- 右侧商品 -->
-		<scroll-view scroll-top="{{scrollTop}}" class="right_content" scroll-y>
-			<view class="goods_group" wx:for="{{rightContent}}" wx:for-item="item1" wx:for-index="index1" wx:key="*this">
-				<view class="goods_title">
-					<text class="delimiter">/</text>
-					<text class="title">{{item1.cat_name}}</text>
-					<text class="delimiter">/</text>
-				</view>
-				<view class="goods_list">
-					<navigator wx:for="{{item1.children}}" wx:for-item="item2" wx:for-index="index2" wx:key="cat_id" url="/pages/goods_list/index?cid={{item2.cat_id}}">
-						<image src="{{item2.cat_icon}}" mode="widthFix" />
-						<view class="goods_name">{{item2.cat_name}}</view>
-					</navigator>
+  <view class="container">
+    <!-- 左侧一级分类 -->
+    <scroll-view class="left_nav" scroll-y>
+      <view
+        wx:for="{{categories}}"
+        wx:key="id"
+        class="nav_item {{currentCategoryId === item.id ? 'active' : ''}}"
+        bindtap="handleCategoryTap"
+        data-id="{{item.id}}"
+      >
+        <text class="nav_icon">{{item.icon}}</text>
+        <text class="nav_name">{{item.name}}</text>
+      </view>
+    </scroll-view>
 
-				</view>
+    <!-- 右侧内容 -->
+    <view class="right_content">
+      <!-- 二级分类标签 -->
+      <scroll-view class="sub_tabs" scroll-x>
+        <view
+          class="sub_tab {{currentSubId === 0 ? 'active' : ''}}"
+          bindtap="handleSubTap"
+          data-id="{{0}}"
+        >全部</view>
+        <view
+          wx:for="{{subCategories}}"
+          wx:key="id"
+          class="sub_tab {{currentSubId === item.id ? 'active' : ''}}"
+          bindtap="handleSubTap"
+          data-id="{{item.id}}"
+        >{{item.name}}</view>
+      </scroll-view>
 
-			</view>
+      <!-- 吸顶排序栏 -->
+      <view class="sort_bar">
+        <view
+          wx:for="{{sortOptions}}"
+          wx:key="key"
+          class="sort_item {{sort === item.key ? 'active' : ''}}"
+          bindtap="handleSortTap"
+          data-key="{{item.key}}"
+        >
+          {{item.label}}
+          <text wx:if="{{sort === item.key}}" class="sort_arrow">▼</text>
+        </view>
+        <view class="sort_item filter_btn {{showFilter ? 'active' : ''}}" bindtap="toggleFilter">
+          筛选 ⚙
+        </view>
+      </view>
 
-		</scroll-view>
-	</view>
+      <!-- 商品区 -->
+      <scroll-view
+        class="goods_scroll"
+        scroll-y
+        lower-threshold="100"
+        bindscrolltolower="handleScrollToLower"
+        refresher-enabled
+        refresher-triggered="{{refreshing}}"
+        bindrefresherrefresh="handleRefresh"
+      >
+        <!-- 骨架屏 -->
+        <view wx:if="{{loading}}" class="skeleton_grid">
+          <view class="skeleton_card" wx:for="{{[1,2,3,4,5,6]}}" wx:key="*this">
+            <view class="sk_img breath"></view>
+            <view class="sk_line breath w80"></view>
+            <view class="sk_line breath w60"></view>
+            <view class="sk_line breath w40"></view>
+          </view>
+        </view>
 
+        <!-- 商品网格 -->
+        <view wx:elif="{{!empty}}" class="goods_grid">
+          <view class="goods_card" wx:for="{{goodsList}}" wx:key="id">
+            <view bindtap="goDetail" data-id="{{item.id}}">
+              <image
+                class="goods_img"
+                src="{{item.mainPic}}"
+                mode="aspectFill"
+                data-index="{{index}}"
+                binderror="handleImgError"
+              />
+            </view>
+            <view class="goods_info">
+              <view class="goods_name" bindtap="goDetail" data-id="{{item.id}}">{{item.name}}</view>
+              <view class="goods_tags">
+                <text class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+              </view>
+              <view class="goods_bottom">
+                <view class="price_box">
+                  <text class="price">{{item.priceText}}</text>
+                  <text class="origin_price">{{item.originPriceText}}</text>
+                </view>
+                <view class="sales">已售{{item.sales}}件</view>
+              </view>
+              <view class="add_cart" catchtap="handleAddCart" data-goods="{{item}}">＋</view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 空态 -->
+        <view wx:else class="empty_state">
+          <view class="empty_icon">🛒</view>
+          <view class="empty_text">没有找到相关商品</view>
+          <view class="empty_btn" bindtap="clearFilter">清除筛选</view>
+        </view>
+
+        <!-- 到底提示 -->
+        <view wx:if="{{noMore && !loading && !empty}}" class="no_more">—— 没有更多了 ——</view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 筛选半屏面板 -->
+  <view wx:if="{{showFilter}}" class="mask" bindtap="toggleFilter"></view>
+  <view class="filter_panel {{showFilter ? 'open' : ''}}">
+    <view class="filter_title">筛选</view>
+    <view class="filter_row">
+      <text class="filter_label">价格区间</text>
+      <view class="price_inputs">
+        <input class="price_input" type="digit" placeholder="最低" value="{{priceMin}}" data-field="priceMin" bindinput="handlePriceInput" />
+        <text class="price_dash">—</text>
+        <input class="price_input" type="digit" placeholder="最高" value="{{priceMax}}" data-field="priceMax" bindinput="handlePriceInput" />
+      </view>
+    </view>
+    <view class="filter_row">
+      <text class="filter_label">仅看有货</text>
+      <switch checked="{{onlyStock}}" color="#eb4450" bindchange="handleOnlyStockChange" />
+    </view>
+    <view class="filter_actions">
+      <view class="filter_reset" bindtap="resetFilter">重置</view>
+      <view class="filter_apply" bindtap="applyFilter">确定</view>
+    </view>
+  </view>
 </view>

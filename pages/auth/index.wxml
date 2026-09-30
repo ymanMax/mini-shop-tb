@@ -1,10 +1,9 @@
 <!--pages/auth/index.wxml-->
-<button type="primary" plain open-type="getUserInfo" bindgetuserinfo="handleGetUserInfo">
-	获取授权
-</button>
-<view class="caution">
-	<view>
-		只能进行模拟获取权限 无法真正获取token值 望周知！！！
-	</view>
-
+<view class="page">
+  <view class="auth_card">
+    <view class="auth_icon">🔐</view>
+    <view class="title">授权登录</view>
+    <view class="subtitle">需要您的授权才能继续操作</view>
+    <button class="auth_btn" bindtap="handleGetUserInfo">同意授权</button>
+  </view>
 </view>

@@ -1,112 +1,102 @@
 /* pages/user/index.wxss */
-page {
-  background-color: #edece8;
+.page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 40rpx;
 }
-.user {
-  position: relative;
-  height: 45vh;
-  overflow: hidden;
-  background-color: var(--themeColor);
-}
-.user .user_img {
-  position: relative;
-}
-.user .user_img .img_bg {
-  width: 110%;
-  height: 50vh;
-  filter: blur(20rpx);
-}
-.user .user_img .user_info {
-  position: absolute;
-  top: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-}
-.user .user_img .user_info .user_ico {
-  height: 150rpx;
-  width: 150rpx;
-  border-radius: 50%;
-}
-.user .user_img .user_info .user_name {
-  margin-top: 40rpx;
-  font-size: 36rpx;
+
+.user_header {
+  background: linear-gradient(135deg, #eb4450, #ff6b6b);
+  padding: 60rpx 32rpx;
+  display: flex;
+  align-items: center;
   color: #fff;
 }
-.user .user_btn {
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  transform: translateX(-59%);
-  padding: 30rpx;
-  font-size: 38rpx;
-  border: 1rpx solid greenyellow;
-  color: greenyellow;
-  border-radius: 10rpx;
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  border: 4rpx solid rgba(255,255,255,0.5);
 }
-.content {
-  position: relative;
+.user_info { margin-left: 24rpx; }
+.nickname { font-size: 36rpx; font-weight: bold; }
+.user_meta { margin-top: 8rpx; display: flex; }
+.level {
+  font-size: 22rpx;
+  background: rgba(255,255,255,0.3);
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  margin-right: 16rpx;
 }
-.content .user_main {
-  position: absolute;
-  padding-bottom: 40rpx;
-  width: 94vw;
-  top: -40rpx;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #666;
+.points { font-size: 22rpx; opacity: 0.9; }
+
+.card {
+  background: #fff;
+  margin: 20rpx;
+  border-radius: 16rpx;
+  padding: 24rpx;
 }
-.content .user_main .collect {
-  display: flex;
-  padding: 10rpx 0;
-  border-radius: 15rpx;
-  background-color: #fff;
-}
-.content .user_main .collect navigator {
-  flex: 1;
-  text-align: center;
-  font-size: 30rpx;
-}
-.content .user_main .collect navigator .collect_num {
-  color: var(--themeColor);
-}
-.content .user_main .order {
-  margin: 30rpx 0;
-  background-color: #fff;
-}
-.content .user_main .order .order_title {
-  padding: 20rpx;
-  border-bottom: 1px solid #ccc;
-}
-.content .user_main .order .order_content {
-  display: flex;
-}
-.content .user_main .order .order_content navigator {
-  flex: 1;
-  padding: 15rpx 0;
-  text-align: center;
-}
-.content .user_main .order .order_content navigator .iconfont {
-  font-size: 40rpx;
-  color: var(--themeColor);
-}
-.content .user_main .addres {
-  padding: 20rpx;
-  background-color: #fff;
-}
-.content .user_main .app_info {
-  margin: 30rpx 0;
-  background-color: #fff;
-}
-.content .user_main .app_info .app_info_item {
-  padding: 20rpx;
-  border-bottom: 1rpx solid #ccc;
-}
-.content .user_main .app_info .info_relation {
+.card_head {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
 }
-.content .user_main .recommend {
-  padding: 20rpx;
-  background-color: #fff;
+.card_title { font-size: 30rpx; font-weight: bold; color: #333; }
+.all_orders { font-size: 24rpx; color: #999; }
+
+.order_grid {
+  display: flex;
+  justify-content: space-around;
+}
+.order_item {
+  text-align: center;
+  position: relative;
+  padding: 12rpx;
+}
+.order_icon { font-size: 48rpx; display: block; }
+.order_label { font-size: 24rpx; color: #333; margin-top: 8rpx; display: block; }
+.order_badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #eb4450;
+  color: #fff;
+  font-size: 20rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  line-height: 32rpx;
+  border-radius: 16rpx;
+  padding: 0 8rpx;
+}
+
+.func_list { padding: 0 8rpx; }
+.func_item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.func_item:last-child { border-bottom: none; }
+.func_icon { font-size: 36rpx; margin-right: 16rpx; }
+.func_label { flex: 1; font-size: 28rpx; color: #333; }
+.func_value { font-size: 24rpx; color: #999; }
+.msg_badge {
+  display: inline-block;
+  background: #eb4450;
+  color: #fff;
+  font-size: 20rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  line-height: 32rpx;
+  border-radius: 16rpx;
+  padding: 0 8rpx;
+  margin-right: 8rpx;
+}
+
+.footer_tip {
+  text-align: center;
+  color: #bbb;
+  font-size: 22rpx;
+  padding: 40rpx 0;
 }

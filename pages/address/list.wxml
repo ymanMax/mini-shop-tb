@@ -1,0 +1,49 @@
+<!--pages/address/list.wxml-->
+<view class="page">
+  <view class="addr_list" wx:if="{{!loading && addresses.length}}">
+    <view
+      class="addr_card"
+      wx:for="{{addresses}}"
+      wx:key="id"
+      bindtouchstart="handleTouchStart"
+      bindtouchend="handleTouchEnd"
+      data-id="{{item.id}}"
+      bindtap="handleSelect"
+    >
+      <!-- 删除按钮（左滑露出） -->
+      <view class="delete_btn" catchtap="removeAddress" data-id="{{item.id}}">删除</view>
+      <view class="card_main" style="transform: translateX({{swipedId === item.id ? '-160rpx' : '0'}});">
+        <view class="addr_head">
+          <text class="addr_name">{{item.name}}</text>
+          <text class="addr_phone">{{item.phone}}</text>
+          <text class="addr_tag {{item.tagClass}}">{{item.tag}}</text>
+          <text class="default_badge" wx:if="{{item.isDefault}}">默认</text>
+        </view>
+        <view class="addr_detail">{{item.region}} {{item.detail}}</view>
+        <view class="addr_actions">
+          <view class="action_link" catchtap="goEdit" data-id="{{item.id}}">✏️ 编辑</view>
+          <view class="action_link" wx:if="{{!item.isDefault}}" catchtap="setDefault" data-id="{{item.id}}">⭐ 设为默认</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 骨架屏 -->
+  <view class="skeleton" wx:if="{{loading}}">
+    <view class="sk_card breath" wx:for="{{[1,2,3]}}" wx:key="*this">
+      <view class="sk_line w90"></view>
+      <view class="sk_line w60"></view>
+    </view>
+  </view>
+
+  <!-- 空态 -->
+  <view class="empty_state" wx:if="{{!loading && !addresses.length}}">
+    <view class="empty_icon">📍</view>
+    <view class="empty_text">还没有收货地址，点击下方按钮新增~</view>
+  </view>
+
+  <!-- 底部新增按钮 -->
+  <view class="bottom_bar" wx:if="{{!loading}}">
+    <view class="add_btn" bindtap="goAdd">＋ 新增地址</view>
+  </view>
+</view>

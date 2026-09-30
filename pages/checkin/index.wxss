@@ -1,0 +1,160 @@
+/* pages/checkin/index.wxss */
+.page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 140rpx;
+}
+
+/* 连续签到奖励 */
+.streak_bar {
+  background: linear-gradient(135deg, #eb4450, #ff6b6b);
+  margin: 20rpx;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  color: #fff;
+}
+.streak_title { font-size: 28rpx; font-weight: bold; margin-bottom: 16rpx; }
+.streak_days {
+  display: flex;
+  justify-content: space-between;
+}
+.streak_day {
+  text-align: center;
+  flex: 1;
+}
+.day_num {
+  font-size: 20rpx;
+  background: rgba(255,255,255,0.2);
+  padding: 8rpx 0;
+  border-radius: 8rpx;
+}
+.day_num.done {
+  background: #fff;
+  color: #eb4450;
+  font-weight: bold;
+}
+.day_points { font-size: 22rpx; margin-top: 8rpx; }
+.streak_info { font-size: 22rpx; opacity: 0.9; margin-top: 16rpx; }
+
+/* 日历 */
+.calendar_card {
+  background: #fff;
+  margin: 20rpx;
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+.calendar_head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.cal_prev, .cal_next {
+  font-size: 36rpx;
+  color: #666;
+  padding: 8rpx 24rpx;
+}
+.cal_title { font-size: 30rpx; font-weight: bold; color: #333; }
+.week_row {
+  display: flex;
+  border-bottom: 1rpx solid #eee;
+  padding-bottom: 12rpx;
+}
+.week_cell {
+  flex: 1;
+  text-align: center;
+  font-size: 24rpx;
+  color: #999;
+}
+.calendar_grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding-top: 12rpx;
+}
+.cal_cell {
+  width: calc(100% / 7);
+  height: 80rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.cal_day { font-size: 26rpx; color: #333; }
+.cal_cell.signed .cal_day {
+  background: #eb4450;
+  color: #fff;
+  width: 48rpx;
+  height: 48rpx;
+  line-height: 48rpx;
+  border-radius: 50%;
+}
+.cal_cell.today .cal_day {
+  border: 2rpx solid #eb4450;
+  width: 48rpx;
+  height: 48rpx;
+  line-height: 44rpx;
+  border-radius: 50%;
+}
+.cal_cell.future .cal_day { color: #ccc; }
+.cal_check {
+  font-size: 18rpx;
+  color: #eb4450;
+  position: absolute;
+  bottom: 4rpx;
+}
+
+/* 签到按钮 */
+.checkin_bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 20rpx 24rpx;
+  background: #fff;
+  box-shadow: 0 -2rpx 12rpx rgba(0,0,0,0.06);
+  z-index: 100;
+}
+.checkin_btn {
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background: #eb4450;
+  color: #fff;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+}
+.checkin_btn.disabled { background: #eee; color: #999; }
+
+/* 成功弹层 */
+.mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+}
+.success_panel {
+  position: fixed;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%) scale(0);
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 48rpx;
+  text-align: center;
+  z-index: 201;
+  transition: transform 0.3s;
+  width: 600rpx;
+}
+.success_panel.open { transform: translate(-50%, -50%) scale(1); }
+.success_icon { font-size: 80rpx; }
+.success_title { font-size: 32rpx; font-weight: bold; color: #333; margin-top: 16rpx; }
+.success_reward { font-size: 48rpx; color: #eb4450; font-weight: bold; margin: 16rpx 0; }
+.success_streak { font-size: 24rpx; color: #999; }
+.success_btn {
+  margin-top: 32rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  background: #eb4450;
+  color: #fff;
+  border-radius: 36rpx;
+  font-size: 28rpx;
+}

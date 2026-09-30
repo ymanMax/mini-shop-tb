@@ -1,0 +1,83 @@
+/* pages/coupon/index.wxss */
+.page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+.coupon_list { padding: 20rpx; }
+.coupon_card {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  overflow: hidden;
+}
+.coupon_left {
+  width: 200rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx;
+  color: #fff;
+}
+.type_full { background: linear-gradient(135deg, #eb4450, #ff6b6b); }
+.type_discount { background: linear-gradient(135deg, #ff9500, #ffb74d); }
+.type_none { background: linear-gradient(135deg, #ffd700, #ffed4e); color: #333; }
+.coupon_amount {
+  font-size: 48rpx;
+  font-weight: bold;
+}
+.coupon_threshold {
+  font-size: 22rpx;
+  margin-top: 8rpx;
+  opacity: 0.9;
+}
+.coupon_right {
+  flex: 1;
+  padding: 24rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.coupon_name {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+}
+.coupon_scope {
+  font-size: 22rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+.coupon_progress {
+  font-size: 20rpx;
+  color: #bbb;
+  margin-top: 4rpx;
+}
+.claim_btn {
+  margin-top: 12rpx;
+  align-self: flex-end;
+  padding: 8rpx 24rpx;
+  background: #eb4450;
+  color: #fff;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+}
+.claim_btn.claimed {
+  background: #eee;
+  color: #999;
+}
+.claim_btn.use {
+  background: #eb4450;
+}
+.coupon_status {
+  margin-top: 12rpx;
+  align-self: flex-end;
+  font-size: 24rpx;
+  color: #999;
+}
+.disabled { opacity: 0.5; }
+.empty_state { text-align: center; padding: 120rpx 0; }
+.empty_icon { font-size: 100rpx; }
+.empty_text { color: #999; margin: 20rpx 0; font-size: 28rpx; }

@@ -1,0 +1,60 @@
+<!--pages/history/index.wxml-->
+<view class="page">
+  <!-- 顶部操作栏 -->
+  <view class="top_bar" wx:if="{{!loading && groups.length}}">
+    <view class="clear_btn" bindtap="clearAll">清空全部</view>
+  </view>
+
+  <!-- 分组列表 -->
+  <view class="history_groups" wx:if="{{!loading && groups.length}}">
+    <view class="group" wx:for="{{groups}}" wx:for-item="group" wx:key="title" wx:for-index="groupIndex">
+      <view class="group_title">{{group.title}}</view>
+      <view
+        class="history_card"
+        wx:for="{{group.items}}"
+        wx:for-item="item"
+        wx:key="goodsId"
+        bindtouchstart="handleTouchStart"
+        bindtouchend="handleTouchEnd"
+        data-id="{{item.goodsId}}"
+      >
+        <view class="delete_btn" bindtap="removeItem" data-id="{{item.goodsId}}">删除</view>
+        <view class="card_main" style="transform: translateX({{swipedId === item.goodsId ? '-160rpx' : '0'}});">
+          <image
+            class="history_img"
+            src="{{item.mainPic}}"
+            mode="aspectFill"
+            data-group-index="{{groupIndex}}"
+            data-item-index="{{index}}"
+            binderror="handleImgError"
+            bindtap="goDetail"
+            data-id="{{item.goodsId}}"
+          />
+          <view class="history_info" bindtap="goDetail" data-id="{{item.goodsId}}">
+            <view class="history_name">{{item.name}}</view>
+            <view class="history_bottom">
+              <text class="history_price">{{item.priceText}}</text>
+              <text class="history_time">{{item.timeText}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 骨架屏 -->
+  <view class="skeleton" wx:if="{{loading}}">
+    <view class="sk_card breath" wx:for="{{[1,2,3]}}" wx:key="*this">
+      <view class="sk_img"></view>
+      <view class="sk_line w80"></view>
+      <view class="sk_line w60"></view>
+    </view>
+  </view>
+
+  <!-- 空态 -->
+  <view class="empty_state" wx:if="{{!loading && !groups.length}}">
+    <view class="empty_icon">🕐</view>
+    <view class="empty_text">还没有浏览记录，去逛逛~</view>
+    <view class="empty_btn" bindtap="goHome">去逛逛</view>
+  </view>
+</view>

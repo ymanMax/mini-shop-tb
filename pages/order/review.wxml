@@ -1,0 +1,76 @@
+<!--pages/order/review.wxml-->
+<view class="page" wx:if="{{order && goods}}">
+  <!-- 商品信息 -->
+  <view class="card">
+    <view class="goods_row">
+      <image class="goods_img" src="{{goods.mainPic}}" mode="aspectFill" binderror="handleImgError" data-field="goods.mainPic" />
+      <view class="goods_info">
+        <view class="goods_name">{{goods.name}}</view>
+        <view class="goods_spec">{{goods.specText}} × {{goods.count}}</view>
+      </view>
+      <view class="goods_price">{{goods.price}}</view>
+    </view>
+  </view>
+
+  <!-- 星级评分 -->
+  <view class="card">
+    <view class="card_title"><text>评分</text></view>
+    <view class="star_row">
+      <text
+        wx:for="{{[1,2,3,4,5]}}"
+        wx:key="*this"
+        class="star {{item <= rating ? 'on' : ''}}"
+        data-star="{{item}}"
+        bindtap="handleStarSelect"
+      >★</text>
+      <text class="star_text">{{rating === 5 ? '非常满意' : rating === 4 ? '满意' : rating === 3 ? '一般' : rating === 2 ? '不满意' : '非常不满意'}}</text>
+    </view>
+  </view>
+
+  <!-- 快捷标签 -->
+  <view class="card">
+    <view class="card_title"><text>评价标签</text></view>
+    <view class="tag_list">
+      <view
+        class="quick_tag {{tagSelected[item] ? 'active' : ''}}"
+        wx:for="{{quickTags}}"
+        wx:key="*this"
+        bindtap="handleTagToggle"
+        data-tag="{{item}}"
+      >{{item}}</view>
+    </view>
+  </view>
+
+  <!-- 文字评价 -->
+  <view class="card">
+    <view class="card_title"><text>评价内容</text></view>
+    <textarea
+      class="content_input"
+      placeholder="分享你的真实感受，帮助更多小伙伴~"
+      maxlength="100"
+      value="{{content}}"
+      bindinput="handleContentInput"
+    />
+    <view class="word_count">{{content.length}}/100</view>
+  </view>
+
+  <!-- 晒图上传 -->
+  <view class="card">
+    <view class="card_title"><text>晒图（最多6张）</text></view>
+    <view class="upload_list">
+      <view class="upload_item" wx:for="{{images}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill" bindtap="handlePreviewImage" data-url="{{item}}" binderror="handleImgError" data-field="images[{{index}}]" />
+        <view class="remove_btn" bindtap="handleRemoveImage" data-index="{{index}}">✕</view>
+      </view>
+      <view class="upload_add" bindtap="handleChooseImage" wx:if="{{images.length < 6}}">
+        <text class="add_icon">＋</text>
+        <text class="add_text">上传晒图</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit_bar">
+    <view class="submit_btn {{submitting ? 'disabled' : ''}}" bindtap="handleSubmit">提交评价</view>
+  </view>
+</view>
