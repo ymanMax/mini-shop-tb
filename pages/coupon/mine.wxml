@@ -1,0 +1,70 @@
+<!--pages/coupon/mine.wxml-->
+<view class="page">
+  <!-- 状态 Tab：吸顶，带各状态数量 -->
+  <view class="tabs">
+    <view
+      class="tab-item {{item.isActive ? 'on' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="status"
+      bindtap="onTabTap"
+      data-index="{{index}}"
+    >
+      <text>{{item.value}}</text>
+      <text class="tab-count" wx:if="{{item.count > 0}}">{{item.count}}</text>
+      <view class="tab-line" wx:if="{{item.isActive}}"></view>
+    </view>
+  </view>
+
+  <!-- 首次加载骨架屏 -->
+  <block wx:if="{{loading}}">
+    <view class="sk-card" wx:for="{{[1, 2, 3]}}" wx:key="*this">
+      <view class="skeleton-block sk-face"></view>
+      <view class="sk-info">
+        <view class="skeleton-block sk-line sk-w60"></view>
+        <view class="skeleton-block sk-line sk-w40"></view>
+        <view class="skeleton-block sk-line sk-w30"></view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 券列表 -->
+  <block wx:elif="{{coupons.length > 0}}">
+    <view class="coupon-card {{item.cardClass}}" wx:for="{{coupons}}" wx:key="id">
+      <!-- 已使用 / 已过期印章 -->
+      <view class="coupon-seal" wx:if="{{item.showSeal}}">{{item.sealText}}</view>
+
+      <!-- 左侧大号面额区 -->
+      <view class="coupon-left">
+        <view class="coupon-amount">
+          <text class="coupon-symbol" wx:if="{{item.symbol}}">{{item.symbol}}</text>
+          <text class="coupon-value">{{item.amountMain}}</text>
+          <text class="coupon-unit" wx:if="{{item.unitText}}">{{item.unitText}}</text>
+        </view>
+        <view class="coupon-threshold">{{item.subText}}</view>
+      </view>
+
+      <!-- 右侧信息区 -->
+      <view class="coupon-right">
+        <view class="coupon-info">
+          <view class="coupon-title ellipsis">{{item.title}}</view>
+          <view class="coupon-meta">
+            <text class="coupon-scope">{{item.scopeText}}</text>
+          </view>
+          <!-- 临期券有效期文案标红并展示剩余小时 -->
+          <view class="coupon-valid {{item.expiring ? 'expiring' : ''}}">
+            <text wx:if="{{item.expiring}}" class="valid-clock">⏰</text>
+            <text>{{item.validText}}</text>
+          </view>
+        </view>
+        <view class="coupon-btn" wx:if="{{item.showUse}}" catchtap="handleUse">去使用</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 各 Tab 空态 -->
+  <view class="empty" wx:else>
+    <view class="empty-icon">🎫</view>
+    <view class="empty-text">{{tabs[activeIndex].emptyText}}</view>
+    <view class="empty-btn btn-primary" bindtap="handleGoCenter">去领券</view>
+  </view>
+</view>

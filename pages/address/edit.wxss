@@ -1,0 +1,162 @@
+/* pages/address/edit.wxss */
+page {
+  padding-bottom: 200rpx;
+}
+
+/* ============ 表单卡片 ============ */
+.form-card {
+  margin: 24rpx;
+  padding: 4rpx 24rpx;
+  background: #fff;
+  border-radius: 16rpx;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  min-height: 104rpx;
+  border-bottom: 1rpx solid var(--borderColor);
+}
+
+.form-row:last-child {
+  border-bottom: none;
+}
+
+.form-label {
+  flex: none;
+  width: 150rpx;
+  font-size: 28rpx;
+  color: var(--textMain);
+}
+
+.form-label--strong {
+  font-weight: 500;
+}
+
+.form-input {
+  flex: 1;
+  min-width: 0;
+  font-size: 28rpx;
+  color: var(--textMain);
+}
+
+.form-placeholder {
+  color: #bcbcbc;
+  font-size: 28rpx;
+}
+
+/* 地区选择器 */
+.form-picker {
+  flex: 1;
+  min-width: 0;
+}
+
+.picker-value {
+  font-size: 28rpx;
+  color: var(--textMain);
+}
+
+.picker-placeholder {
+  color: #bcbcbc;
+}
+
+.form-arrow {
+  flex: none;
+  font-size: 36rpx;
+  line-height: 1;
+  color: var(--textLight);
+  margin-left: 10rpx;
+}
+
+/* 详细地址多行 */
+.form-row--textarea {
+  align-items: flex-start;
+  padding: 26rpx 0;
+}
+
+.form-textarea {
+  flex: 1;
+  min-width: 0;
+  height: 140rpx;
+  font-size: 28rpx;
+  line-height: 42rpx;
+  color: var(--textMain);
+}
+
+/* ============ 标签区块 ============ */
+.form-block-title {
+  font-size: 28rpx;
+  color: var(--textMain);
+  padding: 28rpx 0 8rpx;
+}
+
+.tag-options {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 12rpx 0 28rpx;
+}
+
+.tag-option {
+  min-width: 140rpx;
+  text-align: center;
+  font-size: 26rpx;
+  line-height: 64rpx;
+  height: 64rpx;
+  padding: 0 28rpx;
+  margin: 12rpx 24rpx 12rpx 0;
+  border: 1rpx solid #dddddd;
+  border-radius: 999rpx;
+  color: var(--textSub);
+  background: #fff;
+}
+
+/* 选中：主题色边框 + 淡主题色底 */
+.tag-option--on {
+  color: var(--themeColor);
+  border-color: var(--themeColor);
+  background: var(--themeColorFade);
+}
+
+/* ============ 默认开关行 ============ */
+.form-row--switch {
+  justify-content: space-between;
+  min-height: 120rpx;
+}
+
+.switch-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  padding-right: 20rpx;
+}
+
+.switch-sub {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: var(--textLight);
+}
+
+/* ============ 底部固定保存按钮 ============ */
+.save-placeholder {
+  height: 40rpx;
+}
+
+.save-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  padding: 16rpx 24rpx 16rpx;
+  background: #fff;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.save-btn {
+  width: 100%;
+}
+
+.save-btn.is-disabled {
+  opacity: 0.6;
+}

@@ -1,0 +1,200 @@
+/* pages/address/list.wxss */
+page {
+  padding-bottom: 200rpx;
+}
+
+/* ============ 首屏骨架屏 ============ */
+.skeleton-wrap {
+  padding: 24rpx;
+}
+
+.skeleton-card {
+  padding: 36rpx 28rpx;
+  margin-bottom: 24rpx;
+  background: #fff;
+  border-radius: 16rpx;
+}
+
+.skeleton-line {
+  height: 30rpx;
+  margin-bottom: 24rpx;
+}
+
+.skeleton-line:last-child {
+  margin-bottom: 0;
+}
+
+/* ============ 地址列表 ============ */
+.addr-list {
+  padding: 24rpx 24rpx 0;
+}
+
+.addr-item {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 24rpx;
+  background: var(--themeColor);
+  border-radius: 16rpx;
+}
+
+.addr-item__delete {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 140rpx;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  color: #fff;
+  background: var(--themeColor);
+}
+
+.addr-item__content {
+  position: relative;
+  z-index: 2;
+  padding: 28rpx 24rpx;
+  background: #fff;
+  border-radius: 16rpx;
+}
+
+/* 选择模式下当前选中地址的主题色高亮边框 */
+.addr-item__content.is-current {
+  box-shadow: inset 0 0 0 3rpx var(--themeColor);
+}
+
+.addr-item__top {
+  display: flex;
+  align-items: center;
+  padding-right: 8rpx;
+}
+
+/* 默认标签占了右上角，给内容右侧留白 */
+.addr-item__top.has-default {
+  padding-right: 96rpx;
+}
+
+.addr-item__name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--textMain);
+  margin-right: 20rpx;
+}
+
+.addr-item__phone {
+  font-size: 26rpx;
+  color: var(--textSub);
+  margin-right: 16rpx;
+}
+
+.addr-item__detail {
+  margin-top: 14rpx;
+  font-size: 26rpx;
+  line-height: 38rpx;
+  color: var(--textSub);
+}
+
+.addr-item__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20rpx;
+}
+
+.addr-item__bottom-space {
+  flex: 1;
+}
+
+.addr-item__default-check {
+  font-size: 24rpx;
+  color: #22a06b;
+}
+
+.addr-item__actions {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+
+.addr-action {
+  font-size: 24rpx;
+  color: var(--textSub);
+  padding: 8rpx 20rpx;
+  margin-left: 16rpx;
+  border: 1rpx solid #dddddd;
+  border-radius: 999rpx;
+}
+
+.addr-action--primary {
+  color: var(--themeColor);
+  border-color: rgba(235, 68, 80, 0.5);
+}
+
+/* 默认标签：右上角绿色系 */
+.addr-item__default-tag {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 3;
+  font-size: 20rpx;
+  line-height: 1;
+  padding: 12rpx 18rpx;
+  color: #fff;
+  background: linear-gradient(135deg, #4cd08b, #22a06b);
+  border-radius: 0 16rpx 0 16rpx;
+}
+
+.addr-list-placeholder {
+  height: 40rpx;
+}
+
+/* ============ 标签胶囊（不同标签不同淡色） ============ */
+.tag-pill {
+  display: inline-block;
+  flex: none;
+  font-size: 20rpx;
+  line-height: 34rpx;
+  padding: 0 14rpx;
+  border-radius: 999rpx;
+}
+
+.tag-pill--home {
+  color: #eb4450;
+  background: rgba(235, 68, 80, 0.1);
+}
+
+.tag-pill--company {
+  color: #2f7cf6;
+  background: rgba(47, 124, 246, 0.1);
+}
+
+.tag-pill--school {
+  color: #22a06b;
+  background: rgba(34, 160, 107, 0.12);
+}
+
+.tag-pill--other {
+  color: #c07a1a;
+  background: rgba(214, 158, 46, 0.14);
+}
+
+/* ============ 底部固定新增按钮 ============ */
+.addr-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  padding: 16rpx 24rpx 16rpx;
+  background: #fff;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.addr-footer__btn {
+  width: 100%;
+}
+
+.addr-footer__btn.is-disabled {
+  background: #cccccc;
+}

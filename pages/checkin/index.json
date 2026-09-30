@@ -1,0 +1,6 @@
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "每日签到",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}

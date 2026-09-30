@@ -1,0 +1,173 @@
+<!--pages/order/detail.wxml-->
+<!-- 加载骨架 -->
+<view class="detail-skeleton" wx:if="{{loading}}">
+  <view class="skeleton-block sk-header"></view>
+  <view class="skeleton-block sk-card"></view>
+  <view class="skeleton-block sk-card"></view>
+  <view class="skeleton-block sk-card"></view>
+</view>
+
+<!-- 失败 / 订单不存在 -->
+<view class="empty" wx:elif="{{loadError}}">
+  <view class="empty-icon">😕</view>
+  <view class="empty-text">订单不存在或加载失败</view>
+  <view class="empty-btn btn-plain" bindtap="handleRetry">重新加载</view>
+  <view class="empty-btn btn-primary" bindtap="handleBack">返回</view>
+</view>
+
+<view class="detail" wx:else>
+  <!-- 状态头部：主题色渐变 -->
+  <view class="status-header">
+    <view class="status-icon">{{order.statusIcon}}</view>
+    <view class="status-text">{{order.statusText}}</view>
+    <view class="status-desc">{{order.statusDesc}}</view>
+  </view>
+
+  <!-- 物流跟踪 -->
+  <view class="card" id="logistics" wx:if="{{order.showLogistics}}">
+    <view class="card-title">
+      物流信息
+      <text class="logi-status">{{order.logistics.statusText}}</text>
+    </view>
+    <view class="logi-head">
+      <text class="logi-company">{{order.logistics.company}}</text>
+      <view class="logi-no">
+        <text class="logi-no-text">{{order.logistics.trackingNo}}</text>
+        <text class="copy-btn" catchtap="copyText" data-text="{{order.logistics.trackingNo}}">复制</text>
+      </view>
+    </view>
+    <view class="timeline">
+      <view class="tl-item" wx:for="{{order.logistics.timeline}}" wx:key="time">
+        <view class="tl-axis">
+          <view class="tl-dot {{item.done ? 'done' : ''}}"></view>
+          <view
+            class="tl-line {{item.lineDone ? 'done' : ''}}"
+            wx:if="{{index < order.logistics.timeline.length - 1}}"
+          ></view>
+        </view>
+        <view class="tl-body">
+          <view class="tl-text {{item.done ? 'done' : ''}}">{{item.text}}</view>
+          <view class="tl-desc">{{item.desc}}</view>
+          <view class="tl-time">{{item.timeText}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="advance-btn" wx:if="{{order.canAdvance}}" catchtap="handleAdvance">🔧 模拟配送进度</view>
+  </view>
+
+  <!-- 收货地址 -->
+  <view class="card address-card" wx:if="{{order.addressSnapshot}}">
+    <view class="addr-icon">📍</view>
+    <view class="addr-body">
+      <view class="addr-line1">
+        <text class="addr-name">{{order.addressSnapshot.userName}}</text>
+        <text class="addr-tel">{{order.addressSnapshot.telNumber}}</text>
+      </view>
+      <view class="addr-all">{{order.addressSnapshot.all}}</view>
+    </view>
+  </view>
+
+  <!-- 商品清单 -->
+  <view class="card">
+    <view class="card-title">
+      商品清单
+      <text class="card-sub">共 {{order.itemCount}} 件商品</text>
+    </view>
+    <view
+      class="goods-item"
+      wx:for="{{order.items}}"
+      wx:key="goodsId"
+      bindtap="handleGoods"
+      data-id="{{item.goodsId}}"
+    >
+      <view class="gi-thumb">
+        <image src="{{item.mainPic}}" mode="aspectFill" binderror="handleImageError" data-index="{{index}}" />
+      </view>
+      <view class="gi-info">
+        <view class="gi-name ellipsis-2">{{item.name}}</view>
+        <view class="gi-spec">{{item.specText}}</view>
+        <view class="gi-bottom">
+          <view class="gi-price">
+            <text class="price-symbol">¥</text>
+            <text class="price">{{item.priceText}}</text>
+            <text class="gi-count">×{{item.count}}</text>
+          </view>
+          <text class="gi-subtotal">¥{{item.subtotalText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 金额明细 -->
+  <view class="card">
+    <view class="amt-row">
+      <text class="amt-label">商品总价</text>
+      <text class="amt-value">¥{{order.totalAmountText}}</text>
+    </view>
+    <view class="amt-row">
+      <text class="amt-label">优惠金额</text>
+      <text class="amt-value amt-discount">-¥{{order.discountAmountText}}</text>
+    </view>
+    <view class="amt-row">
+      <text class="amt-label">运费</text>
+      <text class="amt-value">¥{{order.freightText}}</text>
+    </view>
+    <view class="amt-divider"></view>
+    <view class="amt-row amt-final">
+      <text class="amt-label amt-label-final">实付金额</text>
+      <text class="price amt-final-price">¥{{order.payAmountText}}</text>
+    </view>
+  </view>
+
+  <!-- 订单信息 -->
+  <view class="card">
+    <view class="card-title">订单信息</view>
+    <view class="info-row">
+      <text class="info-label">订单号</text>
+      <view class="info-value info-value-copy">
+        <text class="info-text">{{order.orderNo}}</text>
+        <text class="copy-btn" catchtap="copyText" data-text="{{order.orderNo}}">复制</text>
+      </view>
+    </view>
+    <view class="info-row">
+      <text class="info-label">下单时间</text>
+      <text class="info-value">{{order.createTimeText}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">支付时间</text>
+      <text class="info-value">{{order.payTimeText}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">支付方式</text>
+      <text class="info-value">{{order.payMethod}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">订单备注</text>
+      <text class="info-value">{{order.remarkText}}</text>
+    </view>
+  </view>
+
+  <view class="bar-placeholder safe-area-bottom"></view>
+
+  <!-- 底部操作栏 -->
+  <view class="action-bar safe-area-bottom">
+    <block wx:if="{{order.status === 1}}">
+      <view class="bar-btn" bindtap="handleCancel">取消订单</view>
+      <view class="bar-btn bar-primary" bindtap="handlePay">去支付</view>
+    </block>
+    <block wx:elif="{{order.status === 2}}">
+      <view class="bar-btn bar-primary" bindtap="handleUrge">催发货</view>
+    </block>
+    <block wx:elif="{{order.status === 3 || order.status === 4}}">
+      <view class="bar-btn" bindtap="handleViewLogistics">查看物流</view>
+      <view class="bar-btn bar-primary" bindtap="handleConfirm">确认收货</view>
+    </block>
+    <block wx:elif="{{order.status === 5}}">
+      <view class="bar-btn" bindtap="handleAgain">再来一单</view>
+      <view class="bar-btn bar-primary" wx:if="{{!order.isReviewed}}" bindtap="handleReview">去评价</view>
+    </block>
+    <block wx:elif="{{order.status === 6}}">
+      <view class="bar-btn bar-primary" bindtap="handleAgain">再来一单</view>
+    </block>
+  </view>
+</view>

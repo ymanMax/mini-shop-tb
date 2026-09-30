@@ -1,17 +1,266 @@
 @import "./styles/iconfont.wxss";
 
-page, view, text, swipe, swipe-item, image,navigator {
+page, view, text, swiper, swiper-item, image, navigator, scroll-view, button, input, textarea {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
 
 page {
+  /* 设计变量：主题色体系，各页面统一引用 */
   --themeColor: #eb4450;
+  --themeColorLight: #ff6b76;
+  --themeColorFade: rgba(235, 68, 80, 0.08);
+  --textMain: #1a1a1a;
+  --textSub: #666666;
+  --textLight: #999999;
+  --borderColor: #f0f0f0;
+  --bgPage: #f5f5f5;
+  --bgCard: #ffffff;
 
   font-size: 28rpx;
+  color: var(--textMain);
+  background-color: var(--bgPage);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Helvetica, sans-serif;
 }
 
 image {
   width: 100%;
+  display: block;
+}
+
+/* ============ 通用工具类 ============ */
+.flex-row {
+  display: flex;
+  align-items: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-1 {
+  flex: 1;
+  min-width: 0;
+}
+
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ellipsis-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* 首页 / 分类页 / 详情页 通用的 1px 分隔线 */
+.hairline-bottom {
+  position: relative;
+}
+
+.hairline-bottom::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--borderColor);
+  transform: scaleY(0.5);
+}
+
+/* ============ 价格 ============ */
+.price {
+  color: var(--themeColor);
+  font-weight: bold;
+  font-family: "DIN Alternate", -apple-system, sans-serif;
+}
+
+.price-symbol {
+  font-size: 24rpx;
+  color: var(--themeColor);
+  font-weight: bold;
+}
+
+.price-origin {
+  color: var(--textLight);
+  font-size: 24rpx;
+  text-decoration: line-through;
+  margin-left: 10rpx;
+}
+
+/* ============ 按钮 ============ */
+.btn-primary {
+  background: linear-gradient(90deg, #ff6b76, #eb4450);
+  color: #fff;
+  border-radius: 999rpx;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 500;
+  line-height: 76rpx;
+  height: 76rpx;
+  padding: 0 32rpx;
+}
+
+.btn-plain {
+  border: 1rpx solid #dddddd;
+  color: var(--textSub);
+  border-radius: 999rpx;
+  text-align: center;
+  font-size: 26rpx;
+  line-height: 62rpx;
+  height: 64rpx;
+  padding: 0 28rpx;
+}
+
+/* ============ 标签胶囊 ============ */
+.tag {
+  display: inline-block;
+  font-size: 20rpx;
+  line-height: 32rpx;
+  padding: 0 12rpx;
+  border-radius: 6rpx;
+  color: var(--themeColor);
+  background: var(--themeColorFade);
+  border: 1rpx solid rgba(235, 68, 80, 0.2);
+}
+
+.tag-gray {
+  color: var(--textSub);
+  background: #f5f5f5;
+  border-color: #eeeeee;
+}
+
+/* ============ 角标 ============ */
+.badge {
+  position: absolute;
+  top: -10rpx;
+  right: -14rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  padding: 0 8rpx;
+  border-radius: 16rpx;
+  background: var(--themeColor);
+  color: #fff;
+  font-size: 20rpx;
+  line-height: 32rpx;
+  text-align: center;
+  box-shadow: 0 2rpx 8rpx rgba(235, 68, 80, 0.4);
+}
+
+/* ============ 骨架屏 ============ */
+.skeleton {
+  background: linear-gradient(90deg, #eeeeee 25%, #f7f7f7 37%, #eeeeee 63%);
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.4s ease infinite;
+  border-radius: 8rpx;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+/* 骨架屏灰色块呼吸动画（兼容写法） */
+.skeleton-block {
+  background-color: #ededed;
+  animation: skeleton-breath 1.2s ease-in-out infinite;
+  border-radius: 8rpx;
+}
+
+@keyframes skeleton-breath {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* ============ 空态 ============ */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 60rpx;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  line-height: 1;
+  margin-bottom: 28rpx;
+  opacity: 0.85;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: var(--textLight);
+  text-align: center;
+  line-height: 44rpx;
+}
+
+.empty-btn {
+  margin-top: 36rpx;
+  min-width: 240rpx;
+}
+
+/* ============ 列表加载态 ============ */
+.list-end {
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--textLight);
+  padding: 32rpx 0;
+}
+
+.list-end-line {
+  display: inline-block;
+  padding: 0 24rpx;
+  position: relative;
+}
+
+.list-more {
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--textLight);
+  padding: 28rpx 0;
+}
+
+/* ============ 底部安全区 ============ */
+.safe-area-bottom {
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ============ 弹层 ============ */
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+.popup {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  border-radius: 24rpx 24rpx 0 0;
+  z-index: 101;
+  overflow: hidden;
 }

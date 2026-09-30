@@ -1,41 +1,9 @@
-
-// 同时发送异步代码的次数
-let ajaxTimes = 0;
-export const request = (params) => {
-  // 判断 url中是否带有 /my/ 请求的是私有的路径 带上header token
-  let header = { ...params.header };
-  if (params.url.includes("/my/")) {
-    // 拼接header 带上token
-    header["Authorization"] = wx.getStorageSync("token");
-  }
-
-  ajaxTimes++;
-  // 显示加载中 效果
-  wx.showLoading({
-    title: '加载中',
-    mask: true
-  })
-
-  // 定义公共url 
-  const baseUrl = "https://api-hmugo-web.itheima.net/api/public/v1";
-  return new Promise((resolve, reject) => {
-    wx.request({
-      ...params,
-      header: header,
-      url: baseUrl + params.url,
-      success: (result) => {
-        resolve(result.data.message)
-      },
-
-      fail: (err) => {
-        reject(err)
-      },
-      complete: () => {
-        ajaxTimes--
-        if (ajaxTimes === 0) {
-          wx.hideLoading();
-        }
-      }
-    })
-  })
-}
+/**
+ * 旧请求入口（已废弃，保留仅为兼容历史引用）
+ *
+ * 项目已统一收口到 api/http.js：
+ *   import { request, upload } from '../../api/http.js'
+ *
+ * 该文件不再连接真实后端，仅做转发。
+ */
+export { request, upload, USE_MOCK, baseUrl, DEFAULT_IMAGE, DEFAULT_AVATAR } from '../api/http.js';

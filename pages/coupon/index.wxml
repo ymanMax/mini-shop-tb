@@ -1,0 +1,66 @@
+<!--pages/coupon/index.wxml-->
+<view class="page">
+  <!-- 我的优惠券入口（带未使用数量角标） -->
+  <view class="mine-entry" bindtap="handleGoMine">
+    <view class="mine-left">
+      <text class="mine-icon">🎫</text>
+      <text class="mine-label">我的优惠券</text>
+      <text class="badge mine-badge" wx:if="{{unusedCount > 0}}">{{unusedCount}}</text>
+    </view>
+    <view class="mine-right">
+      <text class="mine-tip" wx:if="{{unusedCount > 0}}">{{unusedCount}} 张未使用</text>
+      <text class="mine-tip" wx:else>去查看</text>
+      <text class="mine-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 首次加载骨架屏 -->
+  <block wx:if="{{loading}}">
+    <view class="sk-card" wx:for="{{[1, 2, 3, 4]}}" wx:key="*this">
+      <view class="skeleton-block sk-face"></view>
+      <view class="sk-info">
+        <view class="skeleton-block sk-line sk-w60"></view>
+        <view class="skeleton-block sk-line sk-w40"></view>
+        <view class="skeleton-block sk-line sk-w30"></view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 券模板列表 -->
+  <block wx:elif="{{!empty}}">
+    <view class="coupon-card {{item.cardClass}}" wx:for="{{templates}}" wx:key="id">
+      <!-- 左侧大号面额区 -->
+      <view class="coupon-left">
+        <view class="coupon-amount">
+          <text class="coupon-symbol" wx:if="{{item.symbol}}">{{item.symbol}}</text>
+          <text class="coupon-value">{{item.amountMain}}</text>
+          <text class="coupon-unit" wx:if="{{item.unitText}}">{{item.unitText}}</text>
+        </view>
+        <view class="coupon-threshold">{{item.subText}}</view>
+      </view>
+      <!-- 右侧信息区（带半圆缺口造型） -->
+      <view class="coupon-right">
+        <view class="coupon-info">
+          <view class="coupon-title ellipsis">{{item.title}}</view>
+          <view class="coupon-meta">
+            <text class="coupon-scope">{{item.scope}}</text>
+            <text class="coupon-days">{{item.daysText}}</text>
+          </view>
+          <view class="coupon-desc ellipsis">{{item.description}}</view>
+        </view>
+        <view
+          class="coupon-btn {{item.disabled ? 'coupon-btn-disabled' : ''}}"
+          catchtap="handleClaim"
+          data-index="{{index}}"
+        >{{item.btnText}}</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 空态：全部领完或加载失败 -->
+  <view class="empty" wx:else>
+    <view class="empty-icon">🎫</view>
+    <view class="empty-text">优惠券已被领完，下次早点来~</view>
+    <view class="empty-btn btn-primary" bindtap="handleGoMine">看我的优惠券</view>
+  </view>
+</view>

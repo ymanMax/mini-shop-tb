@@ -1,119 +1,321 @@
-/* pages/user/index.wxss */
+/* pages/user/index.less（与 index.wxss 保持一致，wxss 为编译产物） */
 page {
-  background-color: #edece8;
+  background-color: var(--bgPage);
 }
-.user {
+
+.user_page {
+  padding-bottom: 60rpx;
+}
+
+/* ==================== 用户信息头部 ==================== */
+.user_header {
   position: relative;
-  height: 45vh;
+  padding: 40rpx 32rpx 0;
+  background: linear-gradient(160deg, #ff7a84, var(--themeColor) 70%);
   overflow: hidden;
-  background-color: var(--themeColor);
-  .user_img {
-    position: relative;
-    .img_bg {
-      width: 110%;
-      height: 50vh;
-      filter: blur(20rpx);
-    }
-    .user_info {
-      position: absolute;
-      top: 20%;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      .user_ico {
-        height: 150rpx;
-        width: 150rpx;
-        border-radius: 50%;
-        
-      }
-      .user_name {
-        margin-top: 40rpx;
-        font-size: 36rpx;
-        color: #fff;
-      }
-    }
-  }
-  .user_btn {
-    position: absolute;
-    top: 30%;
-    left: 50%;
-    transform: translateX(-59%);
-    padding: 30rpx;
-    font-size: 38rpx;
-    border: 1rpx solid greenyellow;
-    color:greenyellow;
-    border-radius: 10rpx;
-  }
 }
-.content {
+
+.header_bg {
+  position: absolute;
+  right: -80rpx;
+  top: -80rpx;
+  width: 320rpx;
+  height: 320rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.user_profile {
   position: relative;
+  display: flex;
+  align-items: center;
+}
 
-  .user_main {
-    position: absolute;
-    padding-bottom: 40rpx;
-    width: 94vw;
-    top: -40rpx;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #666;
+.user_avatar {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 50%;
+  border: 4rpx solid rgba(255, 255, 255, 0.6);
+  background: #f0f0f0;
+  flex-shrink: 0;
+}
 
-    .collect {
-      display: flex;
-      padding: 10rpx 0;
-      border-radius: 15rpx;
-      background-color: #fff;
+.user_meta {
+  flex: 1;
+  margin-left: 24rpx;
+  min-width: 0;
+}
 
-      navigator {
-        flex: 1;
-        text-align: center;
-        font-size: 30rpx;
-        .collect_num {
-          color: var(--themeColor);
-        }
-      }
-    }
+.user_name {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #fff;
+}
 
-    .order {
-      margin: 30rpx 0;
-      background-color: #fff;
-      
-      .order_title {
-        padding: 20rpx;
-        border-bottom: 1px solid #ccc;
-        
-      }
-      .order_content {
-        display: flex;
-        navigator {
-          flex: 1;
-          padding: 15rpx 0;
-          text-align: center;
-          .iconfont {
-            font-size: 40rpx;
-            color: var(--themeColor)
-          }
-        }
-      }
-    }
-    .addres {
-      padding: 20rpx;
-      background-color: #fff;
-    }
-    .app_info {
-      margin: 30rpx 0;
-      background-color: #fff;
-      .app_info_item {
-        padding: 20rpx;
-        border-bottom: 1rpx solid #ccc;
-      }
-      .info_relation {
-        display: flex;
-        justify-content: space-between;
-      }
-    }
-    .recommend {
-      padding: 20rpx;
-      background-color: #fff;
-    }
-  }
+.user_phone {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 10rpx;
+}
+
+.user_level {
+  flex-shrink: 0;
+  font-size: 22rpx;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.22);
+  border: 1rpx solid rgba(255, 255, 255, 0.5);
+  border-radius: 999rpx;
+  padding: 6rpx 20rpx;
+}
+
+.user_assets {
+  position: relative;
+  display: flex;
+  margin-top: 36rpx;
+  padding: 26rpx 0;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 16rpx 16rpx 0 0;
+}
+
+.asset_item {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.asset_item::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rpx;
+  height: 44rpx;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.asset_item:last-child::after {
+  display: none;
+}
+
+.asset_num {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #fff;
+}
+
+.asset_label {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 8rpx;
+}
+
+/* ==================== 通用卡片 ==================== */
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 20rpx;
+  padding: 8rpx 24rpx;
+}
+
+.card_head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 0 16rpx;
+}
+
+.card_title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: var(--textMain);
+}
+
+.card_more {
+  font-size: 24rpx;
+  color: var(--textLight);
+}
+
+/* ==================== 我的订单 ==================== */
+.order_card {
+  margin-top: -2rpx;
+  border-radius: 16rpx;
+}
+
+.order_entries {
+  display: flex;
+  padding: 16rpx 0 28rpx;
+}
+
+.order_entry {
+  flex: 1;
+  text-align: center;
+}
+
+.order_entry_icon {
+  position: relative;
+  display: inline-block;
+  font-size: 46rpx;
+  line-height: 1.2;
+}
+
+.order_entry_icon .badge {
+  top: -8rpx;
+  right: -22rpx;
+}
+
+.order_entry_name {
+  font-size: 24rpx;
+  color: var(--textSub);
+  margin-top: 10rpx;
+}
+
+/* ==================== 我的服务（宫格入口） ==================== */
+.service_grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.service_item {
+  width: 25%;
+  text-align: center;
+  padding: 22rpx 0 18rpx;
+  position: relative;
+}
+
+.service_icon_wrap {
+  position: relative;
+  display: inline-block;
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 50%;
+  background: var(--themeColorFade);
+  line-height: 76rpx;
+}
+
+.service_icon {
+  font-size: 38rpx;
+}
+
+.service_icon_wrap .badge {
+  top: -6rpx;
+  right: -12rpx;
+}
+
+/* 未签到红点 */
+.dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 50%;
+  background: var(--themeColor);
+  border: 2rpx solid #fff;
+}
+
+.service_name {
+  font-size: 24rpx;
+  color: var(--textMain);
+  margin-top: 12rpx;
+}
+
+.service_sub {
+  font-size: 20rpx;
+  color: var(--textLight);
+  margin-top: 4rpx;
+}
+
+/* ==================== 购物车 / 收藏 / 搜索 ==================== */
+.quick_item {
+  display: flex;
+  align-items: center;
+  padding: 26rpx 0;
+  border-bottom: 1rpx solid var(--borderColor);
+}
+
+.quick_item:last-child {
+  border-bottom: none;
+}
+
+.quick_icon_wrap {
+  position: relative;
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: var(--themeColorFade);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.quick_icon {
+  font-size: 36rpx;
+}
+
+.quick_icon_wrap .badge {
+  top: -6rpx;
+  right: -10rpx;
+}
+
+.quick_text {
+  flex: 1;
+  margin-left: 22rpx;
+  min-width: 0;
+}
+
+.quick_title {
+  font-size: 28rpx;
+  color: var(--textMain);
+}
+
+.quick_desc {
+  font-size: 22rpx;
+  color: var(--textLight);
+  margin-top: 6rpx;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.quick_arrow {
+  font-size: 34rpx;
+  color: #ccc;
+  flex-shrink: 0;
+  margin-left: 12rpx;
+}
+
+/* ==================== 设置列表 ==================== */
+.list_item {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 0;
+  border-bottom: 1rpx solid var(--borderColor);
+}
+
+.list_item:last-child {
+  border-bottom: none;
+}
+
+.list_label {
+  font-size: 28rpx;
+  color: var(--textMain);
+  flex-shrink: 0;
+}
+
+.list_value {
+  flex: 1;
+  text-align: right;
+  font-size: 24rpx;
+  color: var(--textLight);
+  margin: 0 12rpx;
+  min-width: 0;
+}
+
+.page_bottom {
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--textLight);
+  padding: 40rpx 0 20rpx;
 }

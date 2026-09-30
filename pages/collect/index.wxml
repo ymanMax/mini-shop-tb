@@ -1,23 +1,76 @@
 <!--pages/collect/index.wxml-->
-<Tabs tabs="{{tabs}}" bindtabsItenChange="handletabsItenChange">
-	<view class="collect_main">
-		<view class="collect_title">
-			<text class="collect_tips active">全部</text>
-			<text class="collect_tips">正在热卖</text>
-			<text class="collect_tips">即将上线</text>
-		</view>
-		<view class="collect_content">
-			<navigator class="goods_item" wx:for="{{collect}}" wx:key="goods_id" url="/pages/goods_detail/index?goods_id={{item.goods_id}}">
-				<!-- 左侧图片 -->
-				<view class="goods_img_wrap">
-					<image src="{{item.goods_small_logo? item.goods_small_logo :'https://ww1.sinaimg.cn/large/007rAy9hgy1g24by9t530j30i20i2glm.jpg'}}" mode="widthFix" />
-				</view>
-				<!-- 右侧商品数据 -->
-				<view class="goods_info_wrap">
-					<view class="goods_name">{{item.goods_name}}</view>
-					<view class="goods_price">￥{{item.goods_price}}</view>
-				</view>
-			</navigator>
+<view class="collect_page">
+	<!-- ==================== Tab 栏（吸顶） ==================== -->
+	<view class="tab_bar">
+		<view class="tab_item {{currentTab === item.key ? 'active' : ''}}" wx:for="{{tabs}}" wx:key="key" data-key="{{item.key}}" bindtap="handleTabTap">
+			<text>{{item.label}}</text>
+			<text class="tab_count" wx:if="{{item.count > 0}}">{{item.count}}</text>
 		</view>
 	</view>
-</Tabs>
+
+	<!-- ==================== 骨架屏 ==================== -->
+	<view class="sk_wrap" wx:if="{{loading}}">
+		<view class="sk_item" wx:for="{{[1,2,3]}}" wx:key="*this">
+			<view class="skeleton-block sk_img"></view>
+			<view class="sk_info">
+				<view class="skeleton-block sk_line"></view>
+				<view class="skeleton-block sk_line short"></view>
+				<view class="skeleton-block sk_price"></view>
+			</view>
+		</view>
+	</view>
+
+	<block wx:else>
+		<block wx:if="{{list.length > 0}}">
+			<view class="collect_count">共 {{list.length}} 件收藏商品 · 左右滑动可取消收藏</view>
+
+			<view class="goods_row" wx:for="{{list}}" wx:key="id">
+				<!-- 左滑露出的删除按钮 -->
+				<view class="row_delete" data-id="{{item.id}}" catchtap="handleRemove">取消收藏</view>
+
+				<!-- 商品卡片主体 -->
+				<view
+					class="goods_item"
+					style="transform: translateX({{item.offset}}rpx);"
+					data-id="{{item.id}}"
+					data-index="{{index}}"
+					bindtouchstart="handleTouchStart"
+					bindtouchmove="handleTouchMove"
+					bindtouchend="handleTouchEnd"
+					bindtouchcancel="handleTouchEnd"
+					bindtap="handleRowTap"
+				>
+					<image class="goods_img" src="{{item.mainPic}}" mode="aspectFill" binderror="handleImageError" data-index="{{index}}" data-id="{{item.id}}" catchtap="handleGoGoods" />
+					<view class="goods_info">
+						<view class="goods_name ellipsis-2" data-id="{{item.id}}" catchtap="handleGoGoods">{{item.name}}</view>
+
+						<!-- 已收藏标识 -->
+						<view class="goods_meta">
+							<text class="collected_flag">❤️ 已收藏</text>
+							<text class="sold_out" wx:if="{{item.soldOut}}">已售罄</text>
+							<text class="goods_sales">已售{{item.salesText}}</text>
+						</view>
+
+						<view class="goods_bottom">
+							<view class="goods_price">
+								<text class="price_symbol">¥</text>
+								<text class="price_now">{{item.priceText}}</text>
+								<text class="price_origin">¥{{item.originalPriceText}}</text>
+							</view>
+							<view class="add_btn" data-id="{{item.id}}" catchtap="handleAddCart">+</view>
+						</view>
+					</view>
+				</view>
+			</view>
+
+			<view class="list-end">— 已经到底啦 —</view>
+		</block>
+
+		<!-- ==================== 空态 ==================== -->
+		<view class="empty" wx:else>
+			<view class="empty-icon">❤️</view>
+			<view class="empty-text">{{currentTab === 'all' ? '还没有收藏商品，去逛逛~' : currentTab === 'hot' ? '还没有正在热卖的收藏商品~' : '还没有即将上线的收藏商品~'}}</view>
+			<view class="btn-primary empty-btn" bindtap="handleGoHome">去逛逛</view>
+		</view>
+	</block>
+</view>

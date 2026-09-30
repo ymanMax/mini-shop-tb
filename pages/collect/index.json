@@ -1,6 +1,6 @@
 {
-  "usingComponents": {
-    "Tabs": "../../components/Tabs/Tabs"
-  },
-  "navigationBarTitleText": "商品收藏"
+  "usingComponents": {},
+  "navigationBarTitleText": "我的收藏",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
 }

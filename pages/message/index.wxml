@@ -1,0 +1,70 @@
+<!--pages/message/index.wxml-->
+<view class="page">
+  <!-- 吸顶区：未读概览 + 全部已读 + 类型 Tab -->
+  <view class="sticky-head">
+    <view class="head-bar">
+      <text class="unread-tip">{{unreadTotal > 0 ? unreadTotal + ' 条未读' : '消息已全部读完'}}</text>
+      <view
+        class="read-all {{canReadAll ? '' : 'disabled'}}"
+        bindtap="handleReadAll"
+      >{{readAllLoading ? '处理中...' : '全部已读'}}</view>
+    </view>
+    <view class="tabs">
+      <view
+        class="tab-item {{item.isActive ? 'on' : ''}}"
+        wx:for="{{tabs}}"
+        wx:key="type"
+        bindtap="onTabTap"
+        data-index="{{index}}"
+      >
+        <text>{{item.value}}</text>
+        <view class="tab-line" wx:if="{{item.isActive}}"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 首次加载骨架屏 -->
+  <view class="skeleton-card" wx:if="{{loading}}" wx:for="{{[1, 2, 3, 4]}}" wx:key="*this">
+    <view class="skeleton-block sk-icon"></view>
+    <view class="sk-main">
+      <view class="skeleton-block sk-line sk-w60"></view>
+      <view class="skeleton-block sk-line sk-w90"></view>
+    </view>
+  </view>
+
+  <!-- 消息列表 -->
+  <view class="list" wx:if="{{!loading}}">
+    <view
+      class="msg-card {{item.isRead ? 'read' : 'unread'}} {{item.isNew ? 'fade-in' : ''}}"
+      wx:for="{{list}}"
+      wx:key="id"
+      bindtap="onMsgTap"
+      data-index="{{index}}"
+    >
+      <view class="type-icon {{item.typeClass}}">{{item.icon}}</view>
+      <view class="msg-body flex-1">
+        <view class="msg-top">
+          <view class="title-wrap flex-1">
+            <view class="dot" wx:if="{{!item.isRead}}"></view>
+            <text class="msg-title ellipsis">{{item.title}}</text>
+          </view>
+          <text class="msg-time">{{item.timeText}}</text>
+        </view>
+        <view class="content-wrap">
+          <text class="msg-content {{item.expanded ? 'expanded' : 'ellipsis'}}">{{item.content}}</text>
+          <text class="expand-hint" wx:if="{{item.relatedType === 'none'}}">{{item.expanded ? '收起' : '展开'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="list-more" wx:if="{{loadingMore}}">加载中...</view>
+    <view class="list-end" wx:if="{{!loadingMore && noMore && list.length > 0}}">没有更多了</view>
+  </view>
+
+  <!-- 空态 -->
+  <view class="empty" wx:if="{{!loading && list.length === 0}}">
+    <view class="empty-icon">{{tabs[activeIndex].icon}}</view>
+    <view class="empty-text">{{tabs[activeIndex].emptyText}}</view>
+    <view class="empty-btn btn-primary" bindtap="goHome">去首页逛逛</view>
+  </view>
+</view>

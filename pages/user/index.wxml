@@ -1,75 +1,145 @@
 <!--pages/user/index.wxml-->
-<!-- 头像昵称 -->
-<view class="user">
-	<view wx:if="{{userinfo}}" class="user_img">
-		<image class="img_bg" src="{{userinfo.avatarUrl}}"></image>
-		<view class="user_info">
-			<image class="user_ico" src="{{userinfo.avatarUrl}}" mode="widthFix" />
-			<view class="user_name">{{userinfo.nickName}}</view>
+<view class="user_page">
+	<!-- ==================== 用户信息头部 ==================== -->
+	<view class="user_header">
+		<view class="header_bg"></view>
+		<view class="user_profile">
+			<image class="user_avatar" src="{{avatar}}" mode="aspectFill" binderror="handleAvatarError" />
+			<view class="user_meta">
+				<view class="user_name">{{userInfo.nickName || '烧饼爱好者'}}</view>
+				<view class="user_phone">{{userInfo.phone || '138****8888'}}</view>
+			</view>
+			<view class="user_level">{{userInfo.memberLevel || '黄金会员'}}</view>
 		</view>
-	</view>
-	<view wx:else class="user_btn">
-		<navigator url="/pages/login/index">
-			登入
-		</navigator>
 
-	</view>
-</view>
-<!-- 内容 -->
-<view class="content">
-	<view class="user_main">
-		<!-- 收藏 关注 -->
-		<view class="collect">
-			<navigator>
-				<view class="collect_num">0</view>
-				<view class="collect_title">收藏的店铺</view>
-			</navigator>
-			<navigator url="/pages/collect/index">
-				<view class="collect_num">{{collectNums}}</view>
-				<view class="collect_title">收藏的商品</view>
-			</navigator>
-			<navigator>
-				<view class="collect_num">0</view>
-				<view class="collect_title">关注的商品</view>
-			</navigator>
-			<navigator>
-				<view class="collect_num">0</view>
-				<view class="collect_title">我的足迹</view>
-			</navigator>
-		</view>
-		<!-- 我的订单 -->
-		<view class="order">
-			<view class="order_title">我的订单</view>
-			<view class="order_content">
-				<navigator url="/pages/order/index?type=1">
-					<view class="iconfont icon-ding_dan"></view>
-					<view class="order_name">全部订单</view>
-				</navigator>
-				<navigator url="/pages/order/index?type=2">
-					<view class="iconfont icon-fukuantongzhi"></view>
-					<view class="order_name">待付款</view>
-				</navigator>
-				<navigator url="/pages/order/index?type=3">
-					<view class="iconfont icon-receipt-address"></view>
-					<view class="order_name">待收货</view>
-				</navigator>
-				<navigator url="/pages/order/index?type=4">
-					<view class="iconfont icon-tuihuotuikuan_dianpu"></view>
-					<view class="order_name">退款/退货</view>
-				</navigator>
+		<!-- 资产 -->
+		<view class="user_assets">
+			<view class="asset_item" bindtap="handleAbout">
+				<view class="asset_num">{{userInfo.points || 0}}</view>
+				<view class="asset_label">积分</view>
+			</view>
+			<view class="asset_item" bindtap="handleAbout">
+				<view class="asset_num">{{userInfo.coupons || 0}}</view>
+				<view class="asset_label">优惠券</view>
+			</view>
+			<view class="asset_item" bindtap="handleAbout">
+				<view class="asset_num">¥{{balanceText}}</view>
+				<view class="asset_label">余额</view>
 			</view>
 		</view>
-		<!-- 收货地址管理 -->
-		<view class="addres">收货地址管理</view>
-		<!-- 联系 意见 关于 -->
-		<view class="app_info">
-			<view class="app_info_item info_relation">
-				<text>联系客服</text>
-				<text>400-618-4000</text>
-			</view>
-			<navigator class="app_info_item" url="/pages/feedback/index">意见反馈</navigator>
-			<view class="app_info_item">关于我们</view>
-		</view>
-		<view class="recommend">把应用推荐给其他人</view>
 	</view>
+
+	<!-- ==================== 我的订单 ==================== -->
+	<view class="card order_card">
+		<view class="card_head" bindtap="handleGoOrderAll">
+			<text class="card_title">我的订单</text>
+			<text class="card_more">全部订单({{orderCount.all}}) ›</text>
+		</view>
+		<view class="order_entries">
+			<view class="order_entry" wx:for="{{orderEntries}}" wx:key="type" data-type="{{item.type}}" bindtap="handleGoOrder">
+				<view class="order_entry_icon">
+					{{item.icon}}
+					<view class="badge" wx:if="{{orderCount[item.countKey] > 0}}">{{orderCount[item.countKey]}}</view>
+				</view>
+				<view class="order_entry_name">{{item.name}}</view>
+			</view>
+		</view>
+	</view>
+
+	<!-- ==================== 我的服务（宫格入口） ==================== -->
+	<view class="card service_card">
+		<view class="service_grid">
+			<view class="service_item" bindtap="handleGoCart">
+				<view class="service_icon_wrap">
+					<text class="service_icon">🛒</text>
+					<view class="badge" wx:if="{{cartCount > 0}}">{{cartCount > 99 ? '99+' : cartCount}}</view>
+				</view>
+				<view class="service_name">我的购物车</view>
+			</view>
+
+			<view class="service_item" bindtap="handleGoCollect">
+				<view class="service_icon_wrap">
+					<text class="service_icon">❤️</text>
+					<view class="badge" wx:if="{{collectNums > 0}}">{{collectNums > 99 ? '99+' : collectNums}}</view>
+				</view>
+				<view class="service_name">我的收藏</view>
+			</view>
+
+			<view class="service_item" bindtap="handleGoFootprint">
+				<view class="service_icon_wrap">
+					<text class="service_icon">👣</text>
+					<view class="badge" wx:if="{{historyNums > 0}}">{{historyNums > 99 ? '99+' : historyNums}}</view>
+				</view>
+				<view class="service_name">浏览足迹</view>
+			</view>
+
+			<view class="service_item" bindtap="handleGoCoupon">
+				<view class="service_icon_wrap">
+					<text class="service_icon">🎫</text>
+					<view class="badge" wx:if="{{couponCount > 0}}">{{couponCount}}</view>
+				</view>
+				<view class="service_name">我的优惠券</view>
+			</view>
+
+			<view class="service_item" bindtap="handleGoPoints">
+				<view class="service_icon_wrap">
+					<text class="service_icon">⭐</text>
+				</view>
+				<view class="service_name">积分中心</view>
+				<view class="service_sub">{{points}} 积分</view>
+			</view>
+
+			<view class="service_item" bindtap="handleGoCheckin">
+				<view class="service_icon_wrap">
+					<text class="service_icon">📅</text>
+					<!-- 今日未签到显示红点 -->
+					<view class="dot" wx:if="{{!todaySigned}}"></view>
+				</view>
+				<view class="service_name">每日签到</view>
+				<view class="service_sub">{{todaySigned ? '今日已签' : '签到赚积分'}}</view>
+			</view>
+
+			<view class="service_item" bindtap="handleGoMessage">
+				<view class="service_icon_wrap">
+					<text class="service_icon">🔔</text>
+					<view class="badge" wx:if="{{unreadCount > 0}}">{{unreadCount > 99 ? '99+' : unreadCount}}</view>
+				</view>
+				<view class="service_name">消息中心</view>
+			</view>
+
+			<view class="service_item" bindtap="handleGoSearch">
+				<view class="service_icon_wrap"><text class="service_icon">🔍</text></view>
+				<view class="service_name">搜索商品</view>
+			</view>
+		</view>
+	</view>
+
+	<!-- ==================== 设置列表 ==================== -->
+	<view class="card list_card">
+		<view class="list_item" bindtap="handleGoAddress">
+			<text class="list_label">📍 收货地址管理</text>
+			<text class="list_value ellipsis">{{addressText}}</text>
+			<text class="quick_arrow">›</text>
+		</view>
+		<view class="list_item" bindtap="handleContact">
+			<text class="list_label">🎧 联系客服</text>
+			<text class="list_value">400-618-4000</text>
+			<text class="quick_arrow">›</text>
+		</view>
+		<view class="list_item" bindtap="handleGoFeedback">
+			<text class="list_label">✍️ 意见反馈</text>
+			<text class="quick_arrow">›</text>
+		</view>
+		<view class="list_item" bindtap="handleAbout">
+			<text class="list_label">ℹ️ 关于我们</text>
+			<text class="list_value">v2.0</text>
+			<text class="quick_arrow">›</text>
+		</view>
+		<view class="list_item" bindtap="handleShare">
+			<text class="list_label">🎁 把应用推荐给其他人</text>
+			<text class="quick_arrow">›</text>
+		</view>
+	</view>
+
+	<view class="page_bottom">烧饼商品 · 老手艺现烤现发</view>
 </view>

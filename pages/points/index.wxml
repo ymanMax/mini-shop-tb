@@ -1,0 +1,108 @@
+<!--pages/points/index.wxml-->
+<view class="points-page">
+  <!-- ==================== 骨架屏 ==================== -->
+  <block wx:if="{{loading}}">
+    <view class="skeleton-block sk-hero"></view>
+    <view class="sk-card">
+      <view class="skeleton-block sk-line" wx:for="{{[1, 2, 3, 4]}}" wx:key="*this"></view>
+      <view class="skeleton-block sk-line short" wx:for="{{[1, 2]}}" wx:key="*this"></view>
+    </view>
+    <view class="sk-card">
+      <view class="skeleton-block sk-grid" wx:for="{{[1, 2, 3, 4]}}" wx:key="*this"></view>
+    </view>
+  </block>
+
+  <!-- ==================== 加载失败空态 ==================== -->
+  <view class="empty" wx:elif="{{error}}">
+    <view class="empty-icon">😵</view>
+    <view class="empty-text">积分数据加载失败</view>
+    <view class="empty-text">请检查网络后重试</view>
+    <view class="btn-primary empty-btn" bindtap="handleRetry">重新加载</view>
+  </view>
+
+  <block wx:else>
+    <!-- ==================== 头部积分卡 ==================== -->
+    <view class="hero">
+      <view class="hero-top flex-between">
+        <text class="hero-label">当前可用积分</text>
+        <view class="hero-badge" wx:if="{{info.consecutiveDays > 0}}">🔥 连续签到 {{info.consecutiveDays}} 天</view>
+      </view>
+
+      <view class="hero-points">
+        <text class="hero-num">{{info.pointsText}}</text>
+        <text class="hero-unit">积分</text>
+      </view>
+
+      <view class="hero-sub">
+        <text>累计获取 {{info.totalEarned}}</text>
+        <text class="hero-divider">|</text>
+        <text>累计消耗 {{info.totalSpent}}</text>
+      </view>
+
+      <!-- 未签到时高亮 + 红点，引导去签到 -->
+      <view class="checkin-entry {{info.todaySigned ? 'done' : 'active'}}" bindtap="handleGoCheckin">
+        <text>{{info.todaySigned ? '今日已签到 ✓' : '签到赚积分'}}</text>
+        <view class="entry-dot" wx:if="{{!info.todaySigned}}"></view>
+      </view>
+    </view>
+
+    <!-- ==================== 积分明细 ==================== -->
+    <view class="section">
+      <view class="section-head flex-between">
+        <text class="section-title">积分明细</text>
+        <text class="section-count" wx:if="{{recordTotal > 0}}">共 {{recordTotal}} 条</text>
+      </view>
+
+      <view class="rec-card">
+        <view class="rec-item hairline-bottom" wx:for="{{records}}" wx:key="id">
+          <view class="rec-icon">{{item.icon}}</view>
+          <view class="rec-main flex-1">
+            <view class="rec-title ellipsis">{{item.title}}</view>
+            <view class="rec-meta">
+              <text class="tag tag-gray rec-tag">{{item.source}}</text>
+              <text class="rec-time">{{item.timeText}}</text>
+            </view>
+          </view>
+          <text class="rec-points {{item.isEarn ? 'earn' : 'spend'}}">{{item.pointsText}}</text>
+        </view>
+
+        <!-- 明细空态 -->
+        <view class="empty rec-empty" wx:if="{{records.length === 0}}">
+          <view class="empty-icon">🧾</view>
+          <view class="empty-text">还没有积分明细，去逛逛攒积分吧~</view>
+        </view>
+
+        <view class="list-more" wx:if="{{loadingMore}}">加载中...</view>
+        <view class="list-end" wx:elif="{{!hasMore && records.length > 0}}">— 没有更多了 —</view>
+      </view>
+    </view>
+
+    <!-- ==================== 兑换专区 ==================== -->
+    <view class="section">
+      <view class="section-head">
+        <text class="section-title">积分兑换专区</text>
+      </view>
+
+      <view class="goods-grid">
+        <view class="goods-cell" wx:for="{{goods}}" wx:key="id">
+          <view class="goods-icon">{{item.icon}}</view>
+          <view class="goods-name ellipsis">{{item.name}}</view>
+          <view class="goods-desc ellipsis-2">{{item.desc}}</view>
+          <view class="goods-foot flex-between">
+            <view class="goods-points">
+              <text class="gp-num">{{item.points}}</text>
+              <text class="gp-unit">分</text>
+            </view>
+            <view
+              class="exchange-btn {{item.canExchange ? '' : 'disabled'}}"
+              data-id="{{item.id}}"
+              bindtap="handleExchange"
+            >{{item.buttonText}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="list-end page-end">— 积分可兑换优惠券与商品，先到先得 —</view>
+  </block>
+</view>

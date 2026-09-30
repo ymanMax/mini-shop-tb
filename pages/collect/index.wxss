@@ -1,47 +1,225 @@
-.collect_main {
-  background-color: #f3f4f6;
+/* pages/collect/index.wxss */
+page {
+  background: var(--bgPage);
 }
-.collect_main .collect_title {
+
+/* ==================== Tab 栏 ==================== */
+.tab_bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
-  padding: 35rpx 0;
-}
-.collect_main .collect_title .collect_tips {
-  margin-left: 20rpx;
-  padding: 15rpx;
-  background-color: #fff;
-  border: 1rpx solid #ccc;
-}
-.collect_main .collect_title .active {
-  color: var(--themeColor);
-  border: 1rpx solid currentColor;
-}
-.collect_main .collect_content .goods_item {
-  display: flex;
-  background-color: #fff;
-  border-bottom: 1px solid #ccc;
-}
-.collect_main .collect_content .goods_item .goods_img_wrap {
-  flex: 2;
-  display: flex;
-  justify-content: center;
   align-items: center;
+  height: 88rpx;
+  background: #fff;
+  border-bottom: 1rpx solid var(--borderColor);
 }
-.collect_main .collect_content .goods_item .goods_img_wrap image {
-  width: 70%;
+
+.tab_item {
+  flex: 1;
+  text-align: center;
+  font-size: 28rpx;
+  color: var(--textSub);
+  position: relative;
+  line-height: 88rpx;
 }
-.collect_main .collect_content .goods_item .goods_info_wrap {
-  flex: 3;
+
+.tab_item.active {
+  color: var(--themeColor);
+  font-weight: bold;
+}
+
+.tab_item.active::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 48rpx;
+  height: 6rpx;
+  border-radius: 3rpx;
+  background: var(--themeColor);
+}
+
+.tab_count {
+  font-size: 20rpx;
+  color: var(--textLight);
+  margin-left: 6rpx;
+  font-weight: normal;
+}
+
+.tab_item.active .tab_count {
+  color: var(--themeColor);
+}
+
+/* ==================== 骨架屏 ==================== */
+.sk_wrap {
+  padding: 20rpx;
+}
+
+.sk_item {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.sk_img {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 12rpx;
+  flex-shrink: 0;
+}
+
+.sk_info {
+  flex: 1;
+  margin-left: 24rpx;
+}
+
+.sk_line {
+  height: 30rpx;
+  margin-bottom: 18rpx;
+}
+
+.sk_line.short {
+  width: 60%;
+}
+
+.sk_price {
+  width: 140rpx;
+  height: 40rpx;
+  margin-top: 30rpx;
+}
+
+/* ==================== 列表 ==================== */
+.collect_count {
+  font-size: 23rpx;
+  color: var(--textLight);
+  padding: 22rpx 32rpx 4rpx;
+}
+
+/* 每行是一个滑动容器：删除按钮垫在底下，卡片主体浮在上面 */
+.goods_row {
+  position: relative;
+  margin: 20rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  background: var(--themeColor);
+}
+
+.row_delete {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 140rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 26rpx;
+  background: var(--themeColor);
+  z-index: 1;
+}
+
+.goods_item {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  /* 跟手位移由内联 style 控制，这里只做松手后的回弹过渡 */
+  transition: transform 0.2s ease;
+}
+
+.goods_img {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 12rpx;
+  background: #f5f5f5;
+  flex-shrink: 0;
+}
+
+.goods_info {
+  flex: 1;
+  margin-left: 24rpx;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
 }
-.collect_main .collect_content .goods_item .goods_info_wrap .goods_name {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+
+.goods_name {
+  font-size: 28rpx;
+  line-height: 40rpx;
+  color: var(--textMain);
+  height: 80rpx;
 }
-.collect_main .collect_content .goods_item .goods_info_wrap .goods_price {
-  font-size: 32rpx;
+
+.goods_meta {
+  display: flex;
+  align-items: center;
+  margin-top: 8rpx;
+}
+
+.collected_flag {
+  font-size: 20rpx;
   color: var(--themeColor);
+  background: var(--themeColorFade);
+  border-radius: 6rpx;
+  padding: 2rpx 10rpx;
+}
+
+.sold_out {
+  font-size: 20rpx;
+  color: #fff;
+  background: #bbb;
+  border-radius: 6rpx;
+  padding: 2rpx 10rpx;
+  margin-left: 10rpx;
+}
+
+.goods_sales {
+  font-size: 21rpx;
+  color: var(--textLight);
+  margin-left: auto;
+}
+
+.goods_bottom {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+}
+
+.goods_price {
+  display: flex;
+  align-items: baseline;
+  flex: 1;
+  min-width: 0;
+}
+
+.price_symbol {
+  font-size: 24rpx;
+  color: var(--themeColor);
+  font-weight: bold;
+}
+
+.price_now {
+  font-size: 36rpx;
+  color: var(--themeColor);
+  font-weight: bold;
+}
+
+.add_btn {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff6b76, #eb4450);
+  color: #fff;
+  font-size: 36rpx;
+  line-height: 52rpx;
+  text-align: center;
+  flex-shrink: 0;
+  box-shadow: 0 4rpx 12rpx rgba(235, 68, 80, 0.35);
 }

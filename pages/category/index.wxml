@@ -1,32 +1,175 @@
 <!--pages/category/index.wxml-->
-<view class="cates">
-	<SearchInput></SearchInput>
-	<view class="cates_container">
-		<!-- 左侧菜单 -->
-		<scroll-view class="left_mune" scroll-y>
-			<view bindtap="handleItemTap" class="mune_item {{index===currentIndex?'active':''}}" wx:for="{{leftMenuList}}" wx:key="*this" data-index="{{index}}">{{item}}
-			</view>
+<view class="page">
+  <!-- 顶部搜索栏（纯 CSS，不用 SearchInput 组件） -->
+  <view class="search-bar" bindtap="handleSearchTap">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <text class="search-placeholder">搜索烧饼、糕点、饮品</text>
+    </view>
+  </view>
 
-		</scroll-view>
-		<!-- 右侧商品 -->
-		<scroll-view scroll-top="{{scrollTop}}" class="right_content" scroll-y>
-			<view class="goods_group" wx:for="{{rightContent}}" wx:for-item="item1" wx:for-index="index1" wx:key="*this">
-				<view class="goods_title">
-					<text class="delimiter">/</text>
-					<text class="title">{{item1.cat_name}}</text>
-					<text class="delimiter">/</text>
-				</view>
-				<view class="goods_list">
-					<navigator wx:for="{{item1.children}}" wx:for-item="item2" wx:for-index="index2" wx:key="cat_id" url="/pages/goods_list/index?cid={{item2.cat_id}}">
-						<image src="{{item2.cat_icon}}" mode="widthFix" />
-						<view class="goods_name">{{item2.cat_name}}</view>
-					</navigator>
+  <view class="body">
+    <!-- 左侧一级分类导航 -->
+    <scroll-view class="left-nav" scroll-y scroll-with-animation scroll-into-view="{{navIntoView}}">
+      <view
+        wx:for="{{leftMenu}}"
+        wx:key="id"
+        id="cat-{{item.id}}"
+        class="nav-item {{index === currentIndex ? 'active' : ''}}"
+        data-index="{{index}}"
+        bindtap="handleCategoryTap"
+      >
+        <view class="nav-bar"></view>
+        <text class="nav-icon">{{item.icon}}</text>
+        <text class="nav-name">{{item.name}}</text>
+      </view>
+    </scroll-view>
 
-				</view>
+    <!-- 右侧内容区 -->
+    <view class="right-main">
+      <!-- 分类卡片：图标 + 名称 + 描述 -->
+      <view class="cate-card">
+        <text class="cate-icon">{{currentCategory.icon}}</text>
+        <view class="cate-info">
+          <view class="cate-name">{{currentCategory.name}}</view>
+          <view class="cate-desc">{{currentCategory.desc}}</view>
+        </view>
+      </view>
 
-			</view>
+      <!-- 二级分类标签栏（横向滚动） -->
+      <scroll-view class="sub-tabs" scroll-x enable-flex>
+        <view
+          wx:for="{{subCategories}}"
+          wx:key="id"
+          class="sub-tab {{item.id === currentSubId ? 'active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="handleSubTap"
+        >
+          <text class="sub-icon">{{item.icon}}</text>
+          <text>{{item.name}}</text>
+        </view>
+      </scroll-view>
 
-		</scroll-view>
-	</view>
+      <!-- 吸顶筛选栏 -->
+      <view class="filter-bar">
+        <view class="sort-list">
+          <view class="sort-item {{activeSort === 'default' ? 'active' : ''}}" data-key="default" bindtap="handleSortTap">综合</view>
+          <view
+            class="sort-item {{activeSort === 'price-asc' || activeSort === 'price-desc' ? 'active' : ''}}"
+            data-key="price"
+            bindtap="handleSortTap"
+          >
+            <text>价格</text>
+            <view class="sort-arrow">
+              <text class="arrow up {{activeSort === 'price-asc' ? 'on' : ''}}">▲</text>
+              <text class="arrow down {{activeSort === 'price-desc' ? 'on' : ''}}">▼</text>
+            </view>
+          </view>
+          <view class="sort-item {{activeSort === 'sales' ? 'active' : ''}}" data-key="sales" bindtap="handleSortTap">销量</view>
+        </view>
+        <view class="filter-btn {{filterChips.length ? 'on' : ''}}" bindtap="openFilter">
+          <text class="filter-ico">☰</text>
+          <text>筛选</text>
+        </view>
+      </view>
 
+      <!-- 已应用筛选 chips -->
+      <view class="chips" wx:if="{{filterChips.length}}">
+        <view class="chip" wx:for="{{filterChips}}" wx:key="key" data-key="{{item.key}}" bindtap="handleChipRemove">
+          <text>{{item.text}}</text>
+          <text class="chip-x">✕</text>
+        </view>
+      </view>
+
+      <!-- 首屏骨架屏 -->
+      <block wx:if="{{isFirstLoad}}">
+        <view class="goods-card" wx:for="{{[1,2,3,4,5,6]}}" wx:key="*this">
+          <view class="skeleton-block sk-img"></view>
+          <view class="goods-info">
+            <view class="skeleton-block sk-line"></view>
+            <view class="skeleton-block sk-line short"></view>
+            <view class="skeleton-block sk-price"></view>
+          </view>
+        </view>
+      </block>
+
+      <!-- 商品列表 -->
+      <block wx:elif="{{goodsList.length}}">
+        <view class="goods-card" wx:for="{{goodsList}}" wx:key="id" data-id="{{item.id}}" bindtap="handleGoodsTap">
+          <view class="goods-pic">
+            <image src="{{item.mainPic}}" mode="aspectFill" binderror="handleImageError" data-index="{{index}}" />
+            <view class="sold-out" wx:if="{{item.soldOut}}">已售罄</view>
+          </view>
+          <view class="goods-info">
+            <view class="goods-name ellipsis-2">{{item.name}}</view>
+            <view class="goods-tags">
+              <text class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+            </view>
+            <view class="goods-bottom">
+              <view class="goods-meta">
+                <view class="goods-price">
+                  <text class="price-symbol">¥</text>
+                  <text class="price price-num">{{item.priceText}}</text>
+                  <text class="price-origin" wx:if="{{item.showOrigin}}">¥{{item.originalPriceText}}</text>
+                </view>
+                <view class="goods-sales">已售 {{item.salesText}}</view>
+              </view>
+              <view
+                class="add-btn {{addingId === item.id ? 'add-bounce' : ''}} {{item.soldOut ? 'disabled' : ''}}"
+                data-index="{{index}}"
+                catchtap="handleAddCart"
+              >+</view>
+            </view>
+          </view>
+        </view>
+        <view class="list-more" wx:if="{{loadingMore}}">加载中...</view>
+        <view class="list-end" wx:elif="{{!hasMore}}">没有更多了</view>
+      </block>
+
+      <!-- 空态 -->
+      <view class="empty" wx:else>
+        <text class="empty-icon">🍽️</text>
+        <text class="empty-text">没有找到相关商品</text>
+        <view class="empty-btn btn-primary" bindtap="clearAllFilter">清除筛选</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 筛选遮罩 + 半屏面板 -->
+  <view class="mask" wx:if="{{isFilterOpen}}" bindtap="closeFilter"></view>
+  <view class="popup filter-popup {{isFilterOpen ? 'show' : ''}}" catchtap="noop">
+    <view class="filter-head flex-between">
+      <text class="filter-title">筛选</text>
+      <text class="filter-close" bindtap="closeFilter">✕</text>
+    </view>
+    <scroll-view class="filter-body" scroll-y>
+      <view class="filter-sec">
+        <view class="sec-title">价格区间</view>
+        <view class="range-list">
+          <view
+            wx:for="{{priceRanges}}"
+            wx:key="label"
+            class="range-item {{activeRange === index ? 'on' : ''}}"
+            data-index="{{index}}"
+            bindtap="handleRangeTap"
+          >{{item.label}}</view>
+        </view>
+        <view class="price-inputs">
+          <input class="price-input" type="digit" placeholder="最低价" value="{{filterMin}}" bindinput="handleMinInput" />
+          <text class="price-tilde">—</text>
+          <input class="price-input" type="digit" placeholder="最高价" value="{{filterMax}}" bindinput="handleMaxInput" />
+        </view>
+      </view>
+      <view class="filter-sec">
+        <view class="stock-row flex-between">
+          <text class="sec-title no-mb">仅看有货</text>
+          <switch checked="{{filterStock}}" color="#eb4450" bindchange="handleStockChange" />
+        </view>
+      </view>
+    </scroll-view>
+    <view class="filter-foot">
+      <view class="foot-btn plain" bindtap="resetFilterDraft">重置</view>
+      <view class="foot-btn primary" bindtap="confirmFilter">确定</view>
+    </view>
+  </view>
 </view>

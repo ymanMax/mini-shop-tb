@@ -1,4 +1,32 @@
 <!--pages/login/index.wxml-->
-<button type="primary" plain open-type="getUserInfo" bindgetuserinfo="handleGetUserInfo">
-	登入
-</button>
+<view class="login_page">
+	<!-- 品牌头部 -->
+	<view class="brand">
+		<view class="brand_icon">🥯</view>
+		<view class="brand_name">烧饼商品</view>
+		<view class="brand_slogan">老手艺现烤现发 · 一口回到小时候</view>
+	</view>
+
+	<!-- 登录权益 -->
+	<view class="benefits">
+		<view class="benefit_item" wx:for="{{benefits}}" wx:key="title">
+			<text class="benefit_icon">{{item.icon}}</text>
+			<view class="benefit_text">
+				<view class="benefit_title">{{item.title}}</view>
+				<view class="benefit_desc">{{item.desc}}</view>
+			</view>
+		</view>
+	</view>
+
+	<!-- 操作 -->
+	<view class="actions">
+		<button class="login_btn" type="primary" open-type="getUserInfo" bindgetuserinfo="handleGetUserInfo">
+			微信一键登录
+		</button>
+		<view class="skip_btn" bindtap="handleSkip">暂不登录，先逛逛</view>
+	</view>
+
+	<view class="guest_tip">
+		游客也可以浏览商品、加入购物车并下单\n登录仅用于同步昵称与头像
+	</view>
+</view>

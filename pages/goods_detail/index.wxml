@@ -1,48 +1,255 @@
 <!--pages/goods_detail/index.wxml-->
-<!-- 轮播图 -->
-<view class="detail_swiper">
-	<swiper circular autoplay indicator-dots>
-		<swiper-item bindtap="handlePreviewImage" wx:for="{{goodsObj.pics}}" wx:key="pics_id" data-url="{{item.pics_mid}}">
-			<image src="{{item.pics_mid}}" mode="widthFix" />
-		</swiper-item>
-	</swiper>
-</view>
-<!-- 价格标题 -->
-<view class="good_price">￥{{goodsObj.goods_price}}</view>
-<view class="goods_name_row">
-	<view class="goods_name">{{goodsObj.goods_name}}</view>
-	<view class="goods_collect" bindtap="handleCollect">
-		<text class="iconfont {{isCollect===true?'icon-shoucang':'icon-shoucang1' }}"></text>
-		<view class="collcet_text">收藏</view>
+<!-- ==================== 骨架屏 ==================== -->
+<view class="skeleton_page" wx:if="{{loading}}">
+	<view class="skeleton-block sk_gallery"></view>
+	<view class="sk_card">
+		<view class="skeleton-block sk_line sk_price"></view>
+		<view class="skeleton-block sk_line sk_title"></view>
+		<view class="skeleton-block sk_line sk_title2"></view>
+		<view class="skeleton-block sk_line sk_tags"></view>
+	</view>
+	<view class="sk_card">
+		<view class="skeleton-block sk_line sk_title"></view>
+		<view class="skeleton-block sk_line sk_title2"></view>
+		<view class="skeleton-block sk_line sk_tags"></view>
+	</view>
+	<view class="sk_card">
+		<view class="skeleton-block sk_line sk_title"></view>
+		<view class="skeleton-block sk_line sk_title2"></view>
 	</view>
 </view>
-<!-- 图片详情 -->
-<view class="goods_info">
-	<view class="goods_info_title">图文详情</view>
-	<rich-text nodes="{{goodsObj.goods_introduce}}">
-	</rich-text>
-</view>
-<!-- 底部栏 -->
-<view class="btm_tool">
-	<view class="tool_item">
-		<view class="iconfont icon-kefu"></view>
-		<view>客服</view>
-		<button open-type="contact"></button>
+
+<block wx:else>
+	<!-- ==================== 1. 顶部媒体区 ==================== -->
+	<view class="gallery">
+		<swiper class="gallery_swiper" circular autoplay interval="4000" duration="400" bindchange="handleSwiperChange">
+			<swiper-item wx:for="{{pics}}" wx:key="*this">
+				<image class="gallery_img" src="{{item}}" mode="aspectFill" data-index="{{index}}" bindtap="handlePreview" binderror="handleImageError" />
+			</swiper-item>
+		</swiper>
+		<!-- 指示器：1/5 格式 -->
+		<view class="gallery_indicator">{{currentPic}}/{{pics.length}}</view>
+		<view class="gallery_tip">点击图片可放大查看</view>
 	</view>
 
-	<view class="tool_item">
-		<view class="iconfont icon-yixianshi-"></view>
-		<view>分享</view>
-		<button open-type="share"></button>
+	<!-- ==================== 2. 价格信息区 ==================== -->
+	<view class="card price_card">
+		<view class="price_row">
+			<text class="price_symbol">¥</text>
+			<text class="price_now">{{priceText}}</text>
+			<text class="price_origin">¥{{originalPriceText}}</text>
+			<view class="price_sales">已售 {{salesText}}</view>
+		</view>
+		<view class="goods_name">{{goods.name}}</view>
+		<view class="goods_tags">
+			<text class="tag" wx:for="{{goods.tags}}" wx:key="*this">{{item}}</text>
+		</view>
+		<!-- 规格选择入口 -->
+		<view class="spec_entry hairline-bottom" bindtap="handleOpenSku" data-mode="cart">
+			<text class="spec_entry_label">选择</text>
+			<text class="spec_entry_value">{{skuSpecText}}</text>
+			<text class="spec_entry_arrow">›</text>
+		</view>
+		<!-- 服务承诺 -->
+		<view class="promise_row">
+			<text class="promise_item">✅ 正品保障</text>
+			<text class="promise_item">🚚 全场包邮</text>
+			<text class="promise_item">↩️ 7天无理由</text>
+		</view>
 	</view>
 
-	<navigator class="tool_item" url="/pages/cart/index" open-type="switchTab">
-		<view class="iconfont icon-gouwuche"></view>
-		<view>购物车</view>
-	</navigator>
+	<!-- ==================== 3. 评价模块 ==================== -->
+	<view class="card review_card" id="review">
+		<view class="card_title">
+			<text>商品评价</text>
+			<text class="card_title_extra">({{reviewStats.total}})</text>
+		</view>
 
+		<!-- 评分汇总 -->
+		<view class="review_summary">
+			<view class="summary_score">
+				<view class="summary_avg">{{reviewStats.avgRating}}</view>
+				<view class="summary_stars">{{avgStarText}}</view>
+				<view class="summary_count">{{reviewStats.total}} 条评价</view>
+			</view>
+			<view class="summary_bars">
+				<view class="bar_row" wx:for="{{reviewStats.distribution}}" wx:key="star">
+					<text class="bar_label">{{item.star}}星</text>
+					<view class="bar_track">
+						<view class="bar_fill" style="{{item.widthStyle}}"></view>
+					</view>
+					<text class="bar_percent">{{item.percent}}%</text>
+				</view>
+			</view>
+		</view>
+		<view class="review_rate_tip">好评率 {{reviewStats.goodRate}}% · 有图 {{reviewStats.imageCount}} 条</view>
 
-	<view bindtap="handleCartAdd" class="tool_item btn_cart">加入购物车</view>
+		<!-- 评价标签筛选 -->
+		<scroll-view class="review_tabs" scroll-x enable-flex>
+			<view class="review_tab {{reviewType === item.key ? 'active' : ''}}" wx:for="{{reviewTabs}}" wx:key="key" data-key="{{item.key}}" bindtap="handleReviewTab">
+				{{item.label}}{{item.count ? ' ' + item.count : ''}}
+			</view>
+		</scroll-view>
 
-	<view class="tool_item btn_buy" bindtap="handlePurchase">立即购买</view>
-</view>
+		<!-- 评价列表 -->
+		<block wx:if="{{reviews.length > 0}}">
+			<view class="review_item" wx:for="{{reviews}}" wx:key="id">
+				<view class="review_head">
+					<image class="review_avatar" src="{{item.avatar}}" mode="aspectFill" binderror="handleReviewAvatarError" data-index="{{index}}" />
+					<view class="review_user">
+						<view class="review_name">{{item.userName}}</view>
+						<view class="review_stars">{{item.starText}}</view>
+					</view>
+					<view class="review_time">{{item.timeText}}</view>
+				</view>
+				<view class="review_tags" wx:if="{{item.tags.length}}">
+					<text class="tag" wx:for="{{item.tags}}" wx:for-item="tagItem" wx:key="*this">{{tagItem}}</text>
+				</view>
+				<view class="review_content {{item.contentExpanded ? '' : 'clamp'}}">{{item.content}}</view>
+				<view class="review_expand" wx:if="{{item.needExpand}}" data-index="{{index}}" bindtap="handleToggleReviewContent">
+					{{item.contentExpanded ? '收起' : '展开'}}
+				</view>
+				<!-- 晒图 -->
+				<view class="review_imgs" wx:if="{{item.images.length}}">
+					<image class="review_img" wx:for="{{item.images}}" wx:for-item="imgItem" wx:for-index="imgIndex" wx:key="*this" src="{{imgItem}}" mode="aspectFill" data-index="{{index}}" data-url="{{imgItem}}" bindtap="handlePreviewReviewImage" binderror="handleReviewImageError" data-img="{{imgIndex}}" />
+				</view>
+				<view class="review_foot">
+					<text class="review_spec">{{item.specText}}</text>
+				</view>
+			</view>
+
+			<!-- 查看全部 / 加载更多 -->
+			<view class="review_more" wx:if="{{!reviewExpanded}}" bindtap="handleExpandReviews">
+				查看全部 {{reviewTotal}} 条评价 ›
+			</view>
+			<block wx:else>
+				<view class="list-more" wx:if="{{reviewLoading}}">评价加载中...</view>
+				<view class="review_more" wx:elif="{{reviewHasMore}}" bindtap="handleLoadMoreReviews">加载更多评价</view>
+				<view class="list-end" wx:else>— 已经到底啦 —</view>
+			</block>
+		</block>
+
+		<!-- 评价空态 -->
+		<view class="empty review_empty" wx:else>
+			<view class="empty-icon">💬</view>
+			<view class="empty-text">暂无评价，快来第一个评价吧~</view>
+		</view>
+	</view>
+
+	<!-- ==================== 4. 商品参数 ==================== -->
+	<view class="card param_card">
+		<view class="card_title"><text>商品参数</text></view>
+		<view class="param_item" wx:for="{{visibleParams}}" wx:key="key">
+			<text class="param_key">{{item.key}}</text>
+			<text class="param_value">{{item.value}}</text>
+		</view>
+		<view class="param_toggle" wx:if="{{paramFoldable}}" bindtap="handleToggleParam">
+			{{paramExpanded ? '收起参数 ︿' : '展开全部参数 ﹀'}}
+		</view>
+	</view>
+
+	<!-- ==================== 5. 售后保障 ==================== -->
+	<view class="card service_card">
+		<view class="card_title"><text>售后保障</text></view>
+		<view class="service_item" wx:for="{{serviceList}}" wx:key="title">
+			<text class="service_icon">{{item.icon}}</text>
+			<view class="service_text">
+				<view class="service_title">{{item.title}}</view>
+				<view class="service_desc">{{item.desc}}</view>
+			</view>
+		</view>
+	</view>
+
+	<!-- ==================== 6. 图文详情 ==================== -->
+	<view class="card detail_card">
+		<view class="card_title"><text>图文详情</text></view>
+		<view class="detail_desc">
+			<view class="detail_p" wx:for="{{descLines}}" wx:key="*this">{{item}}</view>
+		</view>
+		<image class="detail_img" wx:for="{{goods.detailImages}}" wx:key="*this" src="{{item}}" mode="widthFix" binderror="handleRecommendImageError" data-index="{{index}}" />
+	</view>
+
+	<!-- ==================== 7. 看了又看 ==================== -->
+	<view class="card recommend_card">
+		<view class="card_title"><text>看了又看</text></view>
+		<scroll-view class="recommend_scroll" scroll-x enable-flex>
+			<view class="recommend_item" wx:for="{{recommend}}" wx:key="id" data-id="{{item.id}}" bindtap="handleGoGoods">
+				<image class="recommend_img" src="{{item.mainPic}}" mode="aspectFill" binderror="handleRecommendImageError" data-index="{{index}}" />
+				<view class="recommend_name ellipsis-2">{{item.name}}</view>
+				<view class="recommend_price">
+					<text class="price_symbol">¥</text>
+					<text class="price_now_sm">{{item.priceText}}</text>
+					<text class="recommend_sales">已售{{item.salesText}}</text>
+				</view>
+			</view>
+		</scroll-view>
+	</view>
+
+	<!-- 给底部固定栏留出空间 -->
+	<view class="bottom_placeholder"></view>
+
+	<!-- ==================== 底部操作栏 ==================== -->
+	<view class="btm_tool safe-area-bottom">
+		<view class="tool_item" bindtap="handleCollect">
+			<view class="tool_icon iconfont {{isCollect ? 'icon-shoucang collected' : 'icon-shoucang1'}}"></view>
+			<view class="tool_text {{isCollect ? 'collected' : ''}}">{{isCollect ? '已收藏' : '收藏'}}</view>
+		</view>
+		<view class="tool_item" bindtap="handleContact">
+			<view class="tool_icon">🎧</view>
+			<view class="tool_text">客服</view>
+		</view>
+		<view class="tool_item tool_cart" bindtap="handleGoCart">
+			<view class="tool_icon">🛒</view>
+			<view class="tool_text">购物车</view>
+			<view class="badge" wx:if="{{cartCount > 0}}">{{cartCount > 99 ? '99+' : cartCount}}</view>
+		</view>
+		<view class="tool_btn btn_cart" bindtap="handleQuickAdd" data-mode="cart">加入购物车</view>
+		<view class="tool_btn btn_buy" bindtap="handleQuickAdd" data-mode="buy">立即购买</view>
+	</view>
+
+	<!-- ==================== SKU 规格弹层 ==================== -->
+	<view class="mask" wx:if="{{skuVisible}}" bindtap="handleCloseSku"></view>
+	<view class="popup sku_popup {{skuVisible ? 'show' : ''}}" catchtap="handleStopPropagation">
+		<!-- 头部：主图 + 价格 + 库存 -->
+		<view class="sku_head">
+			<image class="sku_img" src="{{skuImage}}" mode="aspectFill" binderror="handleRecommendImageError" data-index="0" />
+			<view class="sku_head_info">
+				<view class="sku_price_row">
+					<text class="price_symbol">¥</text>
+					<text class="sku_price">{{skuPriceText}}</text>
+					<text class="price_origin">¥{{skuOriginalText}}</text>
+				</view>
+				<view class="sku_stock">{{skuStockTip}}</view>
+				<view class="sku_selected">已选：{{skuSpecText}}</view>
+			</view>
+			<view class="sku_close" bindtap="handleCloseSku">✕</view>
+		</view>
+
+		<scroll-view class="sku_body" scroll-y>
+			<!-- 规格维度 -->
+			<view class="sku_dim" wx:for="{{specDims}}" wx:for-item="dim" wx:for-index="dimIndex" wx:key="name">
+				<view class="sku_dim_name">{{dim.name}}</view>
+				<view class="sku_values">
+					<view class="sku_value {{dim.activeIndex === vIndex ? 'active' : ''}} {{vItem.stock === 0 ? 'disabled' : ''}}" wx:for="{{dim.values}}" wx:for-item="vItem" wx:for-index="vIndex" wx:key="label" data-dim="{{dimIndex}}" data-value="{{vIndex}}" bindtap="handleSelectSpec">
+						{{vItem.label}}
+					</view>
+				</view>
+			</view>
+
+			<!-- 数量 -->
+			<view class="sku_dim sku_count_row">
+				<view class="sku_dim_name">购买数量</view>
+				<view class="num_tool">
+					<view class="num_edit" data-operation="{{-1}}" bindtap="handleSkuCount">-</view>
+					<view class="goods_num">{{skuCount}}</view>
+					<view class="num_edit" data-operation="{{1}}" bindtap="handleSkuCount">+</view>
+				</view>
+			</view>
+		</scroll-view>
+
+		<!-- 底部按钮 -->
+		<view class="sku_footer safe-area-bottom">
+			<view class="sku_confirm {{skuComplete ? '' : 'disabled'}}" bindtap="handleSkuConfirm">{{skuActionText}}</view>
+		</view>
+	</view>
+</block>

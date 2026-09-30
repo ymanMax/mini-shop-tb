@@ -1,0 +1,73 @@
+<!--pages/footprint/index.wxml-->
+<view class="foot_page">
+	<!-- ==================== 顶部统计 + 清空 ==================== -->
+	<view class="foot_header">
+		<text class="foot_count">共 {{total}} 条浏览记录</text>
+		<view class="clear_btn {{total > 0 ? '' : 'disabled'}}" bindtap="handleClearAll">🗑 清空全部</view>
+	</view>
+
+	<!-- ==================== 骨架屏 ==================== -->
+	<view class="sk_wrap" wx:if="{{loading}}">
+		<view class="sk_item" wx:for="{{[1,2,3]}}" wx:key="*this">
+			<view class="skeleton-block sk_img"></view>
+			<view class="sk_info">
+				<view class="skeleton-block sk_line"></view>
+				<view class="skeleton-block sk_line short"></view>
+				<view class="skeleton-block sk_price"></view>
+			</view>
+		</view>
+	</view>
+
+	<block wx:else>
+		<block wx:if="{{groups.length > 0}}">
+			<!-- ==================== 按日期分组 ==================== -->
+			<view class="group" wx:for="{{groups}}" wx:for-item="group" wx:for-index="gi" wx:key="key">
+				<view class="group_title">
+					<text class="group_dot"></text>
+					<text class="group_label">{{group.label}}</text>
+					<text class="group_count">{{group.items.length}} 件</text>
+				</view>
+
+				<view class="goods_row" wx:for="{{group.items}}" wx:for-item="item" wx:for-index="ii" wx:key="goodsId">
+					<!-- 左滑露出的删除按钮 -->
+					<view class="row_delete" data-id="{{item.goodsId}}" catchtap="handleRemove">删除</view>
+
+					<view
+						class="goods_item"
+						style="transform: translateX({{item.offset}}rpx);"
+						data-key="{{gi}}-{{ii}}"
+						data-gi="{{gi}}"
+						data-ii="{{ii}}"
+						bindtouchstart="handleTouchStart"
+						bindtouchmove="handleTouchMove"
+						bindtouchend="handleTouchEnd"
+						bindtouchcancel="handleTouchEnd"
+						bindtap="handleRowTap"
+					>
+						<image class="goods_img" src="{{item.mainPic}}" mode="aspectFill" binderror="handleImageError" data-gi="{{gi}}" data-ii="{{ii}}" data-goodsid="{{item.goodsId}}" catchtap="handleGoGoods" />
+						<view class="goods_info">
+							<view class="goods_name ellipsis-2" data-goodsid="{{item.goodsId}}" catchtap="handleGoGoods">{{item.name}}</view>
+							<view class="goods_time">🕐 {{group.label}} {{item.timeText}}</view>
+							<view class="goods_bottom">
+								<view class="goods_price">
+									<text class="price_symbol">¥</text>
+									<text class="price_now">{{item.priceText}}</text>
+								</view>
+								<view class="add_btn" data-id="{{item.goodsId}}" catchtap="handleAddCart">+</view>
+							</view>
+						</view>
+					</view>
+				</view>
+			</view>
+
+			<view class="list-end">— 只保留最近 50 条浏览记录 —</view>
+		</block>
+
+		<!-- ==================== 空态 ==================== -->
+		<view class="empty" wx:else>
+			<view class="empty-icon">👣</view>
+			<view class="empty-text">还没有浏览记录，去逛逛~</view>
+			<view class="btn-primary empty-btn" bindtap="handleGoHome">去逛逛</view>
+		</view>
+	</block>
+</view>

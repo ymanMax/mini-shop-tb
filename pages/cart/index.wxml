@@ -1,77 +1,145 @@
-<!-- 收获地址按钮 -->
-<view class="revice_address_row">
-	<view class="address_btn" wx:if="{{!address.userName}}">
-		<button bindtap="handleChooseAddress" type="primary" plain>获取收获地址</button>
-	</view>
-	<!-- 收货信息 -->
-	<view wx:else class="user_info_row">
-		<view class="user_info">
-			<view>收货人: {{address.userName}}</view>
-			<view>{{address.all}}</view>
-		</view>
-		<view class="user_phone">{{address.telNumber}}</view>
-	</view>
-	<!--  -->
+<!-- pages/cart/index.wxml -->
+<view class="page">
+
+  <!-- 收货地址区：点击跳地址列表选择模式 -->
+  <view class="address-card" bindtap="handleGoAddress">
+    <block wx:if="{{hasAddress}}">
+      <view class="address-card__icon">📍</view>
+      <view class="address-card__body">
+        <view class="address-card__user">
+          <text class="address-card__name">{{address.userName}}</text>
+          <text class="address-card__phone">{{address.telNumber}}</text>
+        </view>
+        <view class="address-card__detail ellipsis-2">{{address.all}}</view>
+      </view>
+      <view class="address-card__arrow">›</view>
+    </block>
+    <view wx:else class="address-card__add">+ 请添加收货地址</view>
+  </view>
+
+  <!-- 首屏骨架屏 -->
+  <view wx:if="{{loading}}" class="skeleton-list">
+    <view class="skeleton-item" wx:for="{{[1, 2, 3]}}" wx:key="*this">
+      <view class="skeleton-block skeleton-item__img"></view>
+      <view class="skeleton-item__info">
+        <view class="skeleton-block skeleton-item__line" style="width: 70%;"></view>
+        <view class="skeleton-block skeleton-item__line" style="width: 42%;"></view>
+        <view class="skeleton-block skeleton-item__line" style="width: 30%;"></view>
+      </view>
+    </view>
+  </view>
+
+  <block wx:if="{{!loading}}">
+
+    <!-- 空态：无有效商品 -->
+    <view wx:if="{{!hasValid}}" class="empty">
+      <view class="empty-icon">🛒</view>
+      <view class="empty-text empty-text--main">购物车还是空的</view>
+      <view class="empty-text">去挑几样喜欢的吧</view>
+      <view class="btn-primary empty-btn" bindtap="handleGoHome">去逛逛</view>
+    </view>
+
+    <!-- 有效商品列表 -->
+    <view wx:else class="cart-list">
+      <view class="cart-item" wx:for="{{list}}" wx:key="id">
+        <!-- 左滑露出的删除按钮 -->
+        <view class="cart-item__delete" catchtap="handleRemove" data-id="{{item.id}}">删除</view>
+        <!-- 内容层：touch 事件做左滑位移 -->
+        <view
+          class="cart-item__content"
+          style="transform: translateX({{slideId === item.id ? slideX : 0}}rpx);"
+          data-id="{{item.id}}"
+          bindtouchstart="handleTouchStart"
+          bindtouchmove="handleTouchMove"
+          bindtouchend="handleTouchEnd"
+          catchtap="handleRowTap"
+        >
+          <view class="check {{item.checked ? 'check--on' : ''}}" catchtap="handleCheckItem" data-id="{{item.id}}"></view>
+          <view class="cart-item__img">
+            <image src="{{item.mainPic}}" mode="aspectFill" binderror="handleImageError" data-index="{{index}}" />
+          </view>
+          <view class="cart-item__info">
+            <view class="cart-item__name ellipsis-2">{{item.name}}</view>
+            <view class="cart-item__spec"><text class="spec-pill">{{item.specText}}</text></view>
+            <view class="cart-item__bottom">
+              <view class="cart-item__price price">¥{{item.priceText}}</view>
+              <view class="stepper">
+                <view class="stepper__btn" catchtap="handleDecrease" data-id="{{item.id}}">-</view>
+                <view class="stepper__num">{{item.count}}</view>
+                <view class="stepper__btn" catchtap="handleIncrease" data-id="{{item.id}}">+</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 失效商品区：空态下仍可展示 -->
+    <view wx:if="{{invalidList.length > 0}}" class="invalid-section">
+      <view class="invalid-section__header">
+        <view class="invalid-section__title">失效商品 {{invalidList.length}} 件</view>
+        <view class="invalid-section__clear" catchtap="handleClearInvalid">清空失效商品</view>
+      </view>
+      <view class="cart-item cart-item--invalid" wx:for="{{invalidList}}" wx:key="id">
+        <view class="cart-item__content">
+          <view class="check check--disabled"></view>
+          <view class="cart-item__img">
+            <image class="img-gray" src="{{item.mainPic}}" mode="aspectFill" binderror="handleInvalidImageError" data-index="{{index}}" />
+          </view>
+          <view class="cart-item__info">
+            <view class="cart-item__name ellipsis-2">{{item.name}}</view>
+            <view class="cart-item__spec"><text class="spec-pill spec-pill--invalid">已售罄</text></view>
+            <view class="cart-item__bottom">
+              <view class="cart-item__price cart-item__price--muted">¥{{item.priceText}}</view>
+              <view class="invalid-tip">该商品暂时无法购买</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 猜你喜欢：横滑推荐 -->
+    <view class="recommend" wx:if="{{recommendList.length > 0}}">
+      <view class="recommend__title">猜你喜欢</view>
+      <scroll-view class="recommend__scroll" scroll-x>
+        <view
+          class="recommend__card"
+          wx:for="{{recommendList}}"
+          wx:key="id"
+          bindtap="handleGoGoods"
+          data-id="{{item.id}}"
+        >
+          <view class="recommend__img">
+            <image src="{{item.mainPic}}" mode="aspectFill" binderror="handleRecommendImageError" data-index="{{index}}" />
+          </view>
+          <view class="recommend__name ellipsis-2">{{item.name}}</view>
+          <view class="recommend__price price">¥{{item.priceText}}</view>
+        </view>
+      </scroll-view>
+    </view>
+
+  </block>
 </view>
 
-<!-- 购物车内容 -->
-<view class="cart_content">
-	<view class="cart_title">购物车</view>
-	<!-- 商品 -->
-	<view class="cart_main">
-		<!-- 购物车有商品时显示 -->
-		<block wx:if="{{cart.length !== 0}}">
-			<view class="cart_item" wx:for="{{cart}}" wx:key="goods_id">
-				<!-- 复选框 -->
-				<view class="caer_chk_wrap">
-					<checkbox-group bindchange="handleItemChange" data-id="{{item.goods_id}}">
-						<checkbox checked="{{item.checked}}" color="#FF2D4A"></checkbox>
-					</checkbox-group>
-				</view>
-				<!-- 图片 -->
-				<navigator class="cart_img_wrap">
-					<image src="{{item.goods_small_logo}}" mode="widthFix" />
-				</navigator>
-				<!-- 信息 -->
-				<view class="cart_info_wrap">
-					<view class="goods_name">{{item.goods_name}}</view>
-					<view class="goods_price_wrap">
-						<view class="goods_price">￥{{item.goods_price}}</view>
-						<view class="num_tool">
-							<view class="num_edit" bindtap="handleItemNumEdit" data-id="{{item.goods_id}}" data-operation="{{-1}}">-</view>
-							<view class="goods_num">{{item.num}}</view>
-							<view class="num_edit" bindtap="handleItemNumEdit" data-id="{{item.goods_id}}" data-operation="{{1}}">+</view>
-						</view>
-					</view>
-				</view>
-			</view>
-		</block>
-		<!-- 购物车没商品时显示 -->
-		<block wx:else>
-			<image src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1285087026,2572595179&fm=26&gp=0.jpg" mode="widthFix" />
-
-		</block>
-
-	</view>
-</view>
-
-<!-- 底部结算栏 -->
-<view class="footer_tool">
-	<!-- 全选按钮 -->
-	<view class="all_chk_wrap">
-		<checkbox-group bindchange="handleAllChecked">
-			<checkbox checked="{{allChecked}}" color="#F8554F">
-				全选
-			</checkbox>
-		</checkbox-group>
-	</view>
-	<!-- 总价格部分 -->
-	<view class="total_price_wrap">
-		<view class="total_price">
-			合计: <text class="price">￥{{totaPrice}}</text>
-		</view>
-		<view>包含运费</view>
-	</view>
-	<!-- 结算 -->
-	<view bindtap="handlePay" class="order_pay_wrap">结算({{totaNum}})</view>
+<!-- 底部结算栏：空态（无有效商品）时隐藏 -->
+<view wx:if="{{!loading && hasValid}}" class="footer-bar">
+  <!-- 满减提示：高亮当前已达成档位 -->
+  <view class="discount-line">
+    <text
+      class="discount-chip {{item.active ? 'discount-chip--active' : ''}}"
+      wx:for="{{discountTiers}}"
+      wx:key="threshold"
+    >{{item.text}}</text>
+  </view>
+  <view class="footer-bar__main">
+    <view class="footer-all" catchtap="handleAllCheck">
+      <view class="check check--sm {{allChecked ? 'check--on' : ''}}"></view>
+      <text class="footer-all__text">全选</text>
+    </view>
+    <view class="footer-sum">
+      <view class="footer-sum__total">合计：<text class="price footer-sum__num">¥{{checkedAmountText}}</text></view>
+      <view class="footer-sum__sub">已选 {{checkedCountText}} 件</view>
+    </view>
+    <view class="footer-pay {{checkedCount > 0 ? '' : 'is-disabled'}}" catchtap="handleGoCheckout">去结算({{checkedCountText}})</view>
+  </view>
 </view>

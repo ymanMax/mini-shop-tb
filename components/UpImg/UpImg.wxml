@@ -1,5 +1,5 @@
 <view class="up_img">
-	<image src="{{src}}" />
+	<image src="{{src}}" binderror="handleError" />
 	<icon type="clear" size="23" color="red">
 	</icon>
 </view>

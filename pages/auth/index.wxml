@@ -1,10 +1,43 @@
 <!--pages/auth/index.wxml-->
-<button type="primary" plain open-type="getUserInfo" bindgetuserinfo="handleGetUserInfo">
-	获取授权
-</button>
-<view class="caution">
-	<view>
-		只能进行模拟获取权限 无法真正获取token值 望周知！！！
+<view class="auth_page">
+	<view class="auth_header">
+		<view class="auth_icon">🔐</view>
+		<view class="auth_title">{{authorized ? '已完成授权' : '授权以继续'}}</view>
+		<view class="auth_sub">{{authorized ? '昵称与头像已同步' : '授权后即可使用完整功能'}}</view>
 	</view>
 
+	<!-- 授权项 -->
+	<view class="scope_list">
+		<view class="scope_item" wx:for="{{scopes}}" wx:key="name">
+			<text class="scope_icon">{{item.icon}}</text>
+			<view class="scope_text">
+				<view class="scope_name">
+					{{item.name}}
+					<text class="scope_required" wx:if="{{item.required}}">必选</text>
+				</view>
+				<view class="scope_desc">{{item.desc}}</view>
+			</view>
+			<text class="scope_check">{{authorized ? '✅' : '⚪'}}</text>
+		</view>
+	</view>
+
+	<!-- 当前账号 -->
+	<view class="account_card" wx:if="{{currentUser.id}}">
+		<image class="account_avatar" src="{{currentUser.avatar}}" mode="aspectFill" binderror="handleAvatarError" />
+		<view class="account_info">
+			<view class="account_name">{{currentUser.nickName}}</view>
+			<view class="account_phone">{{currentUser.phone}}</view>
+		</view>
+	</view>
+
+	<view class="notice">
+		当前为 Mock 演示环境，点击授权会直接写入本地登录态，不会发起真实微信授权请求。
+	</view>
+
+	<view class="actions">
+		<button class="auth_btn" type="primary" open-type="getUserInfo" bindgetuserinfo="handleGetUserInfo">
+			{{authorized ? '重新授权' : '确认授权'}}
+		</button>
+		<view class="back_btn" bindtap="handleBack">返回</view>
+	</view>
 </view>

@@ -1,0 +1,323 @@
+/* pages/points/index.wxss */
+page {
+  background: var(--bgPage);
+}
+
+.points-page {
+  padding-bottom: 40rpx;
+}
+
+/* ================= 骨架屏 ================= */
+.sk-hero {
+  height: 300rpx;
+  margin: 24rpx;
+  border-radius: 20rpx;
+}
+
+.sk-card {
+  margin: 0 24rpx 24rpx;
+  padding: 24rpx;
+  background: var(--bgCard);
+  border-radius: 16rpx;
+}
+
+.sk-line {
+  height: 32rpx;
+  margin-bottom: 22rpx;
+}
+
+.sk-line.short {
+  width: 60%;
+}
+
+.sk-grid {
+  height: 150rpx;
+  margin-bottom: 20rpx;
+}
+
+/* ================= 头部积分卡 ================= */
+.hero {
+  position: relative;
+  margin: 24rpx;
+  padding: 36rpx 32rpx 32rpx;
+  border-radius: 24rpx;
+  color: #fff;
+  background: linear-gradient(135deg, #ff7a84 0%, #eb4450 100%);
+  box-shadow: 0 12rpx 30rpx rgba(235, 68, 80, 0.28);
+  overflow: hidden;
+}
+
+/* 右上角装饰光斑，增加质感 */
+.hero::after {
+  content: "";
+  position: absolute;
+  top: -80rpx;
+  right: -60rpx;
+  width: 240rpx;
+  height: 240rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.hero-top {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-label {
+  font-size: 26rpx;
+  opacity: 0.9;
+}
+
+.hero-badge {
+  font-size: 22rpx;
+  line-height: 40rpx;
+  padding: 0 18rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
+.hero-points {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  margin: 18rpx 0 10rpx;
+}
+
+.hero-num {
+  font-size: 96rpx;
+  font-weight: bold;
+  line-height: 1.1;
+  font-family: "DIN Alternate", -apple-system, sans-serif;
+  letter-spacing: 2rpx;
+}
+
+.hero-unit {
+  font-size: 28rpx;
+  margin-left: 12rpx;
+  opacity: 0.9;
+}
+
+.hero-sub {
+  position: relative;
+  z-index: 1;
+  font-size: 24rpx;
+  opacity: 0.88;
+}
+
+.hero-divider {
+  margin: 0 16rpx;
+  opacity: 0.6;
+}
+
+/* 签到入口胶囊 */
+.checkin-entry {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 28rpx;
+  padding: 0 30rpx;
+  height: 64rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+  border-radius: 999rpx;
+  background: #fff;
+  color: var(--themeColor);
+}
+
+.checkin-entry.active {
+  box-shadow: 0 6rpx 18rpx rgba(0, 0, 0, 0.14);
+}
+
+.checkin-entry.done {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+/* 未签到的红点 */
+.entry-dot {
+  width: 14rpx;
+  height: 14rpx;
+  margin-left: 12rpx;
+  border-radius: 50%;
+  background: #ff2d4a;
+  box-shadow: 0 0 0 4rpx rgba(255, 45, 74, 0.25);
+}
+
+/* ================= 通用区块 ================= */
+.section {
+  margin: 0 24rpx 28rpx;
+}
+
+.section-head {
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--textMain);
+  padding-left: 18rpx;
+  border-left: 8rpx solid var(--themeColor);
+  line-height: 34rpx;
+}
+
+.section-count {
+  font-size: 24rpx;
+  color: var(--textLight);
+}
+
+/* ================= 积分明细 ================= */
+.rec-card {
+  background: var(--bgCard);
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.rec-item {
+  display: flex;
+  align-items: center;
+  padding: 26rpx 24rpx;
+}
+
+.rec-icon {
+  width: 72rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  text-align: center;
+  font-size: 40rpx;
+  border-radius: 50%;
+  background: var(--themeColorFade);
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.rec-main {
+  margin-right: 16rpx;
+}
+
+.rec-title {
+  font-size: 28rpx;
+  color: var(--textMain);
+  line-height: 40rpx;
+}
+
+.rec-meta {
+  display: flex;
+  align-items: center;
+  margin-top: 10rpx;
+}
+
+.rec-tag {
+  margin-right: 16rpx;
+}
+
+.rec-time {
+  font-size: 22rpx;
+  color: var(--textLight);
+}
+
+.rec-points {
+  font-size: 34rpx;
+  font-weight: bold;
+  font-family: "DIN Alternate", -apple-system, sans-serif;
+  flex-shrink: 0;
+}
+
+.rec-points.earn {
+  color: #16b364;
+}
+
+.rec-points.spend {
+  color: var(--themeColor);
+}
+
+.rec-empty {
+  padding: 80rpx 40rpx;
+}
+
+/* ================= 兑换专区 ================= */
+.goods-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.goods-cell {
+  width: 48.5%;
+  margin-bottom: 22rpx;
+  padding: 24rpx 22rpx 20rpx;
+  background: var(--bgCard);
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 14rpx rgba(0, 0, 0, 0.03);
+}
+
+.goods-icon {
+  width: 88rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  font-size: 48rpx;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #fff1f2, #ffe3e5);
+  margin-bottom: 16rpx;
+}
+
+.goods-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--textMain);
+  line-height: 40rpx;
+}
+
+.goods-desc {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: var(--textLight);
+  line-height: 32rpx;
+  min-height: 64rpx;
+}
+
+.goods-foot {
+  margin-top: 16rpx;
+}
+
+.goods-points {
+  display: flex;
+  align-items: baseline;
+  color: var(--themeColor);
+}
+
+.gp-num {
+  font-size: 34rpx;
+  font-weight: bold;
+  font-family: "DIN Alternate", -apple-system, sans-serif;
+}
+
+.gp-unit {
+  font-size: 22rpx;
+  margin-left: 4rpx;
+}
+
+.exchange-btn {
+  height: 52rpx;
+  line-height: 52rpx;
+  padding: 0 26rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+  color: #fff;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #ff6b76, #eb4450);
+}
+
+.exchange-btn.disabled {
+  background: #e5e5e5;
+  color: #a8a8a8;
+}
+
+.page-end {
+  padding-bottom: 40rpx;
+}

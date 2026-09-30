@@ -1,4 +1,109 @@
 /* pages/login/index.wxss */
-button {
-  margin-top: 30rpx;
+page {
+  background: var(--bgPage);
+}
+
+.login_page {
+  padding: 0 48rpx 60rpx;
+}
+
+/* ==================== 品牌头部 ==================== */
+.brand {
+  padding: 100rpx 0 70rpx;
+  text-align: center;
+}
+
+.brand_icon {
+  font-size: 130rpx;
+  line-height: 1.1;
+}
+
+.brand_name {
+  font-size: 46rpx;
+  font-weight: bold;
+  color: var(--themeColor);
+  margin-top: 24rpx;
+  letter-spacing: 4rpx;
+}
+
+.brand_slogan {
+  font-size: 25rpx;
+  color: var(--textLight);
+  margin-top: 16rpx;
+}
+
+/* ==================== 权益列表 ==================== */
+.benefits {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 12rpx 32rpx;
+}
+
+.benefit_item {
+  display: flex;
+  align-items: center;
+  padding: 26rpx 0;
+  border-bottom: 1rpx solid var(--borderColor);
+}
+
+.benefit_item:last-child {
+  border-bottom: none;
+}
+
+.benefit_icon {
+  font-size: 44rpx;
+  margin-right: 24rpx;
+}
+
+.benefit_text {
+  flex: 1;
+  min-width: 0;
+}
+
+.benefit_title {
+  font-size: 28rpx;
+  color: var(--textMain);
+  font-weight: 500;
+}
+
+.benefit_desc {
+  font-size: 23rpx;
+  color: var(--textLight);
+  margin-top: 6rpx;
+}
+
+/* ==================== 操作区 ==================== */
+.actions {
+  margin-top: 64rpx;
+}
+
+.login_btn {
+  height: 92rpx;
+  line-height: 92rpx;
+  border-radius: 46rpx;
+  background: linear-gradient(90deg, #ff6b76, #eb4450);
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 500;
+  border: none;
+}
+
+.login_btn::after {
+  border: none;
+}
+
+.skip_btn {
+  text-align: center;
+  font-size: 27rpx;
+  color: var(--textSub);
+  padding: 32rpx 0;
+}
+
+.guest_tip {
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--textLight);
+  line-height: 36rpx;
+  white-space: pre-line;
+  margin-top: 20rpx;
 }

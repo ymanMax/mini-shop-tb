@@ -1,0 +1,531 @@
+/* pages/checkin/index.wxss */
+page {
+  background: var(--bgPage);
+}
+
+.checkin-page {
+  padding: 24rpx;
+}
+
+/* ================= 骨架屏 ================= */
+.sk-card {
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  background: var(--bgCard);
+  border-radius: 20rpx;
+}
+
+.sk-title {
+  height: 40rpx;
+  width: 40%;
+  margin-bottom: 28rpx;
+}
+
+.sk-calendar {
+  height: 520rpx;
+}
+
+.sk-strip {
+  height: 180rpx;
+  margin-bottom: 24rpx;
+}
+
+.sk-btn {
+  height: 96rpx;
+  border-radius: 999rpx;
+}
+
+/* ================= 连续天数卡片 ================= */
+.consec-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 30rpx;
+  margin-bottom: 24rpx;
+  border-radius: 20rpx;
+  color: #fff;
+  background: linear-gradient(135deg, #ff7a84 0%, #eb4450 100%);
+  box-shadow: 0 10rpx 26rpx rgba(235, 68, 80, 0.26);
+}
+
+.consec-main {
+  display: flex;
+  align-items: center;
+}
+
+.consec-num-wrap {
+  display: flex;
+  align-items: baseline;
+  margin-right: 24rpx;
+}
+
+.consec-num {
+  font-size: 76rpx;
+  font-weight: bold;
+  line-height: 1;
+  font-family: "DIN Alternate", -apple-system, sans-serif;
+}
+
+.consec-unit {
+  font-size: 26rpx;
+  margin-left: 6rpx;
+}
+
+.consec-label {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.consec-tip {
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  opacity: 0.86;
+}
+
+.consec-points {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-left: 24rpx;
+  border-left: 1rpx solid rgba(255, 255, 255, 0.35);
+}
+
+.cp-num {
+  font-size: 40rpx;
+  font-weight: bold;
+  font-family: "DIN Alternate", -apple-system, sans-serif;
+}
+
+.cp-label {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  opacity: 0.86;
+}
+
+/* ================= 日历卡片 ================= */
+.cal-card {
+  padding: 28rpx 20rpx 24rpx;
+  background: var(--bgCard);
+  border-radius: 20rpx;
+}
+
+.cal-head {
+  padding: 0 16rpx 20rpx;
+}
+
+.cal-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--textMain);
+}
+
+.cal-nav {
+  width: 60rpx;
+  height: 60rpx;
+  line-height: 56rpx;
+  text-align: center;
+  font-size: 44rpx;
+  color: var(--themeColor);
+  border-radius: 50%;
+  background: var(--themeColorFade);
+}
+
+.cal-nav.disabled {
+  color: #c8c8c8;
+  background: #f4f4f4;
+}
+
+.cal-week {
+  display: flex;
+  padding: 8rpx 0 14rpx;
+  border-bottom: 1rpx solid var(--borderColor);
+}
+
+.cal-week-item {
+  width: 14.28%;
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--textSub);
+}
+
+.cal-grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding-top: 10rpx;
+}
+
+.cal-blank {
+  width: 14.28%;
+  height: 104rpx;
+}
+
+/* 每个日期格子：圆点在上、已签时下方补日期数字 */
+.cell {
+  width: 14.28%;
+  height: 104rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-dot {
+  width: 62rpx;
+  height: 62rpx;
+  line-height: 62rpx;
+  text-align: center;
+  border-radius: 50%;
+  font-size: 28rpx;
+  color: #b9b9b9;
+  font-family: "DIN Alternate", -apple-system, sans-serif;
+}
+
+.cal-num-sub {
+  margin-top: 2rpx;
+  font-size: 20rpx;
+  color: var(--textLight);
+}
+
+/* 已签到：主题色实心圆 + 白色 ✓ */
+.cell.signed .cal-dot {
+  background: var(--themeColor);
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 6rpx 14rpx rgba(235, 68, 80, 0.3);
+}
+
+/* 今日未签：主题色虚线描边高亮 */
+.cell.today .cal-dot {
+  color: var(--themeColor);
+  font-weight: 600;
+  border: 2rpx dashed var(--themeColor);
+  background: var(--themeColorFade);
+}
+
+/* 今日已签：实心 + 外圈高亮描边 */
+.cell.today.signed .cal-dot {
+  background: var(--themeColor);
+  color: #fff;
+  border: none;
+  box-shadow: 0 0 0 6rpx rgba(235, 68, 80, 0.2);
+}
+
+/* 未来日期：灰色文字 */
+.cell.future .cal-dot {
+  color: #cfcfcf;
+}
+
+.cal-foot {
+  margin-top: 18rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid var(--borderColor);
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--textLight);
+}
+
+.cal-foot-divider {
+  margin: 0 12rpx;
+}
+
+/* ================= 7 天奖励条 ================= */
+.strip-card {
+  margin-top: 24rpx;
+  padding: 28rpx 20rpx 24rpx;
+  background: var(--bgCard);
+  border-radius: 20rpx;
+}
+
+.strip-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 10rpx 22rpx;
+}
+
+.strip-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--textMain);
+}
+
+.strip-sub {
+  font-size: 22rpx;
+  color: var(--textLight);
+}
+
+.strip-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.strip-cell {
+  position: relative;
+  width: 13.2%;
+  padding: 16rpx 0 12rpx;
+  border-radius: 14rpx;
+  background: #f6f6f6;
+  text-align: center;
+}
+
+.strip-day {
+  font-size: 20rpx;
+  color: var(--textLight);
+}
+
+.strip-points {
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  font-weight: bold;
+  color: var(--textSub);
+  font-family: "DIN Alternate", -apple-system, sans-serif;
+}
+
+.strip-check {
+  position: absolute;
+  top: -14rpx;
+  right: -8rpx;
+  width: 34rpx;
+  height: 34rpx;
+  line-height: 34rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: #fff;
+  border-radius: 50%;
+  background: var(--themeColor);
+  box-shadow: 0 2rpx 8rpx rgba(235, 68, 80, 0.4);
+}
+
+/* 已达成：主题色高亮 + 白字 */
+.strip-cell.reached {
+  background: linear-gradient(135deg, #ff7a84, #eb4450);
+  box-shadow: 0 6rpx 16rpx rgba(235, 68, 80, 0.28);
+}
+
+.strip-cell.reached .strip-day {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.strip-cell.reached .strip-points {
+  color: #fff;
+}
+
+/* 第 7 天大奖：未达成时金色描边，达成时金色实底 */
+.strip-cell.big {
+  border: 2rpx solid #f0b429;
+}
+
+.strip-cell.big .strip-points {
+  color: #d99000;
+}
+
+.strip-cell.big.reached {
+  background: linear-gradient(135deg, #ffcf4d, #f0a020);
+  box-shadow: 0 6rpx 18rpx rgba(240, 160, 32, 0.4);
+}
+
+.strip-cell.big.reached .strip-points {
+  color: #fff;
+}
+
+.strip-cell.big .strip-check {
+  background: #f0a020;
+}
+
+.strip-tag {
+  position: absolute;
+  top: -16rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0 8rpx;
+  font-size: 16rpx;
+  line-height: 26rpx;
+  color: #fff;
+  border-radius: 8rpx 8rpx 8rpx 0;
+  background: #f0a020;
+  white-space: nowrap;
+}
+
+/* ================= 签到按钮 ================= */
+.sign-placeholder {
+  height: 160rpx;
+}
+
+.sign-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 16rpx 24rpx;
+  background: #fff;
+  border-top: 1rpx solid var(--borderColor);
+  z-index: 12;
+}
+
+.sign-btn {
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #fff;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #ff6b76, #eb4450);
+  box-shadow: 0 8rpx 20rpx rgba(235, 68, 80, 0.3);
+}
+
+.sign-btn.disabled {
+  background: #e5e5e5;
+  color: #a8a8a8;
+  box-shadow: none;
+}
+
+/* ================= 签到成功弹层 ================= */
+.reward-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  animation: mask-in 0.2s ease-out;
+}
+
+@keyframes mask-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.reward-card {
+  width: 560rpx;
+  padding: 48rpx 40rpx 40rpx;
+  border-radius: 28rpx;
+  background: #fff;
+  text-align: center;
+  animation: card-pop 0.42s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+@keyframes card-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.reward-emoji {
+  font-size: 96rpx;
+  line-height: 1;
+  animation: emoji-pop 0.6s ease-out 0.05s both;
+}
+
+@keyframes emoji-pop {
+  0% {
+    transform: scale(0.4) rotate(-18deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.18) rotate(6deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+
+.reward-title {
+  margin-top: 20rpx;
+  font-size: 34rpx;
+  font-weight: 600;
+  color: var(--textMain);
+}
+
+.reward-points {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  margin: 24rpx 0 12rpx;
+  color: var(--themeColor);
+  animation: points-zoom 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0.12s both;
+}
+
+@keyframes points-zoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  70% {
+    transform: scale(1.25);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.rp-plus {
+  font-size: 44rpx;
+  font-weight: bold;
+}
+
+.rp-num {
+  font-size: 88rpx;
+  font-weight: bold;
+  line-height: 1;
+  font-family: "DIN Alternate", -apple-system, sans-serif;
+}
+
+.rp-unit {
+  font-size: 28rpx;
+  margin-left: 8rpx;
+}
+
+.reward-desc {
+  font-size: 26rpx;
+  color: var(--textSub);
+}
+
+.reward-btn {
+  margin-top: 36rpx;
+  height: 84rpx;
+  line-height: 84rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #fff;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #ff6b76, #eb4450);
+}
+
+/* 连签 7 天大奖：金色隆重配色 */
+.reward-card.big {
+  background: linear-gradient(180deg, #fff8e6 0%, #ffffff 42%);
+}
+
+.reward-card.big .reward-points {
+  color: #e08a00;
+}
+
+.reward-card.big .reward-title {
+  color: #b06a00;
+}
+
+.reward-card.big .reward-btn {
+  background: linear-gradient(90deg, #ffcf4d, #f0a020);
+  box-shadow: 0 8rpx 20rpx rgba(240, 160, 32, 0.4);
+}
+
+/* 大奖弹层描边 */
+.reward-card.big {
+  box-shadow: 0 0 0 4rpx #f5c542, 0 20rpx 50rpx rgba(0, 0, 0, 0.2);
+}

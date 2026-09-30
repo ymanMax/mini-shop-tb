@@ -1,127 +1,146 @@
-/*
- 1. 用户上滑页面 滚动条触底 加载下一页数据
-  1. 写滚动条触底事件 onReachBottom(){}
-  2. 判断还有没有下一页数据
-    1. 获取总条数total 还有总页数totalPages 一页显示的条数即页容量pagesize
-      总页数 = Math.ceil(总条数total / 页容量pagesize)
-      titalPages = Mach.ceil(23 / 10)
-    2. 获取当前页码数 pagenum
-    3. 判断一下 当前页码数 大于等于 总页数
-        true 则没有下一页
-  3. 如果没有下页数据 弹出提示消息
-  4. 如果有数据 加载数据
-    1. 当前页码数 ++
-    2. 重新发送请求
-    3. 数据请求回来 要进行拼接 而不是全部替换
-
- 2. 下拉刷新页面
-  1. 触发下拉事件 需要在页面json文件中开启配置 enablePullDownRefresh
-      写下拉事件 onPullDownRefresh(){}
-  2. 重置数据 goodsList[]
-  3. 重置页码 为1
-  4. 重新发送请求
-  5. 数据请求回来 需要手动关闭 等待效果
-*/
-
 // pages/goods_list/index.js
-import { request } from '../../request/index.js'
-import regeneratorRuntime from '../../lib/runtime/runtime'
+// 商品列表：按分类 / 关键词筛选，支持综合、销量、价格排序与分页
+import { request } from '../../api/http.js';
+import regeneratorRuntime from '../../lib/runtime/runtime';
+import { formatPrice, formatSales } from '../../utils/format.js';
+import { toastSuccess, toastError, vibrate } from '../../utils/toast.js';
+import { syncCartBadge } from '../../utils/cart.js';
 
+const DEFAULT_IMAGE = '/static/images/default.png';
+const PAGE_SIZE = 10;
+
+const SORTS = [
+  { key: 'default', label: '综合' },
+  { key: 'sales', label: '销量' },
+  { key: 'price', label: '价格' },
+];
 
 Page({
-
   /**
    * 页面的初始数据
    */
   data: {
-    tabs: [
-      {
-        id: 0,
-        value: '综合',
-        isActive: true
-      },
-      {
-        id: 1,
-        value: '销量',
-        isActive: false
-      },
-      {
-        id: 2,
-        value: '价格',
-        isActive: false
-      }
-    ],
-    goodsList: []
-  },
-  // 接口数据
-  QueryParams: {
-    query: '',
-    cid: '',
-    pagenum: 1,
-    pagesize: 10
-  },
-  totalPages: 0, //总页数
-
-  handletabsItenChange(e) {
-    // 获取被点击的索引
-    const { index } = e.detail
-    // 获取原数据 进行遍历
-    let { tabs } = this.data
-    tabs.forEach((n, i) => i === index ? n.isActive = true : n.isActive = false);
-    // 赋值
-    this.setData({
-      tabs
-    })
+    loading: true,
+    goodsList: [],
+    sorts: SORTS,
+    // 当前排序：default | sales | price-asc | price-desc
+    sort: 'default',
+    priceAsc: true,
+    categoryId: '',
+    keyword: '',
+    title: '商品列表',
+    page: 1,
+    total: 0,
+    hasMore: false,
+    loadingMore: false,
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-    this.QueryParams.cid = options.cid || "";
-    this.QueryParams.query = options.query || "";
-    this.getGoodsList()
+  onLoad(options) {
+    // 兼容旧参数 cid / query
+    const categoryId = options.categoryId || options.cid || '';
+    const keyword = options.keyword || options.query || '';
+    this.setData({ categoryId, keyword, loading: true, page: 1, goodsList: [] });
+    if (keyword) wx.setNavigationBarTitle({ title: `搜索：${keyword}` });
+    this.getGoodsList({ reset: true });
   },
 
-  // 获取商品数据列表
-  async getGoodsList() {
-    const res = await request({ url: "/goods/search", data: this.QueryParams })
-    // console.log(res);
-    // 获取总条数
-    const total = res.total;
-    // 计算总页数
-    this.totalPages = Math.ceil(total / this.QueryParams.pagesize)
-    // 旧数据和新数据拼接
-    this.setData({
-      goodsList: [...this.data.goodsList, ...res.goods]
-    })
-    // 关闭下拉刷新的窗口
-    wx.stopPullDownRefresh()
+  onShow() {
+    syncCartBadge();
   },
 
-  // 监听滚动触底 事件
   onReachBottom() {
-    if (this.QueryParams.pagenum >= this.totalPages) {
-      // 没有下一页数据
-      wx.showToast({
-        title: '没有更多数据了',
-      })
-    } else {
-      // 有下一页数据
-      this.QueryParams.pagenum++
-      this.getGoodsList()
+    if (!this.data.hasMore || this.data.loadingMore) return;
+    this.getGoodsList({ reset: false });
+  },
+
+  onPullDownRefresh() {
+    this.getGoodsList({ reset: true }).then(() => wx.stopPullDownRefresh());
+  },
+
+  async getGoodsList({ reset = false } = {}) {
+    const page = reset ? 1 : this.data.page + 1;
+    this.setData(reset ? { loading: true } : { loadingMore: true });
+    try {
+      const res = await request({
+        url: '/goods/search',
+        data: {
+          categoryId: this.data.categoryId,
+          keyword: this.data.keyword,
+          sort: this.data.sort,
+          page,
+          size: PAGE_SIZE,
+        },
+      });
+      const records = (res.records || []).map((g) => ({
+        ...g,
+        priceText: formatPrice(g.price),
+        originalPriceText: formatPrice(g.originalPrice),
+        salesText: formatSales(g.sales),
+      }));
+      const goodsList = reset ? records : this.data.goodsList.concat(records);
+      this.setData({
+        loading: false,
+        loadingMore: false,
+        goodsList,
+        page,
+        total: res.total || 0,
+        hasMore: goodsList.length < (res.total || 0),
+      });
+    } catch (err) {
+      this.setData({ loading: false, loadingMore: false });
+      toastError((err && err.message) || '商品加载失败');
     }
   },
 
-  // 监听下拉刷新 事件
-  onPullDownRefresh() {
-    // 重置数据
-    this.setData({
-      goodsList: []
-    })
-    // 重置页码
-    this.QueryParams.pagenum = 1
-    // 重新发送请求
-    this.getGoodsList()
-  }
-})
+  // ---------------------------------------------------------------- 排序
+  handleSort(e) {
+    const { key } = e.currentTarget.dataset;
+    let sort = key;
+    let priceAsc = this.data.priceAsc;
+    if (key === 'price') {
+      // 再次点击价格在升降序之间切换
+      priceAsc = this.data.sort === 'price-asc' ? false : this.data.sort === 'price-desc' ? true : true;
+      sort = priceAsc ? 'price-asc' : 'price-desc';
+    }
+    if (sort === this.data.sort) return;
+    vibrate();
+    this.setData({ sort, priceAsc, goodsList: [], page: 1 }, () => this.getGoodsList({ reset: true }));
+  },
+
+  // ---------------------------------------------------------------- 加购
+  async handleAddCart(e) {
+    const { index } = e.currentTarget.dataset;
+    const item = this.data.goodsList[index];
+    vibrate();
+    try {
+      await request({
+        url: '/cart/add',
+        method: 'POST',
+        data: {
+          goodsId: item.id,
+          name: item.name,
+          mainPic: item.mainPic,
+          specText: item.specs && item.specs.length ? item.specs[0].values[0].label : `默认规格 · 1${item.unit}`,
+          price: item.price,
+          count: 1,
+          stock: item.stock,
+          unit: item.unit,
+        },
+      });
+      syncCartBadge();
+      toastSuccess('加入购物车成功');
+    } catch (err) {
+      toastError((err && err.message) || '加入购物车失败');
+    }
+  },
+
+  handleGoGoods(e) {
+    const { id } = e.currentTarget.dataset;
+    wx.navigateTo({ url: `/pages/goods_detail/index?goods_id=${id}` });
+  },
+
+  handleImageError(e) {
+    const { index } = e.currentTarget.dataset;
+    this.setData({ [`goodsList[${index}].mainPic`]: DEFAULT_IMAGE });
+  },
+});

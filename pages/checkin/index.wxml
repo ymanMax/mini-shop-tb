@@ -1,0 +1,119 @@
+<!--pages/checkin/index.wxml-->
+<view class="checkin-page">
+  <!-- ==================== 骨架屏 ==================== -->
+  <block wx:if="{{loading}}">
+    <view class="sk-card">
+      <view class="skeleton-block sk-title"></view>
+      <view class="skeleton-block sk-calendar"></view>
+    </view>
+    <view class="skeleton-block sk-strip"></view>
+    <view class="skeleton-block sk-btn"></view>
+  </block>
+
+  <!-- ==================== 加载失败空态 ==================== -->
+  <view class="empty" wx:elif="{{error}}">
+    <view class="empty-icon">😵</view>
+    <view class="empty-text">签到信息加载失败</view>
+    <view class="empty-text">请检查网络后重试</view>
+    <view class="btn-primary empty-btn" bindtap="handleRetry">重新加载</view>
+  </view>
+
+  <block wx:else>
+    <!-- ==================== 当前连续天数 ==================== -->
+    <view class="consec-card">
+      <view class="consec-main">
+        <view class="consec-num-wrap">
+          <text class="consec-num">{{consecutiveDays}}</text>
+          <text class="consec-unit">天</text>
+        </view>
+        <view class="consec-info">
+          <view class="consec-label">已连续签到 {{consecutiveDays}} 天</view>
+          <view class="consec-tip">断签后连续天数将重新从第 1 天计算</view>
+        </view>
+      </view>
+      <view class="consec-points">
+        <text class="cp-num">{{totalPoints}}</text>
+        <text class="cp-label">当前积分</text>
+      </view>
+    </view>
+
+    <!-- ==================== 日历 ==================== -->
+    <view class="cal-card">
+      <view class="cal-head flex-between">
+        <view class="cal-nav {{canPrev ? '' : 'disabled'}}" bindtap="handlePrevMonth">‹</view>
+        <text class="cal-title">{{monthText}}</text>
+        <view class="cal-nav {{canNext ? '' : 'disabled'}}" bindtap="handleNextMonth">›</view>
+      </view>
+
+      <view class="cal-week">
+        <text class="cal-week-item" wx:for="{{weekdays}}" wx:key="*this">{{item}}</text>
+      </view>
+
+      <view class="cal-grid">
+        <block wx:for="{{cells}}" wx:key="key">
+          <view class="cal-blank" wx:if="{{item.empty}}"></view>
+          <view
+            wx:else
+            class="{{item.cls}}"
+            data-today="{{item.isToday}}"
+            data-signed="{{item.signed}}"
+            data-future="{{item.isFuture}}"
+            bindtap="handleDayTap"
+          >
+            <view class="cal-dot">{{item.signed ? '✓' : item.day}}</view>
+            <text class="cal-num-sub" wx:if="{{item.signed}}">{{item.day}}</text>
+          </view>
+        </block>
+      </view>
+
+      <view class="cal-foot">
+        <text>本月已签 {{monthSigned}} 天</text>
+        <text class="cal-foot-divider">·</text>
+        <text>累计签到 {{totalSigned}} 天</text>
+      </view>
+    </view>
+
+    <!-- ==================== 7 天连续奖励条 ==================== -->
+    <view class="strip-card">
+      <view class="strip-head">
+        <text class="strip-title">连续签到奖励</text>
+        <text class="strip-sub">连签越久，奖励越丰厚</text>
+      </view>
+      <view class="strip-row">
+        <view
+          class="strip-cell {{item.reached ? 'reached' : ''}} {{item.isBig ? 'big' : ''}}"
+          wx:for="{{rewards}}"
+          wx:key="day"
+        >
+          <view class="strip-tag" wx:if="{{item.isBig}}">大奖</view>
+          <view class="strip-day">第{{item.day}}天</view>
+          <view class="strip-points">+{{item.points}}</view>
+          <view class="strip-check" wx:if="{{item.reached}}">✓</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部按钮占位，避免被固定按钮遮挡 -->
+    <view class="sign-placeholder"></view>
+
+    <!-- ==================== 签到按钮 ==================== -->
+    <view class="sign-bar safe-area-bottom">
+      <view class="sign-btn {{signBtnDisabled ? 'disabled' : ''}}" bindtap="handleCheckin">{{signBtnText}}</view>
+    </view>
+  </block>
+
+  <!-- ==================== 签到成功弹层 ==================== -->
+  <view class="reward-mask" wx:if="{{showReward}}" bindtap="handleCloseReward">
+    <view class="reward-card {{rewardIsBig ? 'big' : ''}}" catchtap="noop">
+      <view class="reward-emoji">{{rewardIsBig ? '🎉' : '✅'}}</view>
+      <view class="reward-title">{{rewardIsBig ? '连签 7 天大奖' : '签到成功'}}</view>
+      <view class="reward-points {{rewardIsBig ? 'big' : ''}}">
+        <text class="rp-plus">+</text>
+        <text class="rp-num">{{rewardPoints}}</text>
+        <text class="rp-unit">积分</text>
+      </view>
+      <view class="reward-desc">已连续签到 {{rewardDays}} 天，明天继续来哦~</view>
+      <view class="reward-btn" bindtap="handleCloseReward">开心收下</view>
+    </view>
+  </view>
+</view>

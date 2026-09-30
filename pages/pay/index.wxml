@@ -1,48 +1,172 @@
-	<!-- 收货信息 -->
-	<view class="revice_address_row">
-		<view class="user_info_row">
-			<view class="user_info">
-				<view>收货人: {{address.userName}}</view>
-				<view>{{address.all}}</view>
-			</view>
-			<view class="user_phone">{{address.telNumber}}</view>
-		</view>
-	</view>
+<!--pages/pay/index.wxml-->
+<!-- 首次加载骨架屏 -->
+<view class="sk-page" wx:if="{{loading}}">
+  <view class="skeleton-block sk-address"></view>
+  <view class="sk-card">
+    <view class="skeleton-block sk-line"></view>
+    <view class="skeleton-block sk-line"></view>
+    <view class="skeleton-block sk-line"></view>
+  </view>
+  <view class="sk-card">
+    <view class="skeleton-block sk-line"></view>
+    <view class="skeleton-block sk-line"></view>
+  </view>
+</view>
 
-	<!-- 购物车内容 -->
-	<view class="cart_content">
-		<view class="cart_title">购物车</view>
-		<!-- 商品 -->
-		<view class="cart_main">
-			<!-- 购物车商品 -->
-			<view class="cart_item" wx:for="{{cart}}" wx:key="goods_id">
-				<!-- 图片 -->
-				<navigator class="cart_img_wrap">
-					<image src="{{item.goods_small_logo}}" mode="widthFix" />
-				</navigator>
-				<!-- 信息 -->
-				<view class="cart_info_wrap">
-					<view class="goods_name">{{item.goods_name}}</view>
-					<view class="goods_price_wrap">
-						<view class="goods_price">￥{{item.goods_price}}</view>
-						<view class="num_tool">
-							<view class="goods_num">X {{item.num}}</view>
-						</view>
-					</view>
-				</view>
-			</view>
-		</view>
-	</view>
+<block wx:if="{{!loading && hasGoods}}">
+  <!-- 收货地址：点击跳地址列表选择模式 -->
+  <view class="address-card" bindtap="handleGoAddress">
+    <block wx:if="{{address && address.userName}}">
+      <view class="addr-icon">📍</view>
+      <view class="addr-main flex-1">
+        <view class="addr-user">
+          <text class="addr-name">{{address.userName}}</text>
+          <text class="addr-phone">{{address.telNumber}}</text>
+        </view>
+        <view class="addr-detail">{{address.all}}</view>
+      </view>
+      <view class="addr-switch">切换</view>
+    </block>
+    <view wx:else class="addr-empty">+ 请添加收货地址</view>
+  </view>
 
-	<!-- 底部结算栏 -->
-	<view class="footer_tool">
-		<!-- 总价格部分 -->
-		<view class="total_price_wrap">
-			<view class="total_price">
-				合计: <text class="price">￥{{totaPrice}}</text>
-			</view>
-			<view>包含运费</view>
-		</view>
-		<!-- 结算 -->
-		<view class="order_pay_wrap" bindtap="handleOrderPay">支付({{totaNum}})</view>
-	</view>
+  <!-- 商品清单 -->
+  <view class="card">
+    <view class="card-title flex-between">
+      <text>商品清单</text>
+      <text class="card-extra">共 {{totalCount}} 件</text>
+    </view>
+    <view class="goods-item" wx:for="{{goodsItems}}" wx:key="key">
+      <view class="goods-pic">
+        <image src="{{item.mainPic}}" mode="aspectFill" binderror="handleGoodsImageError" data-index="{{index}}" />
+      </view>
+      <view class="goods-info flex-1">
+        <view class="goods-name ellipsis-2">{{item.name}}</view>
+        <view class="goods-spec">{{item.specText}}</view>
+        <view class="goods-bottom flex-between">
+          <text class="goods-price">¥{{item.priceText}}</text>
+          <text class="goods-count">×{{item.count}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 金额明细 -->
+  <view class="card">
+    <view class="amount-row flex-between">
+      <text class="amount-label">商品总价</text>
+      <text class="amount-value">¥{{totalText}}</text>
+    </view>
+    <!-- 优惠券：购物车结算可点开弹层，订单再次支付不可点 -->
+    <view class="amount-row flex-between {{couponEnabled ? 'amount-row-tap' : ''}}" bindtap="handleToggleCoupon">
+      <text class="amount-label">优惠券</text>
+      <view class="amount-right">
+        <text class="amount-value {{hasCoupon ? 'amount-discount' : 'amount-muted'}}">{{couponText}}</text>
+        <text class="amount-arrow" wx:if="{{couponEnabled}}">›</text>
+      </view>
+    </view>
+    <view class="amount-row flex-between">
+      <text class="amount-label">满减</text>
+      <text class="amount-value amount-discount">-¥{{discountText}}</text>
+    </view>
+    <view class="amount-row flex-between">
+      <text class="amount-label">运费</text>
+      <text class="amount-value">¥{{freightText}}</text>
+    </view>
+    <view class="amount-divider"></view>
+    <view class="amount-row flex-between">
+      <text class="amount-pay-label">实付金额</text>
+      <text class="amount-pay-value">¥{{payText}}</text>
+    </view>
+  </view>
+
+  <!-- 订单备注 -->
+  <view class="card">
+    <view class="card-title">订单备注</view>
+    <textarea
+      class="remark-input"
+      maxlength="100"
+      placeholder="选填，如：请工作日送达"
+      placeholder-class="remark-placeholder"
+      bindinput="handleRemarkInput"
+    />
+  </view>
+
+  <view class="pay-placeholder"></view>
+</block>
+
+<!-- 空态 -->
+<view class="empty" wx:if="{{!loading && !hasGoods}}">
+  <view class="empty-icon">🛒</view>
+  <view class="empty-text">{{emptyText}}</view>
+  <view class="empty-btn btn-primary" bindtap="handleGoShopping">去逛逛</view>
+</view>
+
+<!-- 底部支付栏 -->
+<view class="pay-bar safe-area-bottom" wx:if="{{!loading && hasGoods}}">
+  <view class="pay-left">
+    实付 <text class="pay-left-value">¥{{payText}}</text>
+  </view>
+  <view class="pay-btn {{paying ? 'pay-btn-disabled' : ''}}" bindtap="handlePay">立即支付</view>
+</view>
+
+<!-- 优惠券选择弹层（仅购物车结算模式可选券） -->
+<block wx:if="{{couponEnabled}}">
+  <view class="mask" wx:if="{{couponPopVisible}}" bindtap="handleCloseCoupon"></view>
+  <view class="popup coupon-pop {{couponPopVisible ? 'show' : ''}}" catchtap="handleStopPropagation">
+    <view class="pop-head">
+      <text class="pop-title">选择优惠券</text>
+      <text class="pop-close" bindtap="handleCloseCoupon">✕</text>
+    </view>
+    <scroll-view scroll-y class="pop-body">
+      <!-- 不使用优惠券，便于取消已选 -->
+      <view
+        class="coupon-opt no-coupon {{selectedCouponId === 0 ? 'selected' : ''}}"
+        bindtap="handleCouponSelect"
+        data-id="0"
+      >
+        <text class="no-coupon-text">不使用优惠券</text>
+        <view class="opt-radio {{selectedCouponId === 0 ? 'on' : ''}}"></view>
+      </view>
+
+      <view class="pop-sub" wx:if="{{couponCount > 0}}">可用优惠券（{{couponCount}}）</view>
+      <view
+        class="coupon-opt {{item.id === selectedCouponId ? 'selected' : ''}}"
+        wx:for="{{couponList}}"
+        wx:key="id"
+        bindtap="handleCouponSelect"
+        data-id="{{item.id}}"
+      >
+        <view class="opt-face {{item.typeClass}}">
+          <text class="opt-face-val">{{item.faceText}}</text>
+          <text class="opt-face-sub">{{item.thresholdText}}</text>
+        </view>
+        <view class="opt-info flex-1">
+          <view class="opt-title ellipsis">{{item.title}}</view>
+          <view class="opt-end">{{item.endText}}</view>
+          <view class="opt-cut">本单可减 ¥{{item.discountText}}</view>
+        </view>
+        <view class="opt-radio {{item.id === selectedCouponId ? 'on' : ''}}"></view>
+      </view>
+
+      <!-- 不可用券：置灰并展示原因 -->
+      <block wx:if="{{couponUnavailable.length > 0}}">
+        <view class="pop-sub">不可用优惠券（{{couponUnavailable.length}}）</view>
+        <view class="coupon-opt disabled" wx:for="{{couponUnavailable}}" wx:key="id">
+          <view class="opt-face {{item.typeClass}}">
+            <text class="opt-face-val">{{item.faceText}}</text>
+            <text class="opt-face-sub">{{item.thresholdText}}</text>
+          </view>
+          <view class="opt-info flex-1">
+            <view class="opt-title ellipsis">{{item.title}}</view>
+            <view class="opt-end">{{item.endText}}</view>
+          </view>
+          <view class="opt-reason">{{item.reason}}</view>
+        </view>
+      </block>
+
+      <view class="pop-none" wx:if="{{couponCount === 0 && couponUnavailable.length === 0}}">暂无可用优惠券</view>
+      <view class="pop-bottom"></view>
+    </scroll-view>
+  </view>
+</block>

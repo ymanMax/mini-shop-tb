@@ -1,0 +1,92 @@
+<!-- pages/address/edit.wxml -->
+<view class="page">
+
+  <!-- 基础信息 -->
+  <view class="form-card">
+    <view class="form-row">
+      <text class="form-label">收货人</text>
+      <input
+        class="form-input"
+        value="{{userName}}"
+        maxlength="20"
+        placeholder="请填写收货人姓名"
+        placeholder-class="form-placeholder"
+        bindinput="handleNameInput"
+      />
+    </view>
+
+    <view class="form-row">
+      <text class="form-label">手机号</text>
+      <input
+        class="form-input"
+        type="number"
+        maxlength="11"
+        value="{{telNumber}}"
+        placeholder="请填写收货人手机号"
+        placeholder-class="form-placeholder"
+        bindinput="handlePhoneInput"
+      />
+    </view>
+
+    <view class="form-row">
+      <text class="form-label">所在地区</text>
+      <picker
+        class="form-picker"
+        mode="region"
+        value="{{region}}"
+        bindchange="handleRegionChange"
+      >
+        <view class="picker-value {{regionText ? '' : 'picker-placeholder'}}">
+          {{regionText || '请选择所在地区'}}
+        </view>
+      </picker>
+      <text class="form-arrow">›</text>
+    </view>
+
+    <view class="form-row form-row--textarea">
+      <text class="form-label">详细地址</text>
+      <textarea
+        class="form-textarea"
+        value="{{detailInfo}}"
+        maxlength="120"
+        placeholder="街道、楼牌号等"
+        placeholder-class="form-placeholder"
+        bindinput="handleDetailInput"
+      />
+    </view>
+  </view>
+
+  <!-- 地址标签（单选） -->
+  <view class="form-card">
+    <view class="form-block-title">地址标签</view>
+    <view class="tag-options">
+      <view
+        class="tag-option {{tag === item.label ? 'tag-option--on' : ''}}"
+        wx:for="{{tags}}"
+        wx:key="label"
+        data-tag="{{item.label}}"
+        bindtap="handleTagSelect"
+      >{{item.label}}</view>
+    </view>
+  </view>
+
+  <!-- 设为默认 -->
+  <view class="form-card">
+    <view class="form-row form-row--switch">
+      <view class="switch-text">
+        <text class="form-label form-label--strong">设为默认地址</text>
+        <text class="switch-sub">下单时优先使用该地址</text>
+      </view>
+      <switch checked="{{isDefault}}" color="#eb4450" bindchange="handleDefaultChange" />
+    </view>
+  </view>
+
+  <view class="save-placeholder"></view>
+</view>
+
+<!-- 底部固定保存按钮 -->
+<view class="save-bar safe-area-bottom">
+  <view class="btn-primary save-btn {{saving ? 'is-disabled' : ''}}" catchtap="handleSave">
+    {{saving ? '保存中...' : '保存'}}
+  </view>
+</view>
